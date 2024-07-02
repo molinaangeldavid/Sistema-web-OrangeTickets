@@ -1,0 +1,26 @@
+<div class="scenario-container">
+    <div class="scenario">
+        <div class="scenario-teatro">Escenario</div>
+        <table class="sala"> 
+            <tbody class="tbody">
+                <tr *ngFor="let row of seats.scenario;let rowIndex = index" class="row">
+                    <td *ngFor="let seat of row" [ngClass]="{
+                        'seat': seat, 
+                        'seat-available': seat && isAvailable(seat),
+                        'reservated-seat': seat && isReservated(seat),
+                        'paid-seat': seat && isPaid(seat),
+                        'selected-seat': seat && isSelected(seat.fila, seat.asiento),
+                        'empty-seat':!seat
+                    }" (click)="seat && isAvailable(seat) && toggleSeatSelection(seat.fila, seat.asiento)">
+                </td>
+                <td class="row-number">{{ rowIndex + 1 }}</td>
+            </tr>
+        </tbody>
+    </table>
+    
+    <div *ngIf="mostrarBoton">
+            <p-button label="Confirmar" class="button-scenario" (click)="confirmSeat()" size="small" [disabled]="isDisabled"></p-button>
+    </div>
+    
+</div>
+</div>

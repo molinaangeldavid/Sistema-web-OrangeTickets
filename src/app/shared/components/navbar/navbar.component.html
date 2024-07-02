@@ -1,0 +1,18 @@
+<div class="container">
+    <img src="../../../../assets/oie_transparent.png" alt="" srcset="">
+    <span class="titulo">Orange Day School</span>
+    <div class="container-menu" *ngIf="menusecreto">
+        <ul>
+            <li><a (click)="showReservation()">Ver Sala</a></li>
+            <li><a (click)="showReservated()">Detalles</a></li>
+            <li><a (click)="goOut()">Salir</a></li>
+        </ul>
+    </div>
+    <div class="container-menu" *ngIf="menusecretoAdmin">
+        <ul>
+            <li><a (click)="showManageReserves()">Gestionar Reservas</a></li>
+            <li><a (click)="showManageUsers()">Gestionar Usuarios</a></li>
+            <li><a (click)="goOut()">Salir</a></li>
+        </ul>
+    </div>
+</div>

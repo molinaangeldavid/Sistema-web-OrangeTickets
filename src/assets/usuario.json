@@ -1,0 +1,72 @@
+{
+    "usuarios": [
+        {
+            "dni": "72131222",
+            "nombre": "Emanuel",
+            "apellido": "Gonzalez",
+            "ciclo": "Secundaria",
+            "cantidadReservas":0,
+            "grado": 5,
+            "habilitado": true
+        },
+        {
+            "dni": "78829301",
+            "nombre": "Pablo",
+            "apellido": "Gimenez",
+            "ciclo": "Secundaria",
+            "cantidadReservas":0,
+            "grado": 2,
+            "habilitado": true
+        },
+        {
+            "dni": "75232151",
+            "nombre": "Julian",
+            "apellido": "Domingo",
+            "ciclo": "Secundaria",
+            "cantidadReservas":0,
+            "grado": 6,
+            "habilitado": true
+        },
+        {
+            "dni": "88273012",
+            "nombre": "Sofia",
+            "apellido": "Milagros",
+            "ciclo": "Secundaria",
+            "cantidadReservas":0,
+            "grado": 4,
+            "habilitado": true
+        },
+        {
+            "dni": "71238323",
+            "nombre": "Emanuel",
+            "apellido": "Gonzalez",
+            "ciclo": "Primaria",
+            "cantidadReservas":0,
+            "grado": 5,
+            "habilitado": true
+        },
+        {
+            "dni": "28373474",
+            "nombre": "Emanuel",
+            "apellido": "Gonzalez",
+            "ciclo": "Kinder",
+            "cantidadReservas":0,
+            "grado": 5,
+            "habilitado": true
+        }
+    ],
+    "admin": [
+        {
+            "dni": "35902759",
+            "nombre": "Johanna",
+            "apellido": "Sarsoli",
+            "password": "orangetickets"
+        },
+        {
+            "dni": "37760822",
+            "nombre": "Angel",
+            "apellido": "Molina",
+            "password": "desarrollador"
+        }
+    ]
+}

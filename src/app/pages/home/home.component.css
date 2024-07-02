@@ -1,0 +1,31 @@
+:host { 
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    height: 100vh;
+}
+
+.perfil{
+    display: flex;
+    width: 100%;
+    justify-content: space-evenly;
+    margin:20px 0;   
+    padding: 30px;
+}
+
+.perfil div:first-child, .perfil div:last-child{
+    border-left: 2px solid #000;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.data-information{
+    padding: 15px;
+    font-weight: 500;
+}
+
+
+.info span{
+    display:block;
+}

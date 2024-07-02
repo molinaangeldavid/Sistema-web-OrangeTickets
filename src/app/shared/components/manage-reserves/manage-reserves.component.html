@@ -1,0 +1,158 @@
+<p-table [value]="users" [scrollable]="true" scrollHeight="400px" [tableStyle]="{'min-width': '60rem'}"  styleClass="p-datatable-gridlines" >
+    <ng-template pTemplate="header">
+        <tr>
+            <th pSortableColumn="dni">
+                DNI <p-sortIcon field="dni" />
+            </th>
+            <th pSortableColumn="apellido">
+                Apellido <p-sortIcon field="apellido" />
+            </th>
+            <th pSortableColumn="nombre">
+                Nombre <p-sortIcon field="nombre" />
+            </th>
+            <th pSortableColumn="ciclo">
+                Ciclo <p-sortIcon field="ciclo" />
+            </th>
+            <th pSortableColumn="grado">
+                Grado <p-sortIcon field="grado" />
+            </th>
+            <th>
+                Reservas
+            </th>
+            <th>
+                Ver 
+            </th>
+            <th>
+            </th>
+            <th>
+            </th>
+        </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-user>
+        <tr>
+            <td>{{ user.dni }}</td>
+            <td>{{ user.apellido }}</td>
+            <td>{{ user.nombre }}</td>
+            <td>{{ user.ciclo }}</td>
+            <td>{{ user.grado }}</td>
+            <td>{{user.cantidadReservas}}</td>
+            <td><button 
+                type="button" 
+                (click)="showDialog(user.dni)" 
+                pButton 
+                icon="pi pi-external-link" 
+                label="Ver Reservas"
+                size="small">
+            </button></td>
+            <td><button 
+                type="button" 
+                (click)="showDialog(user.dni)" 
+                pButton 
+                icon="pi pi-external-link" 
+                label="Confirmar todo"
+                size="small">
+            </button>
+            <td><button 
+                type="button" 
+                (click)="showDialog(user.dni)" 
+                pButton 
+                icon="pi pi-external-link" 
+                label="Liberar todo"
+                size="small">
+            </button></td>
+        </tr>
+    </ng-template>
+</p-table>
+<p-dialog 
+    header="Reservas" 
+    [resizable]="false" 
+    [modal]="true" 
+    [maximizable]="true" 
+    [(visible)]="dialogVisible" 
+    [style]="{width: '75vw'}" 
+    [contentStyle]="{height: '300px'}">
+    <p-table 
+        [value]="dniSelected" 
+        [scrollable]="true"
+        scrollHeight="flex" 
+        [tableStyle]="{'min-width': '50rem'}"
+        styleClass="p-datatable-gridlines">
+        
+        <ng-template pTemplate="header">
+        <tr>
+            <th>
+                Fila
+            </th>
+            <th>
+                Asiento
+            </th>
+            <th>
+                Fecha
+            </th>
+            <th>
+                Hora
+            </th>
+            <th>
+                Estado
+            </th>
+            <th>
+                Confirmar
+            </th>
+            <th>
+                Liberar
+            </th>
+            
+        </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-reserve>
+        <tr>
+            <td>
+                {{reserve.fila}}
+            </td>
+            <td>
+                {{reserve.asiento}}
+            </td>
+            <td>
+                {{reserve.fecha}}
+            </td>
+            <td>
+                {{reserve.hora}}
+            </td>
+            <td>
+                {{reserve.fila}}
+            </td>
+            <td>
+                <button 
+                type="button" 
+                (click)="showDialog(users.dni)" 
+                pButton 
+                icon="pi pi-external-link" 
+                label="Liberar"
+                size="small">
+            </button>
+            <td>
+                <button 
+                type="button" 
+                (click)="showDialog(users.dni)" 
+                pButton 
+                icon="pi pi-external-link" 
+                label="Ver Reservas"
+                size="small">
+            </button>
+            </td>
+            
+        </tr>
+    </ng-template>
+</p-table>
+<ng-template pTemplate="footer">
+    <button 
+    type="button"
+    pButton
+    pRipple 
+    icon="pi pi-times" 
+    (click)="dialogVisible=false" 
+    label="Salir" 
+    class="p-button-text">
+</button>
+</ng-template>
+</p-dialog>

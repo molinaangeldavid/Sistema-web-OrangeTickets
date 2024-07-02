@@ -1,0 +1,32 @@
+<app-navbar [menusecreto]="false"></app-navbar>
+
+<div class="content">
+    <form #myForm="ngForm">
+        <div class="content-form">
+            <div class="container-title">
+                <span class="title-content">INGRESO</span>
+            </div>
+            <div class="login-user">
+                <label for="inputdni" class="form-label">DNI</label>
+                <input type="text" [(ngModel)]="dni" id="inputdni" class="form-control" aria-describedby="dniHelpBlock" 
+                [ngModelOptions]="{standalone:true}">
+                <div *ngIf="errorDni" class="alert">
+                    Dni Incorrecto
+                </div>
+            </div>
+            
+            <div class="login-admin" *ngIf="esAdmin">
+                <label for="password" class="form-label">Contraseña</label>
+                <input type="password" [(ngModel)]="password" id="password" class="form-control" aria-describedby="passwordHelpBlock" 
+                [ngModelOptions]="{standalone:true}">
+                <div *ngIf="esAdmin && errorPassword && password" class="alert">
+                    Contraseña Incorrecta
+                </div>
+            </div>
+            <p-button label="Ingresar" size="small" class="button-form" (click)="onSubmit()"/>
+        </div>
+    </form>
+</div>
+
+<app-footer></app-footer>
+

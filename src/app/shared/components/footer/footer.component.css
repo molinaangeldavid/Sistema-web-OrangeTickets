@@ -1,0 +1,21 @@
+/* @font-face{
+    font-family: 'Wittenberger Fraktur MT';
+    src: url('../../../../assets/wittenberger-fraktur-mt-std-bold.ttf');
+} */
+
+.container{
+    background-color: #d4d6d0fe;
+    width: 100vw;
+    color: #1A1A1A;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    overflow-y: scroll;
+}
+span{
+    /* font-family:'Wittenberger Fraktur MT','Courier New', Courier, monospace; */
+    font-weight: 700;
+    font-size: 15px;
+    color: #1A1A1A;
+}

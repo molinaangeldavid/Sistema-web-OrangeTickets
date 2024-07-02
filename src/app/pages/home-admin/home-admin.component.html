@@ -1,0 +1,14 @@
+<app-navbar [menusecretoAdmin]="true"></app-navbar>
+
+<div *ngIf="currentComponent === 'reserveManage'" class="content-general">
+    <div class="showScenario">
+        <app-scenario [mostrarBoton]="false"></app-scenario>
+    </div>
+    <div class="showReserves">
+        <app-manage-reserves></app-manage-reserves>
+    </div>
+</div>
+
+<app-manage-users *ngIf="currentComponent === 'userManage'"></app-manage-users>
+
+<app-footer></app-footer>

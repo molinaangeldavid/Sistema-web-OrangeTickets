@@ -1,0 +1,26 @@
+<app-navbar [menusecreto]="true"></app-navbar>
+<div class="perfil">
+    <div>
+        <span class="data-information">Nombre: {{usuario!.nombre}} </span>
+        <span class="data-information">Apellido: {{usuario!.apellido}}</span>
+    </div>
+    <div>
+        <span class="data-information">Ciclo: {{usuario!.ciclo}}</span>
+        <span class="data-information">Curso: {{usuario!.grado}}</span>
+    </div>
+</div>
+
+<div class="content">
+    <!-- <app-reservation *ngIf="currentComponent ==='reservation'"></app-reservation> -->
+    
+    <app-scenario [user]="usuario" *ngIf="currentComponent === 'scenario'" (changePage)="changePage($event)"></app-scenario>
+    
+    <app-reservated [user]="usuario" *ngIf="currentComponent ==='reservated'"></app-reservated>
+    
+</div>
+<div class="info" style="margin-bottom: 30px;">
+    <span>Concert: {{dataConcert.concert}}</span>
+    <span>Sala: {{dataConcert.sala}}</span>
+</div>
+
+<app-footer></app-footer>
