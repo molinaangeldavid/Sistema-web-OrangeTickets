@@ -5,54 +5,54 @@
             "nombre": "Emanuel",
             "apellido": "Gonzalez",
             "ciclo": "Secundaria",
-            "cantidadReservas":0,
             "grado": 5,
-            "habilitado": true
+            "cantidadReservas":[],
+            "habilitaciones": ["1","2"]
         },
         {
             "dni": "78829301",
             "nombre": "Pablo",
             "apellido": "Gimenez",
             "ciclo": "Secundaria",
-            "cantidadReservas":0,
             "grado": 2,
-            "habilitado": true
+            "cantidadReservas":[],
+            "habilitaciones": ["2"]
         },
         {
             "dni": "75232151",
             "nombre": "Julian",
             "apellido": "Domingo",
             "ciclo": "Secundaria",
-            "cantidadReservas":0,
             "grado": 6,
-            "habilitado": true
+            "cantidadReservas":[],
+            "habilitaciones": ["2","3"]
         },
         {
             "dni": "88273012",
             "nombre": "Sofia",
             "apellido": "Milagros",
             "ciclo": "Secundaria",
-            "cantidadReservas":0,
             "grado": 4,
-            "habilitado": true
+            "cantidadReservas":[],
+            "habilitaciones": ["1"]
         },
         {
             "dni": "71238323",
-            "nombre": "Emanuel",
-            "apellido": "Gonzalez",
+            "nombre": "Felipe",
+            "apellido": "Chapia",
             "ciclo": "Primaria",
-            "cantidadReservas":0,
             "grado": 5,
-            "habilitado": true
+            "cantidadReservas":[],
+            "habilitaciones": ["3"]
         },
         {
             "dni": "28373474",
-            "nombre": "Emanuel",
-            "apellido": "Gonzalez",
+            "nombre": "Ximena",
+            "apellido": "Ruiz",
             "ciclo": "Kinder",
-            "cantidadReservas":0,
             "grado": 5,
-            "habilitado": true
+            "cantidadReservas":[], 
+            "habilitaciones": ["3"]
         }
     ],
     "admin": [

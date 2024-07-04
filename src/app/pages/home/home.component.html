@@ -10,17 +10,29 @@
     </div>
 </div>
 
-<div class="content">
-    <!-- <app-reservation *ngIf="currentComponent ==='reservation'"></app-reservation> -->
-    
-    <app-scenario [user]="usuario" *ngIf="currentComponent === 'scenario'" (changePage)="changePage($event)"></app-scenario>
-    
-    <app-reservated [user]="usuario" *ngIf="currentComponent ==='reservated'"></app-reservated>
-    
-</div>
-<div class="info" style="margin-bottom: 30px;">
-    <span>Concert: {{dataConcert.concert}}</span>
-    <span>Sala: {{dataConcert.sala}}</span>
+<div *ngIf="currentComponent === 'scenario'">
+    <div style="margin-bottom: 5px;">
+        <span>Concerts habilitados</span>
+    </div>
+    <div class="container-choose">
+        <div class="dropdown-content">
+            <p-dropdown 
+            [options]="concerts" 
+            [(ngModel)]="concertChoice" 
+            optionLabel="nombre"
+            placeholder="Elegir Concierto" 
+            [ngModelOptions]="{standalone: true}"/>
+
+        </div>
+    </div>
 </div>
 
-<app-footer></app-footer>
+<div class="content">
+    
+    <app-scenario [admin]="admin" [escenario]="concertChoice" *ngIf="currentComponent === 'scenario' && concertChoice" (changePage)="changePage($event)"></app-scenario>
+    
+    <app-reservated *ngIf="currentComponent ==='reservated'"></app-reservated>
+    
+</div>
+
+<app-footer style="position: absolute;bottom: 0;"></app-footer>

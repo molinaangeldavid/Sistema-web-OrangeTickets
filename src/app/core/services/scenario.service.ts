@@ -19,6 +19,10 @@ export class ScenarioService {
     return this.http.get(this.pathScenario)
   }
   
+  sendScenario(scenario:any){
+    return scenario
+  }
+
   // getScenario2(): Observable<any>{
   //   return this.http.get(this.pathScenario2)
   // }

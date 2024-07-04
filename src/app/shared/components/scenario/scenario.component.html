@@ -1,25 +1,69 @@
 <div class="scenario-container">
     <div class="scenario">
         <div class="scenario-teatro">Escenario</div>
-        <table class="sala"> 
+        <table class="sala" *ngIf="admin"> 
             <tbody class="tbody">
-                <tr *ngFor="let row of seats.scenario;let rowIndex = index" class="row">
+                <tr *ngFor="let row of seats[escenario.sala];let rowIndex = index" class="row">
+                    <td *ngFor="let seat of row" [ngClass]="{
+                        'seat': seat, 
+                        'reservated-seat': seat && isReservated(seat),
+                        'seat-user': seat && mySeat(seat),
+                        'paid-seat': seat && isPaid(seat),
+                        'empty-seat':!seat
+                    }" >
+                    </td>
+                    <td class="row-number">
+                        {{ rowIndex + 1 }}
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <table class="sala" *ngIf="!admin"> 
+            <tbody class="tbody">
+                <tr *ngFor="let row of seats[escenario.sala];let rowIndex = index" class="row">
                     <td *ngFor="let seat of row" [ngClass]="{
                         'seat': seat, 
                         'seat-available': seat && isAvailable(seat),
-                        'reservated-seat': seat && isReservated(seat),
-                        'paid-seat': seat && isPaid(seat),
+                        'paid-seat': seat && (isPaid(seat) || isReservated(seat)),
+                        'seat-user': seat && mySeat(seat),
                         'selected-seat': seat && isSelected(seat.fila, seat.asiento),
                         'empty-seat':!seat
                     }" (click)="seat && isAvailable(seat) && toggleSeatSelection(seat.fila, seat.asiento)">
-                </td>
-                <td class="row-number">{{ rowIndex + 1 }}</td>
-            </tr>
-        </tbody>
-    </table>
+                    </td>
+                    <td class="row-number">
+                        {{ rowIndex + 1 }}
+                    </td>
+                </tr>
+            </tbody>
+        </table>
     
-    <div *ngIf="mostrarBoton">
-            <p-button label="Confirmar" class="button-scenario" (click)="confirmSeat()" size="small" [disabled]="isDisabled"></p-button>
+    <div class="guia-color" *ngIf="!admin">
+        <div class="guia-row">
+            <div class="mis-asientos"></div> 
+            <span>Mis Asientos</span>
+        </div>
+        <div class="guia-row">
+            <div class="no-disponibles"></div> 
+            <span>No disponibles</span> 
+        </div>
+    </div>
+    <div class="guia-color" *ngIf="admin">
+        <div class="guia-row">
+            <div class="asientos-disponibles"></div> 
+            <span>Disponibles</span>
+        </div>
+        <div class="guia-row">
+            <div class="asientos-reservados"></div> 
+            <span>Reservados</span> 
+        </div>
+        <div class="guia-row">
+            <div class="asientos-pagados"></div> 
+            <span>Pagados</span> 
+        </div>
+    </div>
+    
+    <div *ngIf="mostrarBoton" class="btn-content">
+        <p-button label="Confirmar" class="button-scenario" (click)="confirmSeat()" size="small"></p-button>
     </div>
     
 </div>

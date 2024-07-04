@@ -9,7 +9,6 @@ export class DataService {
   // private storageScenario = 'jsonData';
   // private storageReserve = 'jsonReserve'
 
-
   constructor() { 
   }
   // Método para obtener los datos JSON

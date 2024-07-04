@@ -1,8 +1,8 @@
 .scenario-container{
     width: 100%;
+    margin:50px 0;
 }
 .scenario{
-    margin:50px 0;
     width: 100%;
     display: flex;
     flex-direction: column;
@@ -10,7 +10,7 @@
     align-items: center;
 }
 .scenario-teatro{
-    width: 50%;
+    width: 45%;
     height: 50px;
     color: rgb(234, 243, 240);
     border: 1px solid #070707;
@@ -21,6 +21,8 @@
     display: flex;
     justify-content: center;
     align-items: center;
+    position: relative;
+    right: 40px;
 }
 .sala{
     width: 80%;
@@ -57,17 +59,15 @@
     background-color: #2b2524;
 }
 
-.reservated-seat{
-    background-color: #bba213;
-}
-.reservated-seat:hover{
+.reservated-seat,.reservated-seat:hover{
     background-color: #bba213;
 }
 
-.paid-seat{
-    background-color: #5f0000;
+.seat-user,.seat-user:hover{
+    background-color: #6d8d41;
 }
-.paid-seat:hover{
+
+.paid-seat,.paid-seat:hover{
     background-color: #5f0000;
 }
 
@@ -79,6 +79,34 @@
     color: #2d2931;
     font-weight: 600;
     padding-left: 20px;
+}
+.guia-color{
+    display: flex;
+    flex-direction: column;
+}
+.guia-row{
+    display: flex;
+}
+.mis-asientos,.no-disponibles,.asientos-disponibles,.asientos-reservados,.asientos-pagados{
+    width: 7px;
+    padding: 7px;
+    border: 1px solid #000;
+    border-radius: 3px;
+    margin: 0 6px 6px 0;
+}
+.mis-asientos{
+    background-color: #6d8d41;
+}
+.no-disponibles,.asientos-pagados{
+    background-color: #5f0000;
+}
+.asientos-reservados{
+    background-color: #bba213;
+}
+
+
+.btn-content{
+    margin-top: 20px;
 }
 
 .button-scenario{

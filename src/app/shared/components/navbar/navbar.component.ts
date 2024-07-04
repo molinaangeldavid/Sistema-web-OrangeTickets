@@ -1,8 +1,9 @@
 import { CommonModule } from '@angular/common';
 import { Component, Input } from '@angular/core';
+import { Router } from '@angular/router';
+
 import { ShowComponentService } from '../../../core/services/show-component.service';
 import { CookieService } from 'ngx-cookie-service';
-import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-navbar',
@@ -35,6 +36,9 @@ export class NavbarComponent {
     this.showService.triggerComponentEvent('reservated');
   }
   
+  showCountCash(){
+    this.showService.triggerComponentEvent('countCash'); 
+  }
   
   showManageReserves(){
     this.showService.triggerComponentEvent('reserveManage');  

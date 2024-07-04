@@ -1,7 +1,7 @@
 <app-navbar [menusecreto]="false"></app-navbar>
 
 <div class="content">
-    <form #myForm="ngForm">
+    <form #myForm="ngForm" (ngSubmit)="onSubmit()">
         <div class="content-form">
             <div class="container-title">
                 <span class="title-content">INGRESO</span>
@@ -19,11 +19,11 @@
                 <label for="password" class="form-label">Contraseña</label>
                 <input type="password" [(ngModel)]="password" id="password" class="form-control" aria-describedby="passwordHelpBlock" 
                 [ngModelOptions]="{standalone:true}">
-                <div *ngIf="esAdmin && errorPassword && password" class="alert">
+                <div *ngIf="(errorPassword && esAdmin)" class="alert">
                     Contraseña Incorrecta
                 </div>
             </div>
-            <p-button label="Ingresar" size="small" class="button-form" (click)="onSubmit()"/>
+            <p-button  type="submit" label="Ingresar" size="small" class="button-form"/>
         </div>
     </form>
 </div>

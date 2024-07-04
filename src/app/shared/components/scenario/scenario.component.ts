@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { CUSTOM_ELEMENTS_SCHEMA,NO_ERRORS_SCHEMA,Component, EventEmitter, Input, Output } from '@angular/core';
+import { CUSTOM_ELEMENTS_SCHEMA,NO_ERRORS_SCHEMA,Component, EventEmitter, Input, Output, OnInit, OnChanges, SimpleChanges } from '@angular/core';
 import { ButtonModule } from 'primeng/button';
 import { DataService } from '../../../core/services/data.service';
 import { CookieService } from 'ngx-cookie-service';
@@ -16,31 +16,29 @@ import { CookieService } from 'ngx-cookie-service';
   styleUrl: './scenario.component.css',
   schemas:[CUSTOM_ELEMENTS_SCHEMA,NO_ERRORS_SCHEMA]
 })
-export class ScenarioComponent {
+export class ScenarioComponent implements OnInit,OnChanges {
   
-  
-  @Input() user: any
   @Input() mostrarBoton = true
+  @Input() escenario: any
+  @Input() admin:boolean | undefined
   
   @Output() changePage = new EventEmitter<string>()
   
   private storageScenario = 'jsonData';
-  private storageScenario2 = 'jsonData2';
   private storageReserve = 'jsonReservation'
   private storageUsers = 'jsonUsers'
   
-  costo:number = 7500
-  
+  // Carga de los 3 conciertos - salas
   seats: any | undefined
-  
+  // Los asientos que son seleccionados
   selectedSeats: Set<string> = new Set();
-  
+  // La data de todas las reservas
   reservation: any | undefined
-  
+  // El dni del usuario
   dni: any
-  
+  // boton desactivo
   isDisabled: boolean | undefined
-  
+  // Todos los usuarios
   users: any | undefined
 
   constructor(
@@ -53,9 +51,17 @@ export class ScenarioComponent {
     this.seats = this.dataService.getData(this.storageScenario)
     this.reservation = this.dataService.getData(this.storageReserve)
     this.users = this.dataService.getData(this.storageUsers)
-    this.dni = this.cookieService.get('dni')
+    if(this.admin){
+      this.dni = this.cookieService.get('dniAdmin')
+    }else{
+      this.dni = this.cookieService.get('dni')
+    }
   }
   
+  ngOnChanges(changes:SimpleChanges){
+    this.seats = this.dataService.getData(this.storageScenario)
+  }
+
   getSeatKey(rowIndex: number, seatIndex: number): string {
     return `${rowIndex}-${seatIndex}`;
   }
@@ -82,6 +88,13 @@ export class ScenarioComponent {
     return seat.estado == 'reservado'
   }
   
+  mySeat(seat:any){
+    if(!this.reservation[this.dni]){
+      return false
+    }
+    return this.reservation[this.dni].some((s:any) => s.fila === seat.fila && s.asiento === seat.asiento);
+  }
+
   isPaid(seat: any):boolean{
     return seat.estado == 'pagado'
   }
@@ -90,13 +103,14 @@ export class ScenarioComponent {
     return num < 10 ? `0${num}` : `${num}`;
   }
   
+
   confirmSeat(){
     const reserveDone: any[] = []
     const now = new Date();
     
     const currentDate = `${now.getFullYear()}-${this.padNumber(now.getMonth() + 1)}-${this.padNumber(now.getDate())}`;
     
-    const currentTime = `${this.padNumber(now.getHours())}:${this.padNumber(now.getMinutes())}:${this.padNumber(now.getSeconds())}`;
+    const currentTime = `${this.padNumber(now.getHours())}:${this.padNumber(now.getMinutes())}`;
     
     this.selectedSeats.forEach(seatKey => {
       const [fila, asiento] = seatKey.split('-').map(Number);
@@ -105,9 +119,12 @@ export class ScenarioComponent {
         asiento,
         fecha:currentDate,
         hora: currentTime,
+        concert: this.escenario.nombre,
         estado: 'Reservado'
       })
-      for (let row of this.seats.scenario) {
+
+      // cambia de estado a reservado solo para en la funcionalidad del usuario
+      for (let row of this.seats[this.escenario.sala]) {
         if (!row) continue;
         for (let seat of row) {
           if (seat && seat.fila === fila && seat.asiento === asiento) {
@@ -117,7 +134,12 @@ export class ScenarioComponent {
       }
       
     });
-    this.reservation[this.dni] = reserveDone
+    if(this.reservation.hasOwnProperty(this.dni)){
+      this.reservation[this.dni] = this.reservation[this.dni].concat(reserveDone)
+    }else{
+      this.reservation[this.dni] = reserveDone
+
+    }
     this.dataService.saveData(this.storageReserve,this.reservation)
     
     this.dataService.saveData(this.storageScenario,this.seats)

@@ -6,6 +6,10 @@ import { TableModule } from 'primeng/table';
 import { DialogModule } from 'primeng/dialog';
 import { ButtonModule } from 'primeng/button';
 import { CommonModule } from '@angular/common';
+import { IconFieldModule } from 'primeng/iconfield';
+import { InputIconModule } from 'primeng/inputicon';
+import { InputTextModule } from 'primeng/inputtext';
+
 
 @Component({
   selector: 'app-manage-reserves',
@@ -14,7 +18,10 @@ import { CommonModule } from '@angular/common';
     TableModule,
     DialogModule,
     ButtonModule,
-    CommonModule
+    CommonModule,
+    IconFieldModule,
+    InputIconModule,
+    InputTextModule
   ],
   templateUrl: './manage-reserves.component.html',
   styleUrl: './manage-reserves.component.css',
@@ -34,7 +41,7 @@ export class ManageReservesComponent {
     private dataService: DataService,
     private authService:AuthService
   ){
-
+    
   }
 
   ngOnInit(){

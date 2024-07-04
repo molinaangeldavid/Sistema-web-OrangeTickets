@@ -41,6 +41,7 @@ export class ReservatedComponent {
       { field: 'asiento', header: 'Nº Asiento' },
       { field: 'fecha', header: 'Fecha reserva' },
       { field: 'hora', header: 'Hora reserva' },
+      { field: 'concert', header: 'Concert' },
       { field: 'estado', header: 'Estado' }
     ];
 

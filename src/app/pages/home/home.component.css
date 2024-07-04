@@ -9,8 +9,7 @@
     display: flex;
     width: 100%;
     justify-content: space-evenly;
-    margin:20px 0;   
-    padding: 30px;
+    padding: 15px;
 }
 
 .perfil div:first-child, .perfil div:last-child{
@@ -18,6 +17,19 @@
     display: flex;
     flex-direction: column;
     justify-content: center;
+}
+
+.container-choose{
+    display: flex;
+    align-items: center;
+}
+
+.p-button.p-button-sm{
+    padding: 0.5rem;
+    margin: 2rem;
+}
+.dropdown-content{
+    margin-right:15px;
 }
 
 .data-information{

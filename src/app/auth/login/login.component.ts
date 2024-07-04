@@ -14,6 +14,7 @@ import { ButtonModule } from 'primeng/button';
 import { ScenarioService } from '../../core/services/scenario.service';
 import { DataService } from '../../core/services/data.service';
 import { ReservationService } from '../../core/services/reservation.service';
+import { ConcertService } from '../../core/services/concert.service';
 
 @Component({
   selector: 'app-login',
@@ -35,16 +36,18 @@ export class LoginComponent implements OnInit{
   
   //dni ngModel
   dni: any|undefined
-  errorDni: boolean | undefined = false
+  errorDni: boolean = false
   
   //condition input admin
-  esAdmin:boolean | undefined
-  errorPassword: boolean | undefined = false
+  esAdmin:boolean = false
+  errorPassword: boolean = false
   
   //password ngModel
-  password: any | undefined
+  password: any = ''
   
-  data: any
+  concerts: any | undefined
+  
+  users: any | undefined
   
   scenario: any | undefined
   
@@ -56,66 +59,79 @@ export class LoginComponent implements OnInit{
     private authService: AuthService,
     private scenarioService: ScenarioService,
     private dataService: DataService,
-    private reservationService: ReservationService
+    private reservationService: ReservationService,
+    private concertService: ConcertService
   ){
   }
   
   ngOnInit(){    
-    this.dni = ""
     this.esAdmin = false
-    this.password = ""
-    const users = this.dataService.getData('jsonUsers')
-    if(!users){
-      this.authService.getDatos().subscribe(data => {
-        this.data = data;
-        this.dataService.saveData('jsonUsers',this.data)
-      })
-    }
+    const existUsers = this.dataService.getData('jsonUsers')
+    
+    this.authService.getDatos().subscribe(data => {
+      this.users = data;
+      if(!existUsers){
+        this.dataService.saveData('jsonUsers',data)
+      }
+    })
+    
+    
     const existeData = this.dataService.getData('jsonData')
-    if(!existeData){
-      this.scenarioService.getScenario().subscribe(value => {
-        this.scenario = value
+    this.scenarioService.getScenario().subscribe(value => {
+      this.scenario = value
+      if(!existeData){
         this.dataService.saveData('jsonData',this.scenario)
-      })
-    }
-    // const existeData2 = this.dataService.getData('jsonData2')
-    // if(!existeData2){
-    //   this.scenarioService.getScenario2().subscribe(value => {
-    //     this.scenario = value
-    //     this.dataService.saveData('jsonData2',this.scenario)
-    //   })
-    // }
-    const existeReserva = this.dataService.getData('jsonReservation')
-    if(!existeReserva){
-      this.reservationService.getReservation().subscribe(value=> {
-        this.reservas = value
-        this.dataService.saveData('jsonReservation',this.reservas)
-      })
-    }
-
+      }
+    })
+  
+    const concerts = this.dataService.getData('jsonConcerts')
+    if(!concerts){
+    this.concertService.getDatos().subscribe(data => {
+      this.concerts = data;
+      if(!concerts){
+      this.dataService.saveData('jsonConcerts',this.concerts)
+      }
+    })
+  }
+  const existeReserva = this.dataService.getData('jsonReservation')
+  if(!existeReserva){
+    this.reservationService.getReservation().subscribe(value=> {
+      this.reservas = value
+      if(!existeReserva){
+      this.dataService.saveData('jsonReservation',this.reservas)
+      }
+    })
   }
   
-  onSubmit(){
-    const igualDNI = this.data.usuarios.find((usuario:any) => this.dni == usuario.dni)
-    const dniAdmin = this.data.admin.find((value:any) => this.dni == value.dni)
-    if(!igualDNI && !dniAdmin){
-      this.errorDni = true
-    }else{
-      if(igualDNI){
-        this.cookieService.set("dni",`${igualDNI.dni}`);
-        this.router.navigate(['home'])
-      }else if(dniAdmin){
+}
+
+onSubmit(){
+  const igualDNI = this.users.usuarios.find((usuario:any) => this.dni == usuario.dni)
+  const dniAdmin = this.users.admin.find((value:any) => this.dni == value.dni)
+  if(!igualDNI && !dniAdmin){
+    this.errorDni = true
+  }else{
+    if(igualDNI){
+      this.cookieService.set("dni",`${igualDNI.dni}`);
+      this.router.navigate(['home'])
+    }else {
+      if(dniAdmin){
         this.esAdmin = true
-        this.data.admin.forEach((value:any) => {
-          if(value.password == this.password){
-            this.cookieService.set("dniAdmin",this.dni)
-            this.router.navigate(['admin'])
-          }
-        })
-      }else{
-        this.errorPassword = true
+        if(this.errorDni){
+          this.errorDni = !this.errorDni
+        }
+        if(dniAdmin.password == this.password){
+          this.cookieService.set("dniAdmin",this.dni)
+          this.router.navigate(['admin'])
+        }else{
+          this.errorPassword = true
+          
+        }
+        
+        
       }
     }
   }
+}
 }
 
