@@ -3,17 +3,17 @@
     <span class="titulo">Orange Day School</span>
     <div class="container-menu" *ngIf="menusecreto">
         <ul>
-            <li><a (click)="showReservation()">Ver Sala</a></li>
-            <li><a (click)="showReservated()">Detalles</a></li>
-            <li><a (click)="goOut()">Salir</a></li>
+            <li class="hover-list"><a (click)="showReservation()">Sala</a></li>
+            <li class="hover-list"><a (click)="showReservated()">Detalles</a></li>
+            <li class="hover-list"><a (click)="goOut()">Salir</a></li>
         </ul>
     </div>
     <div class="container-menu" *ngIf="menusecretoAdmin">
         <ul>
-            <li><a (click)="showCountCash()">Ver Caja</a></li>
-            <li><a (click)="showManageReserves()">Gestion Reservas</a></li>
-            <li><a (click)="showManageUsers()">Gestion Usuarios</a></li>
-            <li><a (click)="goOut()">Salir</a></li>
+            <li class="hover-list"><a (click)="showManageReserves()">Reservas</a></li>
+            <li class="hover-list"><a (click)="showManageUsers()">Usuarios</a></li>
+            <li class="hover-list"><a (click)="showCountCash()">Caja</a></li>
+            <li class="hover-list"><a (click)="goOut()">Salir</a></li>
         </ul>
     </div>
 </div>

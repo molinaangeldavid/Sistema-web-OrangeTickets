@@ -1,38 +1,43 @@
 .scenario-container{
     width: 100%;
-    margin:50px 0;
+    margin:100px auto 100px 0;
+    text-align: center;
 }
 .scenario{
     width: 100%;
+    margin: auto;
+    overflow-x: auto;
+    margin: 0 auto;
     display: flex;
-    flex-direction: column;
     justify-content: center;
-    align-items: center;
 }
 .scenario-teatro{
-    width: 45%;
-    height: 50px;
+    width: 35%;
+    height: 40px;
     color: rgb(234, 243, 240);
     border: 1px solid #070707;
     background-color: #1f1d1d;
     border-bottom-left-radius: 50px;
     border-bottom-right-radius: 50px;
-    margin-bottom   : 20px;
+    margin: 0 auto;
+    margin-bottom: 20px;
     display: flex;
     justify-content: center;
     align-items: center;
-    position: relative;
-    right: 40px;
 }
 .sala{
-    width: 80%;
-    height: 80%;
+    padding: 20px 0;
 }
 .tbody{
     display: flex;
     flex-direction: column;
     justify-content: center;
-    margin: 0 20px;
+}
+tbody:before {
+    content:"@";
+    display:block;
+    line-height:10px;
+    text-indent:-99999px;
 }
 .row{
     width: 100%;
@@ -68,7 +73,13 @@
 }
 
 .paid-seat,.paid-seat:hover{
-    background-color: #5f0000;
+    background: url('../../../../assets/SoldSeat.jpg');
+    background-size: cover;
+}
+
+.disabled{
+    background: url('../../../../assets/HandSeat.jpg');
+    background-size: cover;
 }
 
 .empty-seat{
@@ -83,6 +94,8 @@
 .guia-color{
     display: flex;
     flex-direction: column;
+    justify-content: center;
+    align-items: center;
 }
 .guia-row{
     display: flex;
@@ -97,16 +110,13 @@
 .mis-asientos{
     background-color: #6d8d41;
 }
-.no-disponibles,.asientos-pagados{
-    background-color: #5f0000;
-}
+
 .asientos-reservados{
     background-color: #bba213;
 }
-
-
-.btn-content{
-    margin-top: 20px;
+.asientos-pagados{
+    background: url('../../../../assets/SoldSeat.jpg');
+    background-size: cover;
 }
 
 .button-scenario{
@@ -114,7 +124,12 @@
 }
 
 @media only screen and (max-width: 1300px) {
-    .sala{
-        table-layout: fixed;
+    
+    .scenario{
+        display: block;
+        width: 100%;
+        margin: auto;
+        overflow-x: auto;
+        margin: 0 auto;
     }
 }

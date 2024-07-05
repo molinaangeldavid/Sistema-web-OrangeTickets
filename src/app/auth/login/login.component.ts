@@ -15,6 +15,7 @@ import { ScenarioService } from '../../core/services/scenario.service';
 import { DataService } from '../../core/services/data.service';
 import { ReservationService } from '../../core/services/reservation.service';
 import { ConcertService } from '../../core/services/concert.service';
+import { ConfirmadoService } from '../../core/services/confirmado.service';
 
 @Component({
   selector: 'app-login',
@@ -53,6 +54,8 @@ export class LoginComponent implements OnInit{
   
   reservas: any | undefined
   
+  confirmados: any | undefined
+
   constructor(
     private cookieService: CookieService,
     private router: Router,
@@ -60,7 +63,8 @@ export class LoginComponent implements OnInit{
     private scenarioService: ScenarioService,
     private dataService: DataService,
     private reservationService: ReservationService,
-    private concertService: ConcertService
+    private concertService: ConcertService,
+    private confirmadoService: ConfirmadoService
   ){
   }
   
@@ -81,6 +85,13 @@ export class LoginComponent implements OnInit{
       this.scenario = value
       if(!existeData){
         this.dataService.saveData('jsonData',this.scenario)
+      }
+    })
+    const existConfirmados = this.dataService.getData('jsonConfirm')
+    this.confirmadoService.getDatos().subscribe(value => {
+      this.confirmados = value
+      if(!existConfirmados){
+        this.dataService.saveData('jsonConfirm',this.confirmados)
       }
     })
   

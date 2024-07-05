@@ -1,4 +1,4 @@
-import { CUSTOM_ELEMENTS_SCHEMA, Component } from '@angular/core';
+import { CUSTOM_ELEMENTS_SCHEMA, Component, SimpleChanges } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 
@@ -47,8 +47,6 @@ export class HomeAdminComponent {
 
   usuario: any
 
-  
-
   admin: boolean = true
 
   concerts: any | undefined
@@ -66,12 +64,10 @@ export class HomeAdminComponent {
     private showComponentService: ShowComponentService,
     private dataService: DataService,
     private cookieService: CookieService
-  ){
-
-  }
+  ){}
 
   ngOnInit(){
-    this.currentComponent! = ''
+    this.currentComponent! = 'reserveManage'
     this.subscription = this.showComponentService.componentEvent$.subscribe(name => {
       this.currentComponent = name;
     })

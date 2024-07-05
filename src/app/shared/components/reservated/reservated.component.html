@@ -1,5 +1,5 @@
-<div class="card">
-    <p-table [columns]="cols" [value]="reserves" [tableStyle]="{ 'min-width': '50rem'}" [styleClass]="'sala'">
+<div class="card" style="display: flex; justify-content: center;">
+    <p-table [columns]="cols" [value]="reserves" [tableStyle]="{ 'width': 'auto'}" [styleClass]="'sala'">
         <ng-template pTemplate="header" let-columns>
             <tr>
                 <th *ngFor="let col of columns">

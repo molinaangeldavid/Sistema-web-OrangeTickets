@@ -10,7 +10,7 @@
     </div>
 </div>
 
-<div *ngIf="currentComponent === 'scenario'">
+<div *ngIf="currentComponent === 'scenario'" style="display: flex; flex-direction: column; justify-content: center; align-items: center;">
     <div style="margin-bottom: 5px;">
         <span>Concerts habilitados</span>
     </div>
@@ -27,7 +27,7 @@
     </div>
 </div>
 
-<div class="content">
+<div class="content" style="margin-bottom: 100px;">
     
     <app-scenario [admin]="admin" [escenario]="concertChoice" *ngIf="currentComponent === 'scenario' && concertChoice" (changePage)="changePage($event)"></app-scenario>
     
@@ -35,4 +35,4 @@
     
 </div>
 
-<app-footer style="position: absolute;bottom: 0;"></app-footer>
+<app-footer style="position: fixed; bottom: 0;"></app-footer>

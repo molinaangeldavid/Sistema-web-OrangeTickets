@@ -2,37 +2,38 @@
 
 <div class="perfil">
     <div>
-        <span class="data-information">Nombre: {{usuario!.nombre}} </span>
-        <span class="data-information">Apellido: {{usuario!.apellido}}</span>
+        <span class="data-information title">Administrador/a</span>
+        <span class="data-information">{{usuario!.nombre}} </span>
+        <span class="data-information">{{usuario!.apellido}}</span>
     </div>
 </div>
 
-<div *ngIf="currentComponent === 'reserveManage'">
-    <div style="padding: 35px 0 5px;">
-        <span>Concerts</span>
-    </div>
-    <div class="container-choose">
-        <div class="dropdown-content">
-            <p-dropdown 
-            [options]="concerts" 
-            [(ngModel)]="concertChoice" 
-            optionLabel="nombre"
-            placeholder="Elegir Concierto" 
-            [ngModelOptions]="{standalone: true}"/>
+
+<div class="content-general" style="padding: 0 0 80px;">
+    <div *ngIf="currentComponent === 'reserveManage'" style="text-align: center;">
+        <div style="padding: 25px 0 5px; margin: auto;">
+            <span>Concerts</span>
+        </div>
+        <div class="container-choose">
+            <div class="dropdown-content">
+                <p-dropdown 
+                [options]="concerts" 
+                [(ngModel)]="concertChoice" 
+                optionLabel="nombre"
+                placeholder="Elegir Concierto" 
+                [ngModelOptions]="{standalone: true}"/>
+            </div>
         </div>
     </div>
-</div>
-
-<div class="content-general" style="padding: 40px 0 80px;">
     <div class="showScenario">
         <app-scenario [admin]="admin" [escenario]="concertChoice" [mostrarBoton]="false" *ngIf="currentComponent === 'reserveManage' && concertChoice"></app-scenario>
     </div>
-    <div class="showReserves">
-        <app-manage-reserves *ngIf="currentComponent === 'reserveManage'"></app-manage-reserves>
+    <div class="showReserves" style="margin-top: 25px;">
+        <app-manage-reserves [admin]="usuario" [escenario]="concertChoice" *ngIf="currentComponent === 'reserveManage' && concertChoice"></app-manage-reserves>
     </div>
 </div>
 
-<app-manage-users *ngIf="currentComponent === 'userManage'"></app-manage-users>
+<app-manage-users  *ngIf="currentComponent === 'userManage'"></app-manage-users>
 
 <app-countCash *ngIf="currentComponent === 'countCash'"></app-countCash>
 

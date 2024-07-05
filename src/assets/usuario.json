@@ -6,7 +6,6 @@
             "apellido": "Gonzalez",
             "ciclo": "Secundaria",
             "grado": 5,
-            "cantidadReservas":[],
             "habilitaciones": ["1","2"]
         },
         {
@@ -15,7 +14,6 @@
             "apellido": "Gimenez",
             "ciclo": "Secundaria",
             "grado": 2,
-            "cantidadReservas":[],
             "habilitaciones": ["2"]
         },
         {
@@ -24,7 +22,6 @@
             "apellido": "Domingo",
             "ciclo": "Secundaria",
             "grado": 6,
-            "cantidadReservas":[],
             "habilitaciones": ["2","3"]
         },
         {
@@ -33,7 +30,6 @@
             "apellido": "Milagros",
             "ciclo": "Secundaria",
             "grado": 4,
-            "cantidadReservas":[],
             "habilitaciones": ["1"]
         },
         {
@@ -42,7 +38,6 @@
             "apellido": "Chapia",
             "ciclo": "Primaria",
             "grado": 5,
-            "cantidadReservas":[],
             "habilitaciones": ["3"]
         },
         {
@@ -51,7 +46,6 @@
             "apellido": "Ruiz",
             "ciclo": "Kinder",
             "grado": 5,
-            "cantidadReservas":[], 
             "habilitaciones": ["3"]
         }
     ],

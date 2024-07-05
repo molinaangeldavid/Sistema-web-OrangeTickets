@@ -2,16 +2,6 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, map} from 'rxjs';
 
-
-interface Usuario {
-  dni: number;
-  nombre: string;
-  apellido: string;
-  ciclo: string;
-  grado: number;
-  habilitado: boolean;
-}
-
 @Injectable({
   providedIn: 'root'
 })

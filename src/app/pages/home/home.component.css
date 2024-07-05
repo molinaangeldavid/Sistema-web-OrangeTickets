@@ -1,15 +1,11 @@
-:host { 
+.perfil{
+    margin: 20px auto;
+}
+.perfil div{
     display: flex;
     flex-direction: column;
+    justify-content: center;
     align-items: center;
-    height: 100vh;
-}
-
-.perfil{
-    display: flex;
-    width: 100%;
-    justify-content: space-evenly;
-    padding: 15px;
 }
 
 .perfil div:first-child, .perfil div:last-child{
@@ -36,7 +32,6 @@
     padding: 15px;
     font-weight: 500;
 }
-
 
 .info span{
     display:block;

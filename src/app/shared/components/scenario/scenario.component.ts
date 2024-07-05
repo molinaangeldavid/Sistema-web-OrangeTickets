@@ -3,6 +3,8 @@ import { CUSTOM_ELEMENTS_SCHEMA,NO_ERRORS_SCHEMA,Component, EventEmitter, Input,
 import { ButtonModule } from 'primeng/button';
 import { DataService } from '../../../core/services/data.service';
 import { CookieService } from 'ngx-cookie-service';
+import { Subscription } from 'rxjs';
+import { ScenarioService } from '../../../core/services/scenario.service';
 
 
 @Component({
@@ -16,8 +18,10 @@ import { CookieService } from 'ngx-cookie-service';
   styleUrl: './scenario.component.css',
   schemas:[CUSTOM_ELEMENTS_SCHEMA,NO_ERRORS_SCHEMA]
 })
-export class ScenarioComponent implements OnInit,OnChanges {
+export class ScenarioComponent implements OnInit{
   
+  private subscription!: Subscription;
+
   @Input() mostrarBoton = true
   @Input() escenario: any
   @Input() admin:boolean | undefined
@@ -43,11 +47,17 @@ export class ScenarioComponent implements OnInit,OnChanges {
 
   constructor(
     private dataService: DataService,
-    private cookieService: CookieService
+    private cookieService: CookieService,
+    private scenarioService: ScenarioService
   ){
   }
   
   ngOnInit(){
+    this.subscription = this.scenarioService.updateScenario$.subscribe(data => {
+      if (data) {
+        this.seats = data
+      }
+    });
     this.seats = this.dataService.getData(this.storageScenario)
     this.reservation = this.dataService.getData(this.storageReserve)
     this.users = this.dataService.getData(this.storageUsers)
@@ -58,10 +68,6 @@ export class ScenarioComponent implements OnInit,OnChanges {
     }
   }
   
-  ngOnChanges(changes:SimpleChanges){
-    this.seats = this.dataService.getData(this.storageScenario)
-  }
-
   getSeatKey(rowIndex: number, seatIndex: number): string {
     return `${rowIndex}-${seatIndex}`;
   }
@@ -81,7 +87,7 @@ export class ScenarioComponent implements OnInit,OnChanges {
   }
   
   isAvailable(seat:any){
-    return seat.estado == 'disponible'
+    return seat.estado == 'disponible' && !this.isDisabledSeat(seat)
   }
   
   isReservated(seat:any):boolean{
@@ -92,13 +98,22 @@ export class ScenarioComponent implements OnInit,OnChanges {
     if(!this.reservation[this.dni]){
       return false
     }
-    return this.reservation[this.dni].some((s:any) => s.fila === seat.fila && s.asiento === seat.asiento);
+    return this.reservation[this.dni].some((s:any) => (s.fila === seat.fila) && (s.asiento === seat.asiento) && this.escenario.nombre == s.nombre);
   }
 
   isPaid(seat: any):boolean{
     return seat.estado == 'pagado'
   }
   
+  isDisabledSeat(seat: any){
+    if(seat.fila == 8){
+      if(seat.asiento == 51 || seat.asiento == 53 || seat.asiento == 55){
+        return true
+      }
+    }
+    return false
+  }
+
   padNumber(num: number): string {
     return num < 10 ? `0${num}` : `${num}`;
   }
@@ -120,7 +135,8 @@ export class ScenarioComponent implements OnInit,OnChanges {
         fecha:currentDate,
         hora: currentTime,
         concert: this.escenario.nombre,
-        estado: 'Reservado'
+        validado: null,
+        estado: 'reservado'
       })
 
       // cambia de estado a reservado solo para en la funcionalidad del usuario
@@ -150,5 +166,11 @@ export class ScenarioComponent implements OnInit,OnChanges {
     this.selectedSeats.clear();
   }
   
+  ngOnDestroy(){
+    if (this.subscription) {
+      this.subscription.unsubscribe();
+    }
+  }
+
 }
 

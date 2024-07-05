@@ -1,10 +1,20 @@
-table{
+/* table{
     margin: 30px auto;
     font-size: 14px;
-    max-width: 800px; /* Puedes ajustar este valor según sea necesario */
+} */
+@layer primeng {
+    .p-datatable-table {
+        border-spacing: 0px;
+        width: auto;
+    }
 }
 
-
+.p-datatable-table .p-datatable-scrollable-table .ng-star-inserted{
+    width: auto;
+}
+.p-datatable-gridlines {
+    width: auto;
+}
 .p-button.p-button-sm{
     font-size: 0.8rem;
     padding: 0.5rem 1.09375rem;

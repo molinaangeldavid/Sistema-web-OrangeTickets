@@ -1,11 +1,14 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { BehaviorSubject, Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ScenarioService {
+
+  private updateScenarioSource = new BehaviorSubject<any>(null);
+  updateScenario$ = this.updateScenarioSource.asObservable();
   
   pathScenario: string = '../../../assets/escenario.json'
   // pathScenario2: string = '../../../assets/escenario2.json'
@@ -19,9 +22,16 @@ export class ScenarioService {
     return this.http.get(this.pathScenario)
   }
   
+  notifyScenarioUpdate(data: any) {
+    this.updateScenarioSource.next(data);
+  }
+
   sendScenario(scenario:any){
     return scenario
   }
+
+
+
 
   // getScenario2(): Observable<any>{
   //   return this.http.get(this.pathScenario2)
