@@ -1,1 +1,146 @@
-<p>count-cash works!</p>
+<div class="contain-cash">
+    <div class="time">
+        <span>{{dateNow[0]}}</span>
+        <span>{{dateNow[1]}}</span>
+    </div>
+    <!-- //////////////// -->
+    <div class="button-choose">
+        <p-button class="button" label="Por usuario" (click)="showByUser()"/>
+        <p-button class="button" label="Por dia" (click)="showByDate()"/>
+        <p-button class="button" label="Por concierto" (click)="showByConcert()"/>
+    </div>
+    
+    <div class="container-table1" *ngIf="showUser">
+        <h3 style="padding: 5px 0; text-align: center;">Confirmadas por Usuario</h3>
+        
+        <p-table #dt2 [value]="byUsers"  [scrollable]="true" scrollHeight="400px" [tableStyle]="{'width': 'auto'}"
+        [globalFilterFields]="['dni', 'apellido', 'nombre', 'ciclo','grado','concert']">
+        <ng-template pTemplate="caption">
+            <div class="flex">
+                <p-iconField iconPosition="right" class="ml-auto">
+                    <p-inputIcon>
+                        <i class="pi pi-search"></i>
+                    </p-inputIcon>
+                    <input 
+                    pInputText 
+                    type="text" 
+                    (input)="dt2.filterGlobal($any($event.target).value, 'contains')" 
+                    placeholder="Buscar..." />
+                </p-iconField>
+            </div>
+        </ng-template>
+        <ng-template pTemplate="header">
+            <tr>
+                <th pSortableColumn="dni">
+                    DNI <p-sortIcon field="dni" />
+                </th>
+                <th pSortableColumn="apellido">
+                    Apellido <p-sortIcon field="apellido" />
+                </th>
+                <th pSortableColumn="nombre">
+                    Nombre <p-sortIcon field="nombre" />
+                </th>
+                <th pSortableColumn="total">
+                    Total <p-sortIcon field="total" />
+                </th>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-user>
+            <tr>
+                <td>{{ user.dni }}</td>
+                <td>{{ user.apellido }}</td>
+                <td>{{ user.nombre }}</td>
+                <td>{{ user.total | currency:'':'symbol':'1.0-0' }}</td>
+            </tr>
+        </ng-template>
+    </p-table>
+    </div>
+    <div class="container-table2" *ngIf="showDate">
+    <h3 style="text-align: center; padding: 5px 0;">Confirmados por dia</h3>
+    
+    <p-table #dt3 [value]="byDays" [scrollable]="true" scrollHeight="400px" [tableStyle]="{'width': 'auto'}" 
+    [globalFilterFields]="['dni','total']">
+    <ng-template pTemplate="caption">
+        <div class="flex">
+            <p-iconField iconPosition="right" class="ml-auto">
+                <p-inputIcon>
+                    <i class="pi pi-search"></i>
+                </p-inputIcon>
+                <input 
+                pInputText 
+                type="text" 
+                (input)="dt3.filterGlobal($any($event.target).value, 'contains')" 
+                placeholder="Buscar..." />
+            </p-iconField>
+        </div>
+    </ng-template>
+    <ng-template pTemplate="header" >
+        <tr>
+            <th pSortableColumn="dia">
+                Fecha <p-sortIcon field="dia" />
+            </th>
+            <th pSortableColumn="dia">
+                Total <p-sortIcon field="dia" />
+            </th>
+            
+        </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-day>
+        <tr>
+            <td>puta</td>
+        </tr>
+        <tr>
+            <td>$122,123</td>
+        </tr>
+    </ng-template>
+    <ng-template pTemplate="summary">
+        <div class="flex align-items-center justify-content-between">
+            Total: {{byDays ? byDays.length : 0 }}
+        </div>
+    </ng-template>
+    </p-table>
+    </div>
+    <div class="container-table3" *ngIf="showConcert" style="display: flex; justify-content: center;">
+    <p-table #dt4 [value]="result" [scrollable]="true" scrollHeight="400px" [tableStyle]="{'width': 'auto'}"
+    [globalFilterFields]="['dni', 'apellido', 'nombre', 'ciclo','grado','concert']">
+    <ng-template pTemplate="caption">
+        <div class="flex">
+            <p-iconField iconPosition="right" class="ml-auto">
+                <p-inputIcon>
+                    <i class="pi pi-search"></i>
+                </p-inputIcon>
+                <input 
+                pInputText 
+                type="text" 
+                (input)="dt4.filterGlobal($any($event.target).value, 'contains')" 
+                placeholder="Buscar..." />
+            </p-iconField>
+        </div>
+    </ng-template>
+    <ng-template pTemplate="header">
+        <tr>
+            <th pSortableColumn="dni">
+                ID <p-sortIcon field="dni" />
+            </th>
+            <th pSortableColumn="apellido">
+                Nombre <p-sortIcon field="apellido" />
+            </th>
+            <th pSortableColumn="nombre">
+                Total <p-sortIcon field="nombre" />
+            </th>
+        </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-concert>
+        <tr>
+            <td>{{ concert.id }}</td>
+            <td>{{ concert.nombre }}</td>
+            <td>{{ concert.total | currency:'':'symbol':'1.0-0' }}</td>
+        </tr>
+    </ng-template>
+</p-table>
+    </div>
+<!-- /////////////////////////////////// -->
+
+</div>
+
+

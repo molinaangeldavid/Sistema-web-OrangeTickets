@@ -1,38 +1,52 @@
 <app-navbar [menusecreto]="true"></app-navbar>
 <div class="perfil">
-    <div>
-        <span class="data-information">Nombre: {{usuario!.nombre}} </span>
-        <span class="data-information">Apellido: {{usuario!.apellido}}</span>
+    <p-card role="region" class="subcontainer-perfil">
+        <div style="text-align: center;font-weight: 700; margin-bottom: 10px;">Estudiante</div>
+    <div style="display: flex; flex-direction: column; justify-content: center; align-items: start;">
+        <span class="data-information">DNI: {{usuario!.dni}}</span>
+        <span class="data-information"> Nombre: {{usuario!.nombre}} {{usuario!.apellido}} </span>
     </div>
-    <div>
+    <div style="display: flex; flex-direction: column; align-items: start;">
         <span class="data-information">Ciclo: {{usuario!.ciclo}}</span>
-        <span class="data-information">Curso: {{usuario!.grado}}</span>
+        <span class="data-information">Grado/año: {{usuario!.grado}}</span>
+    </div>
+</p-card>
+</div>
+
+
+<!-- <div *ngIf="currentComponent === 'scenario'" style="display: flex; flex-direction: column; justify-content: center; align-items: center;">
+<div style="margin-bottom: 5px;">
+    <span>Concerts habilitados</span>
+</div>
+<div class="container-choose">
+    <div class="dropdown-content">
+        <p-dropdown 
+        [options]="concerts" 
+        [(ngModel)]="concertChoice" 
+        optionLabel="nombre"
+        placeholder="Elegir Concierto" 
+        [ngModelOptions]="{standalone: true}"/>
+
+    </div>
+</div>
+</div> -->
+
+<div class="display-details" style="margin-bottom: 0;"> 
+    <div>
+        <span style="text-align: center;">{{concertChoice.nombre}}</span>
+        <span style="text-align: center;">Fecha: {{concertChoice.fecha}}</span>
+        <span style="text-align: center;">Hora: {{concertChoice.hora}}</span>
     </div>
 </div>
 
-<div *ngIf="currentComponent === 'scenario'" style="display: flex; flex-direction: column; justify-content: center; align-items: center;">
-    <div style="margin-bottom: 5px;">
-        <span>Concerts habilitados</span>
-    </div>
-    <div class="container-choose">
-        <div class="dropdown-content">
-            <p-dropdown 
-            [options]="concerts" 
-            [(ngModel)]="concertChoice" 
-            optionLabel="nombre"
-            placeholder="Elegir Concierto" 
-            [ngModelOptions]="{standalone: true}"/>
-
-        </div>
-    </div>
-</div>
-
-<div class="content" style="margin-bottom: 100px;">
+<div class="content" style="margin-bottom: 120px">
     
     <app-scenario [admin]="admin" [escenario]="concertChoice" *ngIf="currentComponent === 'scenario' && concertChoice" (changePage)="changePage($event)"></app-scenario>
     
-    <app-reservated *ngIf="currentComponent ==='reservated'"></app-reservated>
+    <div style="margin: 0 auto;">
+        <app-reservated  *ngIf="currentComponent ==='reservated'"></app-reservated>
+    </div>
     
 </div>
 
-<app-footer style="position: fixed; bottom: 0;"></app-footer>
+<app-footer class="footer"></app-footer>

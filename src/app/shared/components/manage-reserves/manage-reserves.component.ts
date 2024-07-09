@@ -1,4 +1,4 @@
-import { CUSTOM_ELEMENTS_SCHEMA, ChangeDetectorRef, Component, EventEmitter, Input, Output, SimpleChanges } from '@angular/core';
+import { CUSTOM_ELEMENTS_SCHEMA, ChangeDetectorRef, Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges } from '@angular/core';
 import { DataService } from '../../../core/services/data.service';
 import { AuthService } from '../../../core/services/auth.service';
 
@@ -32,7 +32,7 @@ import { ScenarioService } from '../../../core/services/scenario.service';
   providers:[ConfirmationService,MessageService],
   schemas:[CUSTOM_ELEMENTS_SCHEMA],
 })
-export class ManageReservesComponent {
+export class ManageReservesComponent implements OnInit,OnChanges {
   
   @Input() escenario: any
   @Input() admin: any
@@ -67,17 +67,20 @@ export class ManageReservesComponent {
   }
   
   ngOnInit(){
+    console.log(this.escenario)
     this.allSeats = this.dataService.getData('jsonData')
     this.authService.getDatos().subscribe(users => {
       this.allUsers = users
       this.users = users.usuarios.filter((user:any) => {
         const userReservations = this.reserves[user.dni] || [];
-        return userReservations.some((reserva:any) => reserva.concert === this.escenario.nombre && (reserva.estado === 'reservado' || reserva.estado === 'pagado' ));
+        return userReservations.some((reserva:any) => (reserva.concert === this.escenario.nombre) && (reserva.estado === 'reservado' || reserva.estado === 'pagado' ));
       });
       
     })
     
   }
+
+
   //////////////////////////////////////
   // Bloque de funciones de seleccion
   confirmSelectedReserves(dni:any,event:Event){
@@ -113,7 +116,9 @@ export class ManageReservesComponent {
         this.dataService.saveData('jsonData',this.allSeats)
 
         this.reserves = {...this.reserves}
+        console.log(this.reserves)
         this.reserves[dni] = this.dniSelected
+        console.log(this.reserves[dni])
         this.dataService.saveData('jsonReservation',this.reserves)
 
         this.selectedProducts = null;
@@ -170,19 +175,21 @@ export class ManageReservesComponent {
   ngOnChanges(changes:SimpleChanges){
     if (changes['escenario'] && changes['escenario'].currentValue) {
       this.reserves = this.dataService.getData('jsonReservation')
-      this.authService.getDatos().subscribe(users => {
-        this.allUsers = users
+      setTimeout(() => {
+        this.allUsers = this.dataService.getData('jsonUsers')
         const escenarioNombre = changes['escenario'].currentValue.nombre;
+        console.log(escenarioNombre)
         this.users = this.allUsers.usuarios.filter((user: any) => {
           const userReservations = this.reserves[user.dni] || [];
           return userReservations.some((reserva: any) => 
             reserva.concert === escenarioNombre && 
-          reserva.estado === 'reservado' || reserva.estado === 'pagado'
-        );
-      })
-    });
-  } 
-}
+            reserva.estado === 'reservado' || reserva.estado === 'pagado'
+          );
+        })
+
+      }, 2000);
+    } 
+  }
 // Aqui se quitan todas las reservas por usuario y los asientos vuelven a estar disponible
 removeAllReserves(user: any, event: Event) {
   this.confirmationService.confirm({

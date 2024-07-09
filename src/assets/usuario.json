@@ -6,7 +6,7 @@
             "apellido": "Gonzalez",
             "ciclo": "Secundaria",
             "grado": 5,
-            "habilitaciones": ["1","2"]
+            "habilitaciones": "1"
         },
         {
             "dni": "78829301",
@@ -14,7 +14,7 @@
             "apellido": "Gimenez",
             "ciclo": "Secundaria",
             "grado": 2,
-            "habilitaciones": ["2"]
+            "habilitaciones": "2"
         },
         {
             "dni": "75232151",
@@ -22,23 +22,7 @@
             "apellido": "Domingo",
             "ciclo": "Secundaria",
             "grado": 6,
-            "habilitaciones": ["2","3"]
-        },
-        {
-            "dni": "88273012",
-            "nombre": "Sofia",
-            "apellido": "Milagros",
-            "ciclo": "Secundaria",
-            "grado": 4,
-            "habilitaciones": ["1"]
-        },
-        {
-            "dni": "71238323",
-            "nombre": "Felipe",
-            "apellido": "Chapia",
-            "ciclo": "Primaria",
-            "grado": 5,
-            "habilitaciones": ["3"]
+            "habilitaciones": "2"
         },
         {
             "dni": "28373474",
@@ -46,7 +30,23 @@
             "apellido": "Ruiz",
             "ciclo": "Kinder",
             "grado": 5,
-            "habilitaciones": ["3"]
+            "habilitaciones": "3"
+        },
+        {
+            "dni": "88273012",
+            "nombre": "Sofia",
+            "apellido": "Milagros",
+            "ciclo": "Secundaria",
+            "grado": 4,
+            "habilitaciones": "3"
+        },
+        {
+            "dni": "71238323",
+            "nombre": "Felipe",
+            "apellido": "Chapia",
+            "ciclo": "Primaria",
+            "grado": 5,
+            "habilitaciones": "2"
         }
     ],
     "admin": [

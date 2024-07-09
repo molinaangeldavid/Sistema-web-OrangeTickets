@@ -1,15 +1,17 @@
 <app-navbar [menusecretoAdmin]="true"></app-navbar>
 
 <div class="perfil">
-    <div>
-        <span class="data-information title">Administrador/a</span>
-        <span class="data-information">{{usuario!.nombre}} </span>
-        <span class="data-information">{{usuario!.apellido}}</span>
-    </div>
+    <p-card class="subcontainer-perfil">
+        <div>
+            <span class="data-information title">Administrador/a</span>
+            <span class="data-information">{{usuario!.nombre}} </span>
+            <span class="data-information">{{usuario!.apellido}}</span>
+        </div>
+    </p-card>
 </div>
 
 
-<div class="content-general" style="padding: 0 0 80px;">
+<div class="content-general">
     <div *ngIf="currentComponent === 'reserveManage'" style="text-align: center;">
         <div style="padding: 25px 0 5px; margin: auto;">
             <span>Concerts</span>
@@ -24,17 +26,20 @@
                 [ngModelOptions]="{standalone: true}"/>
             </div>
         </div>
-    </div>
+    </div>  
     <div class="showScenario">
         <app-scenario [admin]="admin" [escenario]="concertChoice" [mostrarBoton]="false" *ngIf="currentComponent === 'reserveManage' && concertChoice"></app-scenario>
     </div>
-    <div class="showReserves" style="margin-top: 25px;">
+    <div class="showReserves">
         <app-manage-reserves [admin]="usuario" [escenario]="concertChoice" *ngIf="currentComponent === 'reserveManage' && concertChoice"></app-manage-reserves>
     </div>
 </div>
+<div class="showUsers">
+    <app-manage-users   *ngIf="currentComponent === 'userManage'"></app-manage-users>
+</div>
 
-<app-manage-users  *ngIf="currentComponent === 'userManage'"></app-manage-users>
+<div>
+    <app-count-cash  *ngIf="currentComponent === 'countCash'"></app-count-cash>
+</div>
 
-<app-countCash *ngIf="currentComponent === 'countCash'"></app-countCash>
-
-<app-footer style="position: fixed; bottom: 0;"></app-footer>
+<app-footer class="footer" ></app-footer>

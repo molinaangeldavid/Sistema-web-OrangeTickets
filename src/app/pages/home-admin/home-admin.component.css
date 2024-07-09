@@ -1,5 +1,13 @@
 .perfil{
-    margin-top: 20px;
+    width: 70%;
+    margin: 10px auto;
+}
+.subcontainer-perfil{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 5px;
 }
 .perfil div{
     display: flex;
@@ -8,21 +16,36 @@
     align-items: center;
 }
 
-.data-information{
-    font-weight: 500;
-    padding: 10px;
-}
-.data-information.title{
-    font-weight: 700;
+.showUsers{
+    display: flex;
+    justify-content: center;
 }
 
-.content-general{
-    margin-bottom: 70px;
-}
-.showScenario{
-    text-align: center;
+.data-information{
+    font-weight: 500;
+    padding: 4px;
 }
 .showReserves{
     display: flex;
     justify-content: center;
+    margin-bottom: 100px;
+}
+.data-information.title{
+    font-weight: 700;
+}
+.footer{
+    position: fixed;
+    bottom: 0;
+}
+
+@media screen and (max-width: 800px) {
+    .footer{
+        position: relative;
+    }
+    .showReserves{
+        display: inline-block;
+    }
+    .showUsers{
+        display: inline-block;
+    }
 }

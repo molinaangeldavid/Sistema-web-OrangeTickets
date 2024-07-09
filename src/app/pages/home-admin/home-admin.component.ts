@@ -14,6 +14,7 @@ import { CountCashComponent } from '../../shared/components/count-cash/count-cas
 import { TableModule } from 'primeng/table';
 import { ButtonModule } from 'primeng/button';
 import { DropdownModule } from 'primeng/dropdown';
+import { CardModule } from 'primeng/card';
 
 import { ShowComponentService } from '../../core/services/show-component.service';
 import { DataService } from '../../core/services/data.service';
@@ -37,7 +38,8 @@ import { Subscription } from 'rxjs';
     TableModule,
     CommonModule,
     ButtonModule,
-    DropdownModule
+    DropdownModule,
+    CardModule
   ],
   templateUrl: './home-admin.component.html',
   styleUrl: './home-admin.component.css',

@@ -36,6 +36,7 @@ export class ScenarioComponent implements OnInit{
   seats: any | undefined
   // Los asientos que son seleccionados
   selectedSeats: Set<string> = new Set();
+  seatOrder: any[] = []
   // La data de todas las reservas
   reservation: any | undefined
   // El dni del usuario
@@ -73,36 +74,86 @@ export class ScenarioComponent implements OnInit{
   }
   
   toggleSeatSelection(row:any,seat:any){
-    const seatKey = this.getSeatKey(row, seat);
-    if (this.selectedSeats.has(seatKey)) {
-      this.selectedSeats.delete(seatKey);
-    } else {
-      this.selectedSeats.add(seatKey);
-    }
+      // const seatKey = this.getSeatKey(row, seat);
+      // if (this.selectedSeats.has(seatKey)) {
+      //   this.selectedSeats.delete(seatKey);
+      // } else {
+      //   this.selectedSeats.add(seatKey);
+      // }
+
+      if((this.reservation.dni == undefined || this.reservation.dni != undefined && this.reservation.dni.length < 5)){
+          const seatKey = this.getSeatKey(row, seat);
     
+          if (this.selectedSeats.has(seatKey)) {
+            // Si el asiento ya está seleccionado, lo eliminamos del conjunto y de la orden
+            this.selectedSeats.delete(seatKey);
+            this.seatOrder = this.seatOrder.filter(key => key !== seatKey);
+          } else {
+            // Si el asiento no está seleccionado, lo agregamos
+            if (this.selectedSeats.size < 5) {
+              this.selectedSeats.add(seatKey);
+              this.seatOrder.push(seatKey);
+            } else {
+              // Si ya hay 5 asientos seleccionados, eliminamos el primero y luego agregamos el nuevo
+              const firstSeatKey = this.seatOrder.shift();
+              if (firstSeatKey) {
+                this.selectedSeats.delete(firstSeatKey);
+              }
+              this.selectedSeats.add(seatKey);
+              this.seatOrder.push(seatKey);
+            }
+          }
+        }
   }
   
-  isSelected(row: any, seat: any): boolean{
-    return this.selectedSeats.has(this.getSeatKey(row, seat));
+  getSeatClass(seat: any): string {
+    if (!seat) {
+      return 'empty-seat';
+    }
+    if (this.mySeat(seat)) {
+      return 'seat-user';
+    }
+    if (this.isPaid(seat)) {
+      return 'paid-seat';
+    }
+    if (this.isReservated(seat)) {
+      return 'reservated-seat';
+    }
+    if (this.isSelected(seat.fila, seat.asiento)) {
+      return 'selected-seat';
+    }
+    if (this.isAvailable(seat)) {
+      return 'seat-available';
+    }
+    if (this.isDisabledSeat(seat)) {
+      return 'disabled-seat';
+    }
+    return 'seat';
   }
-  
+
   isAvailable(seat:any){
     return seat.estado == 'disponible' && !this.isDisabledSeat(seat)
+  }
+
+  isSelected(row: any, seat: any): boolean{
+    return this.selectedSeats.has(this.getSeatKey(row, seat));
   }
   
   isReservated(seat:any):boolean{
     return seat.estado == 'reservado'
   }
   
+  
+  isPaid(seat: any):boolean{
+    return seat.estado == 'pagado'
+  }
+
   mySeat(seat:any){
     if(!this.reservation[this.dni]){
       return false
     }
-    return this.reservation[this.dni].some((s:any) => (s.fila === seat.fila) && (s.asiento === seat.asiento) && this.escenario.nombre == s.nombre);
-  }
-
-  isPaid(seat: any):boolean{
-    return seat.estado == 'pagado'
+    const isMySeat = this.reservation[this.dni].some((s:any) => ((s.fila === seat.fila) && (s.asiento === seat.asiento)));
+    return isMySeat 
   }
   
   isDisabledSeat(seat: any){
@@ -118,8 +169,26 @@ export class ScenarioComponent implements OnInit{
     return num < 10 ? `0${num}` : `${num}`;
   }
   
+  getTime():any{
+    const now = new Date();
+    const currentDate = `${now.getFullYear()}-${this.padNumber(now.getMonth() + 1)}-${this.padNumber(now.getDate())}`;
+    const currentTime = `${this.padNumber(now.getHours())}:${this.padNumber(now.getMinutes())}`;
+    return {
+      currentDate,
+      currentTime,
+
+      day: this.padNumber(now.getDate()),
+      hour: this.padNumber(now.getHours()),
+      minutes: this.padNumber(now.getMinutes())}
+  }
+
 
   confirmSeat(){
+
+    if(this.selectedSeats.size == 0){
+      return
+    }
+
     const reserveDone: any[] = []
     const now = new Date();
     

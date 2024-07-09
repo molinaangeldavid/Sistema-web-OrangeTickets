@@ -1,6 +1,20 @@
 <div class="container-table">
-
-    <p-table [value]="users" [scrollable]="true" scrollHeight="400px" [tableStyle]="{'width': 'auto'}">
+    <p-table #dt2 [value]="users" [scrollable]="true" scrollHeight="400px" [tableStyle]="{'width': 'auto'}"
+    [globalFilterFields]="['dni', 'apellido', 'nombre', 'ciclo','grado','concert']">
+    <ng-template pTemplate="caption">
+        <div class="flex">
+            <p-iconField iconPosition="right" class="ml-auto">
+                <p-inputIcon>
+                    <i class="pi pi-search"></i>
+                </p-inputIcon>
+                <input 
+                pInputText 
+                type="text" 
+                (input)="dt2.filterGlobal($any($event.target).value, 'contains')" 
+                placeholder="Buscar..." />
+            </p-iconField>
+        </div>
+    </ng-template>
         <ng-template pTemplate="header">
             <tr>
                 <th pSortableColumn="dni">
@@ -18,8 +32,11 @@
                 <th pSortableColumn="grado">
                     Grado <p-sortIcon field="grado" />
                 </th>
+                <th pSortableColumn="concert">
+                    Habilitado
+                </th>
                 <th>
-                    Ver habilitaciones 
+                    Habilitaciones
                 </th>
             </tr>
         </ng-template>
@@ -30,12 +47,12 @@
                 <td>{{ user.nombre }}</td>
                 <td>{{ user.ciclo }}</td>
                 <td>{{ user.grado }}</td>
+                <td>{{ user.habilitaciones }}</td>
                 <td><button 
                     type="button" 
-                    (click)="showDialog(this.dniSelected)" 
+                    (click)="showDialog(user.dni)" 
                     pButton 
                     icon="pi pi-user-edit" 
-                    severity="success"
                     size="small">
                 </button></td>
             </tr>
@@ -57,6 +74,9 @@
             <ng-template pTemplate="header">
             <tr>
                 <th>
+                    ID
+                </th>
+                <th>
                     Concert
                 </th>
                 <th>
@@ -66,16 +86,15 @@
                     Hora funcion
                 </th>
                 <th>
-                    Habilitar
+                    habilitar
                 </th>
-                <th>
-                    Deshabilitar
-                </th>
-                
             </tr>
         </ng-template>
         <ng-template pTemplate="body" let-concert>
             <tr>
+                <td>
+                    {{concert.id}}
+                </td>
                 <td>
                     {{concert.nombre}}
                 </td>
@@ -87,21 +106,14 @@
                 </td>
                 <td><button 
                     type="button" 
-                    (click)="habilitar(this.dniSelected,$event)" 
-                    pButton 
-                    icon="pi pi-user-edit" 
-                    severity="success"
-                    size="small">
-                </button></td>
-                <td><button 
-                    type="button" 
-                    (click)="deshabilitar(this.dniSelected,$event)" 
+                    (click)="habilitar(concert.id,$event)" 
                     pButton 
                     icon="pi pi-user-edit" 
                     severity="success"
                     size="small">
                 </button></td>
             </tr>
+            <p-confirmDialog></p-confirmDialog>
         </ng-template>
     </p-table>
     <ng-template pTemplate="footer">

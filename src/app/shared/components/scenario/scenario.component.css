@@ -1,6 +1,6 @@
 .scenario-container{
     width: 100%;
-    margin:100px auto 100px 0;
+    margin:20px auto 100px 0;
     text-align: center;
 }
 .scenario{
@@ -69,7 +69,7 @@ tbody:before {
 }
 
 .seat-user,.seat-user:hover{
-    background-color: #6d8d41;
+    background-color: #6d8d41 !important;
 }
 
 .paid-seat,.paid-seat:hover{
@@ -131,5 +131,12 @@ tbody:before {
         margin: auto;
         overflow-x: auto;
         margin: 0 auto;
+    }
+
+}
+@media only screen and (max-width: 800px){
+    
+    .seat,.empty-seat {
+        padding: 7px;
     }
 }

@@ -1,21 +1,15 @@
-/* table{
-    margin: 30px auto;
-    font-size: 14px;
-} */
-@layer primeng {
-    .p-datatable-table {
-        border-spacing: 0px;
-        width: auto;
-    }
+.card{
+    /* width: 60%; */
+    /* display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow-x: auto; */
 }
 
-.p-datatable-table .p-datatable-scrollable-table .ng-star-inserted{
-    width: auto;
+input{
+    padding: 3px;
 }
-.p-datatable-gridlines {
-    width: auto;
-}
-.p-button.p-button-sm{
-    font-size: 0.8rem;
-    padding: 0.5rem 1.09375rem;
+
+.caption{
+    width:50%;
 }

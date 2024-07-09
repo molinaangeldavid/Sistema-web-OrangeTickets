@@ -1,5 +1,5 @@
-@media screen and (max-width: 600px){
-    .sala{
-        table-layout: fixed;
-    }
+.card{
+    flex: display;
+    justify-content: center;
+    align-items: center;
 }

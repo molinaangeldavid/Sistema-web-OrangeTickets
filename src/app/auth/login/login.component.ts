@@ -135,6 +135,7 @@ onSubmit(){
           this.cookieService.set("dniAdmin",this.dni)
           this.router.navigate(['admin'])
         }else{
+          if(this.password!= '')
           this.errorPassword = true
           
         }

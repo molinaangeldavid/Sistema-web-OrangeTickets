@@ -1,0 +1,28 @@
+.contain-cash{
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+
+}
+
+.time{
+    display: flex;
+    flex-direction: column;
+    align-items: self-start;
+    padding: 15px 15px;
+}
+.time span{
+    font-weight: 700;
+    color: rgb(29, 27, 24);
+    padding: 5px 0 ;
+    position: relative;
+    left: 20px;
+}
+
+.button-choose{
+    display: flex;
+    justify-content: space-between;
+}
+

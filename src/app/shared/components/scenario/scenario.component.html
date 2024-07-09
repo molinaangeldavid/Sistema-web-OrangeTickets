@@ -3,7 +3,7 @@
     <div class="scenario">
         <table class="sala" *ngIf="admin"> 
             <thead style="margin-bottom: 10px;">
-                <th>Escenario</th>
+                <th style="letter-spacing: 2px;">ESCENARIO</th>
             </thead>
             <tbody class="tbody" style="margin-top: 10px;">
                 <tr *ngFor="let row of seats[escenario.sala];let rowIndex = index" class="row">
@@ -32,10 +32,10 @@
                         'seat': seat, 
                         'disabled': seat && isDisabledSeat(seat),
                         'seat-available': seat && isAvailable(seat),
-                        'seat-user': seat && mySeat(seat),
                         'selected-seat': seat && isSelected(seat.fila, seat.asiento),
                         'reservated-seat': seat && isReservated(seat),
-                        'paid-seat': seat && isPaid(seat),
+                        'paid-seat': seat && isPaid(seat) && !mySeat(seat),
+                        'seat-user': seat && mySeat(seat),
                         'empty-seat':!seat
                     }" (click)="seat && isAvailable(seat) && toggleSeatSelection(seat.fila, seat.asiento)">
                     </td>
@@ -79,8 +79,8 @@
         </div>
     </div>
     
-    <div *ngIf="mostrarBoton" class="btn-content">
-        <p-button label="Confirmar" class="button-scenario" (click)="confirmSeat()" size="small"></p-button>
+    <div *ngIf="mostrarBoton" class="btn-content" style="margin-top: 30px;">
+        <p-button label="Confirmar" class="button-scenario" (click)="confirmSeat()" size="small" [disabled]="selectedSeats.size === 0"></p-button>
     </div>
     
 </div>

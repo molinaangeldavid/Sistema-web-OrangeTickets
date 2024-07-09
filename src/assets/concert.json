@@ -1,33 +1,34 @@
 {
     "1": {
+        "id": 1,
         "nombre": "La Cage Aux Queens",
         "sala":"scenario",
         "nombreSala": "Pablo Neruda",
-        "fecha":"2024-12-02",
+        "fecha":"02-12-2024",
         "hora":"08:45",
         "teatro": "Paseo La Plaza",
-        "valor": 7500
+        "valor": 10000
 
     },
     "2": {
+        "id": 2,
         "nombre":"Concert 2 Primaria",
         "sala":"scenario2",
         "nombreSala": "Pablo Neruda",
-        "fecha":"2024-11-28",
+        "fecha":"28-11-2024",
         "hora":"08:45",
         "teatro": "Paseo La Plaza",
-        "valor": 7500
+        "valor": 10000
 
     },
-    "3":{
+    "3": {
+        "id": 3,
         "nombre":"Concert 3 Kinder",
         "sala":"scenario3",
         "nombreSala": "Pablo Neruda",
-        "fecha":"2024-11-28",
+        "fecha":"29-11-2024",
         "hora":"08:45",
         "teatro": "Paseo La Plaza",
-        "valor": 7500
-
-
+        "valor": 10000
     }
 }
