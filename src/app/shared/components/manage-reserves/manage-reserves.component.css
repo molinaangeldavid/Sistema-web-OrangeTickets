@@ -1,15 +1,25 @@
 .card{
-    /* width: 60%; */
-    /* display: flex;
+    display: flex;
     justify-content: center;
     align-items: center;
-    overflow-x: auto; */
+    margin-bottom: 50px;
 }
-
+table div div{
+    width: 50%;
+}
 input{
-    padding: 3px;
+    padding: 5px;
 }
 
-.caption{
-    width:50%;
+.button-report{
+    padding: 5px !important;
+    text-align: center;
+    margin: 0 auto;
+    font-size: 14px;
+}
+
+@media screen and (max-width: 800px) {
+    .card{
+        display: block;
+    }
 }

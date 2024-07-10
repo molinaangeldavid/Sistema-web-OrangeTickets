@@ -45,9 +45,10 @@
     align-items: center;
 }
 
-/* .footer{
-
-} */
+.footer{
+    position: fixed;
+    bottom: 0;
+}
 
 @media only screen and (max-width: 800px) {
     .perfil{
@@ -65,6 +66,9 @@
     .display-details{
         font-size: 14px;
     }
-
+    .footer{
+        position: relative;
+        bottom: 0;
+    }
    
 }

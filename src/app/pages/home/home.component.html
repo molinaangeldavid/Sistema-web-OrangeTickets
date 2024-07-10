@@ -1,4 +1,5 @@
-<app-navbar [menusecreto]="true"></app-navbar>
+<app-navbar [menusecreto]="menusecreto"></app-navbar>
+<app-navbar [menusecretonada]="menusecretonada"></app-navbar>
 <div class="perfil">
     <p-card role="region" class="subcontainer-perfil">
         <div style="text-align: center;font-weight: 700; margin-bottom: 10px;">Estudiante</div>
@@ -33,15 +34,19 @@
 
 <div class="display-details" style="margin-bottom: 0;"> 
     <div>
-        <span style="text-align: center;">{{concertChoice.nombre}}</span>
-        <span style="text-align: center;">Fecha: {{concertChoice.fecha}}</span>
-        <span style="text-align: center;">Hora: {{concertChoice.hora}}</span>
+        <span style="text-align: center;">{{concertChoice!.nombre}}</span>
+        <span style="text-align: center;">Fecha: {{concertChoice!.fecha}}</span>
+        <span style="text-align: center;">Hora: {{concertChoice!.hora}}</span>
     </div>
 </div>
 
-<div class="content" style="margin-bottom: 120px">
+<div *ngIf="concertChoice! == null">
+    <p style="text-align: center; font-weight: 700;">Este usuario no tiene Concert habilitado. Comuniquese con administracion para mas detalles</p>
+</div>
+
+<div class="content" style="margin-bottom: 120px" *ngIf="concertChoice! != null">
     
-    <app-scenario [admin]="admin" [escenario]="concertChoice" *ngIf="currentComponent === 'scenario' && concertChoice" (changePage)="changePage($event)"></app-scenario>
+    <app-scenario [admin]="admin" [escenario]="concertChoice!" *ngIf="currentComponent === 'scenario' && concertChoice!" (changePage)="changePage($event)"></app-scenario>
     
     <div style="margin: 0 auto;">
         <app-reservated  *ngIf="currentComponent ==='reservated'"></app-reservated>

@@ -1,10 +1,17 @@
 <div class="container">
-    <img src="../../../../assets/oie_transparent.png" alt="" srcset="">
-    <h1 class="titulo">Orange Day School</h1>
+    <div class="subcontainer">
+        <img src="../../../../assets/oie_transparent.png" alt="" srcset="">
+        <h1 class="titulo">Orange Day School</h1>
+    </div>
     <div class="container-menu" *ngIf="menusecreto">
         <ul>
             <li class="hover-list"><a (click)="showReservation()">Sala</a></li>
             <li class="hover-list"><a (click)="showReservated()">Detalles</a></li>
+            <li class="hover-list"><a (click)="goOut()">Salir</a></li>
+        </ul>
+    </div>
+    <div class="container-menu" *ngIf="menusecretoNada">
+        <ul>
             <li class="hover-list"><a (click)="goOut()">Salir</a></li>
         </ul>
     </div>

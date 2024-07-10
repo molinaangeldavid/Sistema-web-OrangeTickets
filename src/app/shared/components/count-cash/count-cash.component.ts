@@ -27,7 +27,7 @@ import { HttpClient } from '@angular/common/http';
 })
 export class CountCashComponent {
   
-  byDays: any
+  byDays: any[] = [{fecha:"09-7-2024",total: 60000},{fecha: '10-7-2024',total:90000}]
 
   byConcerts: any
 
@@ -60,10 +60,10 @@ export class CountCashComponent {
     this.showUser = true
     this.dateNow = this.getDateNow()
     this.byUsers = this.usersCount()
-    this.http.get('../../../../assets/date.json').subscribe( value => {
+    // this.http.get('../../../../assets/date.json').subscribe( value => {
 
-      this.byDays = value
-    })
+    //   this.byDays = value
+    // })
 
   }
 

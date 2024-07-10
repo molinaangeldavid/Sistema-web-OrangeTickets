@@ -1,3 +1,25 @@
+.container-table{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+/* .p-datatable-header{
+    
+} */
+ table div div{
+     width: 50%;
+ }
+.caption{
+    margin: 0 auto;
+}
+
 input{
     padding: 5px;
+}
+
+@media screen and (max-width: 800px) {
+    .container-table{
+        display: block;
+    }
 }

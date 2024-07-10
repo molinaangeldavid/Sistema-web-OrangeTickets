@@ -9,17 +9,17 @@ import { HomeAdminComponent } from './pages/home-admin/home-admin.component';
 export const routes: Routes = [
     {
         path: '',
-        redirectTo: 'home',
+        redirectTo: 'login',
         pathMatch: 'full'
+    },
+    {
+        path: 'login',
+        component: LoginComponent
     },
     {
         path: 'home',
         component: HomeComponent,
         canActivate: [loginGuard]
-    },
-    {
-        path: 'login',
-        component: LoginComponent
     },
     {
         path: 'admin',

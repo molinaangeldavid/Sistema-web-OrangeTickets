@@ -19,3 +19,12 @@ span{
     font-size: 15px;
     color: #1A1A1A;
 }
+
+@media screen and (max-width: 800px) {
+    .container{
+        padding: 5px;
+    }
+    span{
+        font-size: 11px;
+    }
+}

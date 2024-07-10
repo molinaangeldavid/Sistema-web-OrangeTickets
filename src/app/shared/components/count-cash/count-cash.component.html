@@ -1,20 +1,20 @@
 <div class="contain-cash">
     <div class="time">
-        <span>{{dateNow[0]}}</span>
+        <span style="text-align: center;">{{dateNow[0]}}</span>
         <span>{{dateNow[1]}}</span>
     </div>
     <!-- //////////////// -->
     <div class="button-choose">
-        <p-button class="button" label="Por usuario" (click)="showByUser()"/>
-        <p-button class="button" label="Por dia" (click)="showByDate()"/>
-        <p-button class="button" label="Por concierto" (click)="showByConcert()"/>
+        <button pButton class="button" label="Por usuario" (click)="showByUser()" size="small"></button> 
+        <button pButton class="button" label="Por dia" (click)="showByDate()" size="small"></button> 
+        <button pButton class="button" label="Por concierto" (click)="showByConcert()" size="small"></button>
     </div>
     
     <div class="container-table1" *ngIf="showUser">
         <h3 style="padding: 5px 0; text-align: center;">Confirmadas por Usuario</h3>
         
-        <p-table #dt2 [value]="byUsers"  [scrollable]="true" scrollHeight="400px" [tableStyle]="{'width': 'auto'}"
-        [globalFilterFields]="['dni', 'apellido', 'nombre', 'ciclo','grado','concert']">
+        <p-table #dt2 [value]="byUsers"  [scrollable]="true" scrollHeight="400px" [tableStyle]="{'width': 'auto', 'margin': '0 auto'}"
+        [globalFilterFields]="['dni', 'apellido', 'nombre', 'total']">
         <ng-template pTemplate="caption">
             <div class="flex">
                 <p-iconField iconPosition="right" class="ml-auto">
@@ -58,7 +58,7 @@
     <div class="container-table2" *ngIf="showDate">
     <h3 style="text-align: center; padding: 5px 0;">Confirmados por dia</h3>
     
-    <p-table #dt3 [value]="byDays" [scrollable]="true" scrollHeight="400px" [tableStyle]="{'width': 'auto'}" 
+    <p-table #dt3 [value]="byDays" [scrollable]="true" scrollHeight="400px" [tableStyle]="{'width': 'auto','margin': '0 auto'}" 
     [globalFilterFields]="['dni','total']">
     <ng-template pTemplate="caption">
         <div class="flex">
@@ -76,33 +76,30 @@
     </ng-template>
     <ng-template pTemplate="header" >
         <tr>
-            <th pSortableColumn="dia">
-                Fecha <p-sortIcon field="dia" />
+            <th pSortableColumn="fecha">
+                Fecha <p-sortIcon field="fecha" />
             </th>
-            <th pSortableColumn="dia">
-                Total <p-sortIcon field="dia" />
+            <th pSortableColumn="total">
+                Total <p-sortIcon field="total" />
             </th>
             
         </tr>
     </ng-template>
     <ng-template pTemplate="body" let-day>
         <tr>
-            <td>puta</td>
-        </tr>
-        <tr>
-            <td>$122,123</td>
+            <td>{{day.fecha}}</td>
+            <td>{{day.total}}</td>
         </tr>
     </ng-template>
-    <ng-template pTemplate="summary">
+    <!-- <ng-template pTemplate="summary">
         <div class="flex align-items-center justify-content-between">
-            Total: {{byDays ? byDays.length : 0 }}
         </div>
-    </ng-template>
+    </ng-template> -->
     </p-table>
     </div>
     <div class="container-table3" *ngIf="showConcert" style="display: flex; justify-content: center;">
-    <p-table #dt4 [value]="result" [scrollable]="true" scrollHeight="400px" [tableStyle]="{'width': 'auto'}"
-    [globalFilterFields]="['dni', 'apellido', 'nombre', 'ciclo','grado','concert']">
+    <p-table #dt4 [value]="result" [scrollable]="true" scrollHeight="400px" [tableStyle]="{'width': 'auto','margin': '0 auto'}"
+    [globalFilterFields]="['dni', 'nombre', 'total']">
     <ng-template pTemplate="caption">
         <div class="flex">
             <p-iconField iconPosition="right" class="ml-auto">

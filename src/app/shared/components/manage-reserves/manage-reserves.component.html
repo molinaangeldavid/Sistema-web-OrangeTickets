@@ -6,7 +6,7 @@
     [scrollable]="true" 
     scrollHeight="600px" 
     styleClass="p-datatable-gridlines" 
-    [tableStyle]="{'width':'auto'}"  
+    [tableStyle]="{'width': 'auto', 'margin':'0 auto'}"
     class="custom-table"
     [globalFilterFields]="['dni', 'apellido', 'nombre', 'ciclo','grado']"
     >
@@ -194,3 +194,8 @@ styleClass="p-datatable-gridlines"
 </button>
 </ng-template>
 </p-dialog>
+<div style="display:flex; justify-content: center;">
+    <button class="button-report" *ngIf="this.users.length != 0" pButton type="button" (click)="descarga()" >Descargar Reporte</button>
+
+</div>
+

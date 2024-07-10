@@ -13,7 +13,7 @@ import { CookieService } from 'ngx-cookie-service';
   styleUrl: './navbar.component.css'
 })
 export class NavbarComponent {
-  
+  @Input() menusecretoNada: any | undefined
   @Input() menusecreto: any|undefined
   @Input() menusecretoAdmin: any | undefined
   

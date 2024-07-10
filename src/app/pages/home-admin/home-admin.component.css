@@ -16,19 +16,16 @@
     align-items: center;
 }
 
-.showUsers{
-    display: flex;
-    justify-content: center;
-}
-
 .data-information{
     font-weight: 500;
     padding: 4px;
 }
-.showReserves{
-    display: flex;
-    justify-content: center;
-    margin-bottom: 100px;
+.showReserves,.showCash,.showReserves{
+    margin: 0 auto;
+    margin-bottom:100px;
+}
+.showReserves,.showCash,.showReserves{
+    width: 100%;
 }
 .data-information.title{
     font-weight: 700;
@@ -39,13 +36,13 @@
 }
 
 @media screen and (max-width: 800px) {
-    .footer{
-        position: relative;
+    /* .showReserves{
+        display: inline;
     }
-    .showReserves{
-        display: inline-block;
-    }
-    .showUsers{
-        display: inline-block;
+    /* .showUsers{
+        display: inline;
+    } */
+    .showCash{
+        width: 100%;
     }
 }

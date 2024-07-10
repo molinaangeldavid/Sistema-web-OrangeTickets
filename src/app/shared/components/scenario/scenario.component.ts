@@ -68,7 +68,7 @@ export class ScenarioComponent implements OnInit{
       this.dni = this.cookieService.get('dni')
     }
   }
-  
+
   getSeatKey(rowIndex: number, seatIndex: number): string {
     return `${rowIndex}-${seatIndex}`;
   }

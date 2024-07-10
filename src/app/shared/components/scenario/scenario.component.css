@@ -99,6 +99,7 @@ tbody:before {
 }
 .guia-row{
     display: flex;
+    justify-content: flex-start;
 }
 .mis-asientos,.no-disponibles,.asientos-disponibles,.asientos-reservados,.asientos-pagados{
     width: 7px;

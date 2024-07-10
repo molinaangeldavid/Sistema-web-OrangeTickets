@@ -1,20 +1,20 @@
 <div class="container-table">
-    <p-table #dt2 [value]="users" [scrollable]="true" scrollHeight="400px" [tableStyle]="{'width': 'auto'}"
+    <p-table #dt2 [value]="users" [scrollable]="true" scrollHeight="400px" [tableStyle]="{'width': 'auto', 'margin':'0 auto'}"
     [globalFilterFields]="['dni', 'apellido', 'nombre', 'ciclo','grado','concert']">
-    <ng-template pTemplate="caption">
-        <div class="flex">
-            <p-iconField iconPosition="right" class="ml-auto">
-                <p-inputIcon>
-                    <i class="pi pi-search"></i>
-                </p-inputIcon>
-                <input 
-                pInputText 
-                type="text" 
-                (input)="dt2.filterGlobal($any($event.target).value, 'contains')" 
-                placeholder="Buscar..." />
-            </p-iconField>
-        </div>
-    </ng-template>
+        <ng-template pTemplate="caption" style="width: 50%;">
+            <div class="caption">
+                <p-iconField iconPosition="right" class="ml-auto">
+                    <p-inputIcon>
+                        <i class="pi pi-search"></i>
+                    </p-inputIcon>
+                    <input 
+                    pInputText 
+                    type="text" 
+                    (input)="dt2.filterGlobal($any($event.target).value, 'contains')" 
+                    placeholder="Buscar..." />
+                </p-iconField>
+            </div>
+        </ng-template>
         <ng-template pTemplate="header">
             <tr>
                 <th pSortableColumn="dni">

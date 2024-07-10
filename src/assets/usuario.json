@@ -14,7 +14,7 @@
             "apellido": "Gimenez",
             "ciclo": "Secundaria",
             "grado": 2,
-            "habilitaciones": "2"
+            "habilitaciones": null
         },
         {
             "dni": "75232151",
@@ -30,7 +30,7 @@
             "apellido": "Ruiz",
             "ciclo": "Kinder",
             "grado": 5,
-            "habilitaciones": "3"
+            "habilitaciones": null
         },
         {
             "dni": "88273012",
@@ -46,7 +46,7 @@
             "apellido": "Chapia",
             "ciclo": "Primaria",
             "grado": 5,
-            "habilitaciones": "2"
+            "habilitaciones": null
         }
     ],
     "admin": [

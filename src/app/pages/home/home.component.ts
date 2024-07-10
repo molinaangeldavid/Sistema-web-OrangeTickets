@@ -62,6 +62,9 @@ export class HomeComponent implements OnInit,OnDestroy {
   
   admin: boolean = false
   
+  menusecreto:any
+  menusecretonada: any
+
   constructor(
     private showComponentService: ShowComponentService,
     private cookieService: CookieService,
@@ -80,8 +83,16 @@ export class HomeComponent implements OnInit,OnDestroy {
     const usuario = this.dataService.getData('jsonUsers').usuarios
 
     this.usuario = usuario.find((u:any) => u.dni == this.dni)
-    const concert = this.usuario.habilitaciones
-    this.concertChoice = this.allConcerts[concert]
+    // const concert = this.usuario.habilitaciones
+    // this.concertChoice = this.allConcerts[concert]
+    const concert = this.usuario?.habilitaciones;
+    this.concertChoice = this.allConcerts[concert] ?? null;
+    if (this.concertChoice === null) {
+      this.menusecretonada = true;
+    } else {
+      this.menusecreto = true;
+    }
+
     
   }
   

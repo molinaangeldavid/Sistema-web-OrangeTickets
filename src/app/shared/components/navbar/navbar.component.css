@@ -10,6 +10,11 @@
     width: 100vw;
     padding: 8px 0;
 }
+.subcontainer{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
 .titulo{
    font-size: 30px;
    font-family: 'Wittenberger Fraktur MT', Courier, monospace;
@@ -40,7 +45,7 @@
 }
 
 .hover-list a{
-    padding: 15px;
+    padding: 10px;
     cursor: pointer;
     color: rgb(35, 32, 32);
     font-size: 1rem;
@@ -51,7 +56,10 @@
     transition: .5s;
 }
 
-@media screen and (max-width: 600px) {
+@media screen and (max-width: 720px) {
+    .container{
+        padding: 0;
+    }
     .container-menu{
         padding:0 15px 0 0;
     }
@@ -60,15 +68,28 @@
     }
     .titulo{
         font-size: 15px;
+        bottom: 0;
+        left: 0;
+    }
+    .subcontainer{
+        flex-direction: column;
     }
     .container ul li{
         margin: 5px 0;
     }
     
     .container-menu li a{
-        font-size: 13px;
+        font-size: 10px;
     }
     .container img{
         width:90px;
+        margin: 0 auto;
+    }
+    .hover-list a{
+        padding: 0;
+        cursor: pointer;
+        color: rgb(35, 32, 32);
+        font-size: 1rem;
+        text-decoration: none;
     }
 }
