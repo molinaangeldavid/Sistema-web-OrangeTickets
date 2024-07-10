@@ -4,6 +4,7 @@ import { loginGuard } from './core/guards/login.guard';
 import {adminGuard} from './core/guards/admin.guard'
 import { LoginComponent } from './auth/login/login.component';
 import { HomeAdminComponent } from './pages/home-admin/home-admin.component';
+import { NotFoundComponent } from './pages/not-found/not-found.component';
 
 
 export const routes: Routes = [
@@ -25,5 +26,8 @@ export const routes: Routes = [
         path: 'admin',
         component: HomeAdminComponent,
         canActivate:[adminGuard]
+    },{
+        path: '**',
+        component: NotFoundComponent
     }
 ];
