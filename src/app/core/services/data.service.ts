@@ -1,5 +1,5 @@
-import { DOCUMENT } from '@angular/common';
-import { Inject, Injectable } from '@angular/core';
+import { DOCUMENT, isPlatformBrowser } from '@angular/common';
+import { Inject, Injectable, PLATFORM_ID } from '@angular/core';
 
 @Injectable({
   providedIn: 'root'
@@ -9,17 +9,26 @@ export class DataService {
   // private storageScenario = 'jsonData';
   // private storageReserve = 'jsonReserve'
 
-  constructor() { 
-  }
+  constructor(@Inject(PLATFORM_ID) private platformId: Object) { }
+
   // Método para obtener los datos JSON
   getData(keyStorage:any): any {
-    const data = localStorage.getItem(keyStorage);
-    return data ? JSON.parse(data) : null;
+    if (isPlatformBrowser(this.platformId)) {
+      const data = localStorage.getItem(keyStorage);
+      return data ? JSON.parse(data) : null;
+    } else {
+      console.warn('localStorage is not available');
+      return null
+    }
   }
 
   // Método para guardar los datos JSON
   saveData(keyStorage:any,data: any): void {
-    localStorage.setItem(keyStorage, JSON.stringify(data));
+    if (isPlatformBrowser(this.platformId)) {
+      localStorage.setItem(keyStorage, JSON.stringify(data));
+    } else {
+      console.warn('localStorage is not available');
+    }
   }
 
   
