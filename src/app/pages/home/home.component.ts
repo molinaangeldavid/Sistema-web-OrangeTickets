@@ -87,11 +87,11 @@ export class HomeComponent implements OnInit,OnDestroy {
     // this.concertChoice = this.allConcerts[concert]
     const concert = this.usuario?.habilitaciones;
     this.concertChoice = this.allConcerts[concert] ?? null;
-    if (this.concertChoice === null) {
-      this.menusecretonada = true;
-    } else {
-      this.menusecreto = true;
-    }
+    // if (this.concertChoice === null) {
+    //   this.menusecretonada = true;
+    // } else {
+    //   this.menusecreto = true;
+    // }
 
     
   }
