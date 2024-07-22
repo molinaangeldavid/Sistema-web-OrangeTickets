@@ -49,21 +49,21 @@ interface Concert{
   providers: [MessageService,ConfirmationService]
 })
 export class EventsComponent {
-
+  
   concerts: any | undefined
-
+  
   concert: Concert | undefined
-
+  
   selectedConcerts!: any | null;
-
+  
   concertDialog: boolean = false
-
+  
   submitted: boolean = false
-
-
+  
+  
   fecha: any
   hora: any
-
+  
   constructor(
     private dataService: DataService,
     private messageService: MessageService, 
@@ -84,98 +84,104 @@ export class EventsComponent {
     }
     this.concert ={}
   }
-
+  
   new(){
     this.concert = {};
     this.submitted = false;
     this.concertDialog = true;
   }
-
+  
   editConcert(concert:any){
     this.concert = { ...concert };
     this.concertDialog = true;
   }
-
-  deleteSelectedConcerts(){
-
   
+  deleteSelectedConcerts(){
+    
+    
   }
-
+  
   findIndexById(id: string): number {
     let index = -1;
     for (let i = 0; i < this.concerts.length; i++) {
-        if (this.concerts[i].id === id) {
-            index = i;
-            break;
-        }
+      if (this.concerts[i].id === id) {
+        index = i;
+        break;
+      }
     }
-
+    
     return index;
-}
-
-createId(): string {
-  let maxId = 0;
-  for (const concert of this.concerts) {
-    if (concert.id > maxId) {
-      maxId = concert.id;
-    }
   }
-  return `${maxId + 1}`;
-}
-
-getFormattedDate(date: Date): string {
-  const day = ('0' + date.getDate()).slice(-2);
-  const month = ('0' + (date.getMonth() + 1)).slice(-2);
-  const year = date.getFullYear();
-  return `${day}-${month}-${year}`;
-}
-
-// Método para formatear la hora a hh:mm
-getFormattedTime(time: Date): string {
-  const hours = ('0' + time.getHours()).slice(-2);
-  const minutes = ('0' + time.getMinutes()).slice(-2);
-  return `${hours}:${minutes}`;
-}
+  
+  createId(): string {
+    let maxId = 0;
+    for (const concert of this.concerts) {
+      if (concert.id > maxId) {
+        maxId = concert.id;
+      }
+    }
+    return `${maxId + 1}`;
+  }
+  
+  getFormattedDate(date: Date): string {
+    const day = ('0' + date.getDate()).slice(-2);
+    const month = ('0' + (date.getMonth() + 1)).slice(-2);
+    const year = date.getFullYear();
+    return `${day}-${month}-${year}`;
+  }
+  
+  // Método para formatear la hora a hh:mm
+  getFormattedTime(time: Date): string {
+    const hours = ('0' + time.getHours()).slice(-2);
+    const minutes = ('0' + time.getMinutes()).slice(-2);
+    return `${hours}:${minutes}`;
+  }
   saveConcert(){
-    console.log(this.concert)
-    this.concert!.sala = "Pablo Neruda"
-    this.concert!.teatro = "Paseo La Plaza"
+    this.concert!.nombreSala = "Pablo Neruda"
+    this.concert!.teatro = "Paseo la Plaza"
+    console.log(this.concert?.nombreSala)
     this.submitted = true;
-
+    
     if (this.concert!.nombre?.trim()) {
-        if (this.concert!.id) {
-          this.concert!.fecha = this.getFormattedDate(this.fecha);
-          this.concert!.hora = this.getFormattedTime(this.hora);
-            this.concerts[this.findIndexById(this.concert!.id)] = this.concert;
-            this.messageService.add({ severity: 'success', summary: 'Successful', detail: 'Product Updated', life: 3000 });
-        } else {
-            this.concert!.id = this.createId();
-            this.concert!.fecha = this.getFormattedDate(this.fecha);
-            this.concert!.hora = this.getFormattedTime(this.hora);
-            this.concerts.push(this.concert!);
-            this.messageService.add({ severity: 'success', summary: 'Successful', detail: 'Product Created', life: 3000 });
-        }
-
-        this.concerts = [...this.concerts];
-        this.concertDialog = false;
-        this.concert! = {};
+      if (this.concert!.id) {
+        this.concert!.fecha = this.getFormattedDate(this.fecha);
+        this.concert!.hora = this.getFormattedTime(this.hora);
+        this.concerts[this.findIndexById(this.concert!.id)] = this.concert;
+        this.dataService.saveData('jsonConcerts',{"concerts":this.concerts})
+        this.messageService.add({ severity: 'success', summary: 'Exito', detail: 'Concert actualizado', life: 3000 });
+      } else {
+        this.concert!.id = this.createId();
+        this.concert!.fecha = this.getFormattedDate(this.fecha);
+        this.concert!.hora = this.getFormattedTime(this.hora);
+        this.concerts.push(this.concert!);
+        this.dataService.saveData('jsonConcerts',{"concerts":this.concerts})
+        this.messageService.add({ severity: 'success', summary: 'Exito', detail: 'Concert creado', life: 3000 });
+      }
+      
+      this.concerts = [...this.concerts];
+      this.concertDialog = false;
+      this.concert! = {};
     }
   }
   hideDialog() {
     this.concertDialog = false;
     this.submitted = false;
-}
-  deleteConcert(product: any) {
+  }
+  deleteConcert(concert: any) {
     this.confirmationService.confirm({
-        message: 'Are you sure you want to delete ' + product.name + '?',
-        header: 'Confirm',
-        icon: 'pi pi-exclamation-triangle',
-        accept: () => {
-            this.concerts = this.concerts.filter((val:any) => val.id !== product.id);
-            this.concert = {};
-            this.messageService.add({ severity: 'success', summary: 'Successful', detail: 'Product Deleted', life: 3000 });
-        }
+      message: 'Estas seguro de eliminar ' + concert.nombre + ' ?',
+      acceptLabel: 'Sí',
+      rejectLabel: 'No',
+      header: 'Confirmar',
+      icon: 'pi pi-exclamation-triangle',
+      accept: () => {
+        this.concerts = this.concerts.filter((val:any) => val.id !== concert.id);
+        
+        this.dataService.saveData('jsonConcerts',{"concerts": this.concerts})
+        this.concert = {};
+        this.messageService.add({ severity: 'success', summary: 'Exito', detail: 'Concert Eliminado', life: 3000 });
+      }
     });
-}
-
+  }
+  
 }

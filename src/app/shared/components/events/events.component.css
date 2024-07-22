@@ -1,3 +1,4 @@
+
 .content-table{
     display: flex;
     flex-direction: column;
@@ -10,9 +11,6 @@
     margin-bottom: 10px;
 }
 
-input{
-    padding: 5px !important;
-}
 .field label{
     padding-bottom: 10px !important;
   height: 268px !important;
