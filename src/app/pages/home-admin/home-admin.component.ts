@@ -10,6 +10,7 @@ import { ScenarioComponent } from '../../shared/components/scenario/scenario.com
 import { ManageUsersComponent } from '../../shared/components/manage-users/manage-users.component';
 import { ManageReservesComponent } from '../../shared/components/manage-reserves/manage-reserves.component';
 import { CountCashComponent } from '../../shared/components/count-cash/count-cash.component';
+import { EventsComponent } from '../../shared/components/events/events.component';
 
 import { TableModule } from 'primeng/table';
 import { ButtonModule } from 'primeng/button';
@@ -34,6 +35,7 @@ import { Subscription } from 'rxjs';
     ManageUsersComponent,
     ManageReservesComponent,
     CountCashComponent,
+    EventsComponent,
     FormsModule,
     TableModule,
     CommonModule,
@@ -72,9 +74,8 @@ export class HomeAdminComponent {
     this.currentComponent! = 'reserveManage'
     this.subscription = this.showComponentService.componentEvent$.subscribe(name => {
       this.currentComponent = name;
-    })
-    this.concerts = this.dataService.getData("jsonConcerts")
-    this.concerts = this._searchScenario()
+    }) 
+    this.concerts = this.dataService.getData("jsonConcerts")["concerts"]
     this.dni = this.cookieService.get('dniAdmin')
     this.usuario = this._usuario()
   }
@@ -85,13 +86,13 @@ export class HomeAdminComponent {
     return getAdmin
   }
 
-  private _searchScenario(){
-    const concerts:any = []
-    for(let i in this.concerts){
-      const c = this.concerts[i]
-      concerts.push(c)
-    }
-    return concerts
-  }
+  // private _searchScenario(){
+  //   const concerts:any = []
+  //   for(let i in this.concerts){
+  //     const c = this.concerts[i]
+  //     concerts.push(c)
+  //   }
+  //   return concerts
+  // }
 
 }

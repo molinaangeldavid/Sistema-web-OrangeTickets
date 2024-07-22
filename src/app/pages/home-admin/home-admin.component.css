@@ -7,7 +7,6 @@
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    padding: 5px;
 }
 .perfil div{
     display: flex;
@@ -20,11 +19,9 @@
     font-weight: 500;
     padding: 4px;
 }
-.showReserves,.showCash,.showReserves{
+.showReserves,.showCash,.showReserves,.showEvents{
     margin: 0 auto;
     margin-bottom:100px;
-}
-.showReserves,.showCash,.showReserves{
     width: 100%;
 }
 .data-information.title{
@@ -36,12 +33,6 @@
 }
 
 @media screen and (max-width: 800px) {
-    /* .showReserves{
-        display: inline;
-    }
-    /* .showUsers{
-        display: inline;
-    } */
     .showCash{
         width: 100%;
     }

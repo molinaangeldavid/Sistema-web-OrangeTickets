@@ -1,15 +1,45 @@
+.container-choose,.content-habilitation{
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    margin-bottom: 15px;
+}
+
+.dropdown-content{
+    display: flex;
+    justify-content: center;
+}
+
+.content-habilitation{
+    margin-top: 25px;
+}
+
+p-dropdown{
+    margin: 3px;
+}
+
+.p-inputtext{
+    padding: 4px;
+}
+
+p-calendar{
+    padding: 4px;
+}
+
+#to{
+    padding: 5px !important;
+}
+
 .container-table{
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
 }
-/* .p-datatable-header{
-    
-} */
- table div div{
-     width: 50%;
- }
+
+table div div{
+    width: 50%;
+}
 .caption{
     margin: 0 auto;
 }
@@ -21,5 +51,18 @@ input{
 @media screen and (max-width: 800px) {
     .container-table{
         display: block;
+    }
+
+    .dropdown-content{
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .container-choose, .content-habilitation{
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
     }
 }

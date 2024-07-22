@@ -1,0 +1,164 @@
+<div class="content-table">
+<p-toast />
+<!-- <p-toolbar class="style-button"> -->
+    <!-- <ng-template pTemplate="left"> -->
+        <div class="buttons">
+            <p-button 
+                severity="success" 
+                label="Nuevo" 
+                icon="pi pi-plus" 
+                class="mr-2" 
+                (onClick)="new()" />
+            <p-button 
+                severity="danger" 
+                label="Eliminar" 
+                icon="pi pi-trash" 
+                (onClick)="deleteSelectedConcerts()" 
+                [disabled]="!selectedConcerts || !selectedConcerts.length" />
+        </div>
+    <!-- </ng-template> -->
+<!-- </p-toolbar> -->
+
+<p-table
+    #dt
+    [value]="concerts"
+    [tableStyle]="{ 'width': 'auto','margin':'0 auto' }"
+    [(selection)]="selectedConcerts"
+    [rowHover]="true"
+    dataKey="id"
+>
+    <ng-template pTemplate="header">
+        <tr>
+            <th style="width: 4rem">
+                <p-tableHeaderCheckbox />
+            </th>
+            <th pSortableColumn="id" style="width:20%">
+                # <p-sortIcon field="id" />
+            </th>
+            <th pSortableColumn="nombre" style="width:20%">
+                Nombre <p-sortIcon field="nombre" />
+            </th>
+            <th pSortableColumn="nombreSala" style="width:20%">
+                Sala <p-sortIcon field="nombreSala" />
+            </th>
+            <th pSortableColumn="fecha" style="width:20%">
+                Fecha <p-sortIcon field="fecha" />
+            </th>
+            <th pSortableColumn="hora" style="width:20%">
+                Hora <p-sortIcon field="hora" />
+            </th>
+            <th pSortableColumn="teatro" style="width:20%">
+                Teatro <p-sortIcon field="teatro" />
+            </th>
+            <th pSortableColumn="valor" style="width:20%">
+                Valor <p-sortIcon field="valor" />
+            </th>
+            <th></th>
+        </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-concert>
+        <tr>
+            <td>
+                <p-tableCheckbox [value]="concert" />
+            </td>
+            <td>
+                {{ concert.id }}
+            </td>
+            <td>
+                {{ concert.nombre }}
+            </td>
+            <td>
+                {{ concert.nombreSala }}
+            </td>
+            <td>
+                {{ concert.fecha }}
+            </td>
+            <td>
+                {{ concert.hora }}
+            </td>
+            <td>
+                {{ concert.teatro }}
+            </td>
+            <td>
+                {{ concert.valor }}
+            </td>
+            <td style="display: flex;">
+                <p-button 
+                    icon="pi pi-pencil" 
+                    [rounded]="true" 
+                    [outlined]="true" 
+                    severity="success" 
+                    (onClick)="editConcert(concert)" 
+                    size="small"
+                    />
+                <p-button 
+                    icon="pi pi-trash" 
+                    severity="danger" 
+                    [rounded]="true" 
+                    [outlined]="true" 
+                    size="small"
+                    (onClick)="deleteConcert(concert)" />
+            </td>
+        </tr>
+    </ng-template>
+</p-table>
+</div>
+<p-dialog 
+[(visible)]="concertDialog" 
+[style]="{ 'min-width': '600px','min-height': '700px' }" 
+
+header="Concerts" 
+[modal]="true" 
+styleClass="p-fluid">
+    <ng-template pTemplate="content">
+        <div class="field">
+            <label for="name">Nombre</label>
+            <input 
+                type="text" 
+                pInputText 
+                id="name" 
+                [(ngModel)]="concert!.nombre" 
+                required 
+                autofocus />
+            <small *ngIf="submitted && !concert!.nombre">
+                Name is required.
+            </small>
+        </div>
+        <div class="field">
+            <label for="name">Fecha</label>
+            <p-calendar [(ngModel)]="fecha" dateFormat="dd-mm-yy" />
+        </div>
+        <div class="field">
+            <label for="name">Hora</label>
+            <p-calendar 
+                inputId="calendar-timeonly" 
+                [(ngModel)]="hora" 
+                [timeOnly]="true"
+                hourFormat="24" />
+        </div>
+        <div class="field">
+            <label for="name">Valor</label>
+            <p-inputNumber 
+                [(ngModel)]="concert!.valor" 
+                inputId="minmaxfraction" 
+                mode="decimal" 
+                [minFractionDigits]="2" 
+                [maxFractionDigits]="5" /> 
+        </div>
+    </ng-template>
+
+    <ng-template pTemplate="footer">
+        <p-button 
+            label="Cancel" 
+            icon="pi pi-times" 
+            [text]="true" 
+            (onClick)="hideDialog()" />
+        <p-button
+            label="Save" 
+            icon="pi pi-check" 
+            [text]="true" 
+            (onClick)="saveConcert()" />
+    </ng-template>
+</p-dialog>
+
+<p-confirmDialog [style]="{ width: '450px' }" />

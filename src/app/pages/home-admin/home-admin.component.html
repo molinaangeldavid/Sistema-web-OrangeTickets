@@ -40,6 +40,10 @@
     <div class="showCash" style="margin-bottom: 100px;">
         <app-count-cash  *ngIf="currentComponent === 'countCash'"></app-count-cash>
     </div>
+
+    <div class="showEvents">
+        <app-events *ngIf="currentComponent === 'events'"></app-events>
+    </div>
 </div>
 
 <app-footer class="footer" ></app-footer>

@@ -24,10 +24,6 @@ export class NavbarComponent {
     
   }
   
-  ngOnInit(){
-    
-  }
-  
   showReservation(){
     this.showService.triggerComponentEvent('scenario');
   }
@@ -46,6 +42,10 @@ export class NavbarComponent {
   
   showManageUsers(){
     this.showService.triggerComponentEvent('userManage');
+  }
+
+  showEvents(){
+    this.showService.triggerComponentEvent('events')
   }
   
   goOut(){

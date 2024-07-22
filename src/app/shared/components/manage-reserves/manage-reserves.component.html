@@ -38,16 +38,17 @@
             <th pSortableColumn="ciclo">
                 Ciclo <p-sortIcon field="ciclo" />
             </th>
-            <th pSortableColumn="grado">
-                Grado <p-sortIcon field="grado" />
+            <th pSortableColumn="nivel">
+                Nivel <p-sortIcon field="nivel" />
+            </th>
+            <th pSortableColumn="division">
+                Division <p-sortIcon field="division" />
             </th>
             <th>
                 Ver Detalles
             </th>
-            <!-- <th>
-            </th>
             <th>
-            </th> -->
+            </th>
         </tr>
     </ng-template>
     <ng-template pTemplate="body" let-user>
@@ -56,7 +57,8 @@
             <td>{{ user.apellido }}</td>
             <td>{{ user.nombre }}</td>
             <td>{{ user.ciclo }}</td>
-            <td>{{ user.grado }}</td>
+            <td>{{ user.nivel }}</td>
+            <td>{{ user.division }}</td>
             <td><button 
                 type="button" 
                 (click)="showDialog(user.dni)" 
@@ -64,16 +66,6 @@
                 icon="pi pi-external-link" 
                 size="small">
             </button></td>
-            <!-- <td><button 
-                type="button" 
-                
-                (click)="removeAllReserves(user,$event)" 
-                pButton 
-                icon="pi pi-undo" 
-                label="Liberar Todo"
-                severity="warning"
-                size="small">
-            </button>
             <td>
                 <button 
                 type="button" 
@@ -83,11 +75,12 @@
                 label="Validar Todo"
                 severity="success"
                 size="small">
-            </button> -->
-        <!-- </td> -->
-    </tr>
+            </button>
+            <p-confirmDialog />
+            </td>
+         </tr>
     </ng-template>
-    </p-table>
+</p-table>
 </div>
 <p-dialog 
 header="Reservas" 

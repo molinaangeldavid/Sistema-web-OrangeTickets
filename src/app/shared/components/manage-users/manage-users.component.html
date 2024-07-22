@@ -1,6 +1,62 @@
-<div class="container-table">
-    <p-table #dt2 [value]="users" [scrollable]="true" scrollHeight="400px" [tableStyle]="{'width': 'auto', 'margin':'0 auto'}"
-    [globalFilterFields]="['dni', 'apellido', 'nombre', 'ciclo','grado','concert']">
+    <div class="container-choose">
+        <div class="dropdown-content">
+            <div>
+                <p-dropdown 
+                [options]="concerts" 
+                [(ngModel)]="concertChoice" 
+                optionLabel="nombre"
+                placeholder="Elegir Concierto" 
+                [ngModelOptions]="{standalone: true}"/>
+            </div>
+            <div>
+                <p-dropdown 
+                [options]="ciclos" 
+                [(ngModel)]="cicloChoice" 
+                (ngModelChange)="onCicloChange($event)"
+                optionLabel="ciclo"
+                placeholder="Elegir Ciclo" 
+                [ngModelOptions]="{standalone: true}"/>
+            </div>
+            <div>
+                <p-dropdown 
+                [options]="niveles" 
+                [(ngModel)]="nivelChoice" 
+                optionLabel="nivel"
+                placeholder="Elegir Nivel" 
+                [ngModelOptions]="{standalone: true}"/>
+            </div>
+            <div>
+                <p-dropdown 
+                [options]="divisiones" 
+                [(ngModel)]="divisionChoice" 
+                optionLabel="division"
+                placeholder="Elegir Division" 
+                [ngModelOptions]="{standalone: true}"/>
+            </div>
+        </div>
+        <button pButton type="button" (click)="verFiltro()" class="pi pi-search"></button>
+    </div>
+
+    <div class="content-habilitation" *ngIf=concertChoice>
+        <p-floatLabel>
+            <p-calendar 
+                [(ngModel)]="dateFrom" 
+                inputId="from" />
+            <label for="from">Desde</label>
+        </p-floatLabel>
+        <p-floatLabel>
+            <p-calendar 
+                [(ngModel)]="dateTo" 
+                inputId="to" />
+            <label for="to">Hasta</label>
+        </p-floatLabel>
+        <button pButton type="button" (click)="habilitar(concertChoice,$event)">Habilitar</button>
+    </div>
+    <p-confirmDialog />
+    
+    <div class="container-table">
+        <p-table #dt2 [value]="filteredUsers" [scrollable]="true" scrollHeight="400px" [tableStyle]="{'width': 'auto', 'margin':'0 auto'}"
+        [globalFilterFields]="['dni', 'apellido', 'nombre', 'ciclo','turno','nivel','division','concert']">
         <ng-template pTemplate="caption" style="width: 50%;">
             <div class="caption">
                 <p-iconField iconPosition="right" class="ml-auto">
@@ -29,14 +85,17 @@
                 <th pSortableColumn="ciclo">
                     Ciclo <p-sortIcon field="ciclo" />
                 </th>
-                <th pSortableColumn="grado">
-                    Grado <p-sortIcon field="grado" />
+                <th pSortableColumn="turno">
+                    Turno <p-sortIcon field="turno" />
+                </th>
+                <th pSortableColumn="nivel">
+                    Nivel <p-sortIcon field="nivel" />
+                </th>
+                <th pSortableColumn="division">
+                    Division <p-sortIcon field="division" />
                 </th>
                 <th pSortableColumn="concert">
-                    Habilitado
-                </th>
-                <th>
-                    Habilitaciones
+                   Concert habilitado
                 </th>
             </tr>
         </ng-template>
@@ -46,86 +105,11 @@
                 <td>{{ user.apellido }}</td>
                 <td>{{ user.nombre }}</td>
                 <td>{{ user.ciclo }}</td>
-                <td>{{ user.grado }}</td>
+                <td>{{ user.turno }}</td>
+                <td>{{ user.nivel }}</td>
+                <td>{{ user.division }}</td>
                 <td>{{ user.habilitaciones }}</td>
-                <td><button 
-                    type="button" 
-                    (click)="showDialog(user.dni)" 
-                    pButton 
-                    icon="pi pi-user-edit" 
-                    size="small">
-                </button></td>
             </tr>
         </ng-template>
     </p-table>
-    <p-dialog 
-        header="Reservas" 
-        [resizable]="false" 
-        [modal]="true" 
-        [maximizable]="true" 
-        [(visible)]="dialogVisible" 
-        [style]="{width: '75vw'}" 
-        [contentStyle]="{height: '300px'}">
-        <p-table 
-            [value]="concerts" 
-            [scrollable]="true"
-            scrollHeight="flex" 
-            [tableStyle]="{'width': 'auto'}">
-            <ng-template pTemplate="header">
-            <tr>
-                <th>
-                    ID
-                </th>
-                <th>
-                    Concert
-                </th>
-                <th>
-                    Fecha funcion
-                </th>
-                <th>
-                    Hora funcion
-                </th>
-                <th>
-                    habilitar
-                </th>
-            </tr>
-        </ng-template>
-        <ng-template pTemplate="body" let-concert>
-            <tr>
-                <td>
-                    {{concert.id}}
-                </td>
-                <td>
-                    {{concert.nombre}}
-                </td>
-                <td>
-                    {{concert.fecha}}
-                </td>
-                <td>
-                    {{concert.hora}}
-                </td>
-                <td><button 
-                    type="button" 
-                    (click)="habilitar(concert.id,$event)" 
-                    pButton 
-                    icon="pi pi-user-edit" 
-                    severity="success"
-                    size="small">
-                </button></td>
-            </tr>
-            <p-confirmDialog></p-confirmDialog>
-        </ng-template>
-    </p-table>
-    <ng-template pTemplate="footer">
-        <button 
-        type="button"
-        pButton
-        pRipple 
-        icon="pi pi-times" 
-        (click)="dialogVisible=false" 
-        label="Salir" 
-        class="p-button-text">
-    </button>
-    </ng-template>
-    </p-dialog>
 </div>

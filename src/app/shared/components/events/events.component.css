@@ -1,0 +1,26 @@
+.content-table{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.field{
+    margin-bottom: 10px;
+}
+
+input{
+    padding: 5px !important;
+}
+.field label{
+    padding-bottom: 10px !important;
+  height: 268px !important;
+}
+@media screen and (max-width: 700px) {
+    
+    .content-table{
+        display: block;
+    }
+
+}

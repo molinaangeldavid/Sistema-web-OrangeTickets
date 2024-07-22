@@ -4,9 +4,9 @@
 } */
 
 .container{
-    background-color: #d4d6d0fe;
+    background-color: #FFDAB9;
     width: 100vw;
-    color: #1A1A1A;
+    color: #333333;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -17,7 +17,7 @@ span{
     /* font-family:'Wittenberger Fraktur MT','Courier New', Courier, monospace; */
     font-weight: 700;
     font-size: 15px;
-    color: #1A1A1A;
+    /* color: #1A1A1A; */
 }
 
 @media screen and (max-width: 800px) {

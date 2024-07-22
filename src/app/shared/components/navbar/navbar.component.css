@@ -6,7 +6,7 @@
     display: flex;
     justify-content: space-evenly;
     align-items: center;
-    background-color: #e6e6e6;
+    background-color: #FF6F61;
     width: 100vw;
     padding: 8px 0;
 }
@@ -21,6 +21,8 @@
    position: relative;
    top: 5px;
    left: 5px;
+   color: #FFFFFF;
+   font-weight: 100;
 }
 .container-menu{
     display: flex;
@@ -36,7 +38,7 @@
 .container ul{
     display: flex;
     padding-left: 0;
-    color: rgb(35, 32, 32);
+    color: #FFFFFF;
     font-weight: 700;
 }
 .hover-list {
@@ -47,7 +49,7 @@
 .hover-list a{
     padding: 10px;
     cursor: pointer;
-    color: rgb(35, 32, 32);
+    color: #FFFFFF;
     font-size: 1rem;
     text-decoration: none;
 }

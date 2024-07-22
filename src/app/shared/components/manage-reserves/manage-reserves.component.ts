@@ -1,20 +1,20 @@
 import { CUSTOM_ELEMENTS_SCHEMA, ChangeDetectorRef, Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges } from '@angular/core';
+import { CommonModule } from '@angular/common';
+
 import { DataService } from '../../../core/services/data.service';
+import { ScenarioService } from '../../../core/services/scenario.service';
 
 import { TableModule } from 'primeng/table';
 import { DialogModule } from 'primeng/dialog';
 import { ButtonModule } from 'primeng/button';
-import { CommonModule } from '@angular/common';
 import { IconFieldModule } from 'primeng/iconfield';
 import { InputIconModule } from 'primeng/inputicon';
 import { InputTextModule } from 'primeng/inputtext';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { ConfirmationService, MessageService, PrimeNGConfig } from 'primeng/api';
-import { ScenarioService } from '../../../core/services/scenario.service';
 
 import * as XLSX from 'xlsx';
 import { saveAs } from 'file-saver';
-
 
 @Component({
   selector: 'app-manage-reserves',
@@ -69,7 +69,6 @@ export class ManageReservesComponent implements OnInit,OnChanges {
   }
   
   ngOnInit(){
-    console.log("puta",this.escenario)
     this.allSeats = this.dataService.getData('jsonData')
     this.reserves = this.dataService.getData('jsonReservation');
     this.allUsers = this.dataService.getData('jsonUsers')
@@ -198,43 +197,43 @@ updateScenario(data: any) {
 ///////////////////////////////
 ///////////////////////////////////
 // Aqui se quitan todas las reservas por usuario y los asientos vuelven a estar disponible
-removeAllReserves(user: any, event: Event) {
-  this.confirmationService.confirm({
-    target: event.target as EventTarget,
-    message: 'Estas seguro/a que deseas eliminar todas las reservas de este usuario?',
-    header: 'Confirmacion de eliminacion',
-    icon: 'pi pi-info-circle',
-    acceptButtonStyleClass:"p-button-danger p-button-text",
-    rejectButtonStyleClass:"p-button-text p-button-text",
-    acceptIcon:"none",
-    rejectIcon:"none",
+// removeAllReserves(user: any, event: Event) {
+//   this.confirmationService.confirm({
+//     target: event.target as EventTarget,
+//     message: 'Estas seguro/a que deseas eliminar todas las reservas de este usuario?',
+//     header: 'Confirmacion de eliminacion',
+//     icon: 'pi pi-info-circle',
+//     acceptButtonStyleClass:"p-button-danger p-button-text",
+//     rejectButtonStyleClass:"p-button-text p-button-text",
+//     acceptIcon:"none",
+//     rejectIcon:"none",
     
-    accept: () => {
-      this.reserves[user.dni].forEach((reserve:any) => {
-        const [fila, asiento] = [reserve.fila,reserve.asiento]
-        // cambia de estado a reservado solo para en la funcionalidad del usuario
-        for (let row of this.allSeats[this.escenario.sala]) {
-          if (!row) continue;
-          for (let seat of row) {
-            if (seat && seat.fila === fila && seat.asiento === asiento) {
-              seat.estado = 'disponible';
-            }
-          }
-        }
-      })
-      this.updateScenario(this.allSeats)
-      delete this.reserves[user.dni]
-      this.dataService.saveData('jsonReservation',this.reserves)
-      this.dataService.saveData('jsonData',this.allSeats)
-      this.users = this.users.filter((val:any) => val.dni !== user.dni);
-      user = {}
-      this.messageService.add({ severity: 'info', summary: 'Confirmado', detail: 'Reservas eliminadas' });
-    },
-    reject: () => {
-      this.messageService.add({ severity: 'error', summary: 'Rechazado', detail: 'Accion rechazada' });
-    }
-  });
-}
+//     accept: () => {
+//       this.reserves[user.dni].forEach((reserve:any) => {
+//         const [fila, asiento] = [reserve.fila,reserve.asiento]
+//         // cambia de estado a reservado solo para en la funcionalidad del usuario
+//         for (let row of this.allSeats[this.escenario.sala]) {
+//           if (!row) continue;
+//           for (let seat of row) {
+//             if (seat && seat.fila === fila && seat.asiento === asiento) {
+//               seat.estado = 'disponible';
+//             }
+//           }
+//         }
+//       })
+//       this.updateScenario(this.allSeats)
+//       delete this.reserves[user.dni]
+//       this.dataService.saveData('jsonReservation',this.reserves)
+//       this.dataService.saveData('jsonData',this.allSeats)
+//       this.users = this.users.filter((val:any) => val.dni !== user.dni);
+//       user = {}
+//       this.messageService.add({ severity: 'info', summary: 'Confirmado', detail: 'Reservas eliminadas' });
+//     },
+//     reject: () => {
+//       this.messageService.add({ severity: 'error', summary: 'Rechazado', detail: 'Accion rechazada' });
+//     }
+//   });
+// }
 
 padNumber(num: number): string {
   return num < 10 ? `0${num}` : `${num}`;

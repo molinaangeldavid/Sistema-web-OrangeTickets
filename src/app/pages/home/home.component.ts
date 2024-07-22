@@ -75,7 +75,7 @@ export class HomeComponent implements OnInit,OnDestroy {
   
   async ngOnInit(){
     this.dni = this.cookieService.get("dni")
-    this.allConcerts = this.dataService.getData("jsonConcerts")
+    this.allConcerts = this.dataService.getData("jsonConcerts")["concerts"]
     this.currentComponent! = 'scenario'
     this.subscription = this.showComponentService.componentEvent$.subscribe(name => {
       this.currentComponent = name;
@@ -86,7 +86,8 @@ export class HomeComponent implements OnInit,OnDestroy {
     // const concert = this.usuario.habilitaciones
     // this.concertChoice = this.allConcerts[concert]
     const concert = this.usuario?.habilitaciones;
-    this.concertChoice = this.allConcerts[concert] ?? null;
+    this.concertChoice = this.allConcerts.find((value:any) => value.nombre === concert)
+    console.log(this.concertChoice)
     // if (this.concertChoice === null) {
     //   this.menusecretonada = true;
     // } else {
