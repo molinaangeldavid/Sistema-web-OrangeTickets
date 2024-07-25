@@ -7,18 +7,32 @@ import { Observable, map} from 'rxjs';
 })
 export class AuthService {
 
+  path: any = "http://localhost:3000"
+
   constructor(
     private http: HttpClient
   ) { }
 
-  getDatos(): Observable<any> {
-    return this.http.get<any>('../../../assets/usuario.json');
+
+
+  // getDatos(): Observable<any> {
+  //   return this.http.get<any>('../../../assets/usuario.json');
+  // }
+
+  // getUser(dni:any): Observable<any>{
+  //   return this.http.get<any>('../../../assets/usuario.json').pipe(
+  //     map(value => value.usuarios.find((user:any)=> dni == user.dni))
+  //   )
+  // }
+  authUser(dni:any): Observable<any>{
+    return this.http.post<any>(`${this.path}/api/estudiantes/login`,{dni})
   }
 
-  getUser(dni:any): Observable<any>{
-    return this.http.get<any>('../../../assets/usuario.json').pipe(
-      map(value => value.usuarios.find((user:any)=> dni == user.dni))
-    )
+  authAdmin(dni:any,pass:any): Observable<any> {
+    return this.http.post<any>(`${this.path}/api/admin/login`,{dni,pass});
   }
+
+
+  
 
 }
