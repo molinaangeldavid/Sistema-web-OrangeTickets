@@ -15,6 +15,7 @@ import { DataService } from '../../../core/services/data.service';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { DialogModule } from 'primeng/dialog';
 import { InputTextModule } from 'primeng/inputtext';
+import {HttpClient } from '@angular/common/http';
 
 interface Concert{
   id?: string,
@@ -60,6 +61,7 @@ export class EventsComponent {
   
   submitted: boolean = false
   
+  copiaSala: any
   
   fecha: any
   hora: any
@@ -67,7 +69,8 @@ export class EventsComponent {
   constructor(
     private dataService: DataService,
     private messageService: MessageService, 
-    private confirmationService: ConfirmationService
+    private confirmationService: ConfirmationService,
+    private http: HttpClient
   ){
   }
   
@@ -76,6 +79,7 @@ export class EventsComponent {
     this.concert = {
       id: undefined,
       nombre: "",
+      sala: undefined,
       nombreSala: "Pablo Neruda",
       fecha:"",
       hora:"",
@@ -83,6 +87,10 @@ export class EventsComponent {
       valor:0
     }
     this.concert ={}
+    this.http.get('../../../../assets/salaCopia.json').subscribe((value:any) => {
+      this.copiaSala = value["salaCopia"]
+    })
+
   }
   
   new(){
@@ -97,7 +105,17 @@ export class EventsComponent {
   }
   
   deleteSelectedConcerts(){
-    
+    this.confirmationService.confirm({
+      message: 'Estas seguro de eliminar estos concerts?',
+      header: 'Confirmar',
+      icon: 'pi pi-exclamation-triangle',
+      accept: () => {
+          this.concerts = this.concerts.filter((val:any) => !this.selectedConcerts?.includes(val));
+          this.dataService.saveData('jsonConcerts',{"concerts":this.concerts})
+          this.selectedConcerts = null;
+          this.messageService.add({ severity: 'success', summary: 'Exito', detail: 'Concerts eliminados', life: 3000 });
+      }
+  });
     
   }
   
@@ -117,7 +135,7 @@ export class EventsComponent {
     let maxId = 0;
     for (const concert of this.concerts) {
       if (concert.id > maxId) {
-        maxId = concert.id;
+        maxId = parseInt(concert.id);
       }
     }
     return `${maxId + 1}`;
@@ -150,10 +168,14 @@ export class EventsComponent {
         this.dataService.saveData('jsonConcerts',{"concerts":this.concerts})
         this.messageService.add({ severity: 'success', summary: 'Exito', detail: 'Concert actualizado', life: 3000 });
       } else {
+        const dataConcerts = this.dataService.getData('jsonData')
         this.concert!.id = this.createId();
+        dataConcerts[this.concert!.id] = this.copiaSala
+        this.concert!.sala = this.concert!.id
         this.concert!.fecha = this.getFormattedDate(this.fecha);
         this.concert!.hora = this.getFormattedTime(this.hora);
         this.concerts.push(this.concert!);
+        this.dataService.saveData('jsonData',dataConcerts)
         this.dataService.saveData('jsonConcerts',{"concerts":this.concerts})
         this.messageService.add({ severity: 'success', summary: 'Exito', detail: 'Concert creado', life: 3000 });
       }
@@ -175,6 +197,10 @@ export class EventsComponent {
       header: 'Confirmar',
       icon: 'pi pi-exclamation-triangle',
       accept: () => {
+        let concertRemoved = this.concerts.filter((val: any) => val.id == concert.id)
+        let data = this.dataService.getData('jsonData')
+        delete data[concertRemoved.sala]
+        this.dataService.saveData('jsonData',data)
         this.concerts = this.concerts.filter((val:any) => val.id !== concert.id);
         
         this.dataService.saveData('jsonConcerts',{"concerts": this.concerts})

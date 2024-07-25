@@ -16,12 +16,20 @@
         </ul>
     </div>
     <div class="container-menu" *ngIf="menusecretoAdmin">
-        <ul>
+        <ul class="responsive">
             <li class="hover-list"><a (click)="showManageReserves()">Reservas</a></li>
             <li class="hover-list"><a (click)="showManageUsers()">Usuarios</a></li>
             <li class="hover-list"><a (click)="showCountCash()">Caja</a></li>
             <li class="hover-list"><a (click)="showEvents()">Eventos</a></li>
             <li class="hover-list"><a (click)="goOut()">Salir</a></li>
         </ul>
+        <!-- <p-sidebar [(visible)]="sidebarVisible2" position="left" styleClass="width:20rem">
+            <h3>Right Sidebar</h3>
+        </p-sidebar>
+        <p-button 
+            type="button" 
+            class="mr-2" 
+            (onClick)="sidebarVisible2 = true" 
+            icon="pi pi-arrow-right" /> -->
     </div>
 </div>

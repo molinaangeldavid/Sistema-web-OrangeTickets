@@ -83,16 +83,8 @@ export class HomeComponent implements OnInit,OnDestroy {
     const usuario = this.dataService.getData('jsonUsers').usuarios
 
     this.usuario = usuario.find((u:any) => u.dni == this.dni)
-    // const concert = this.usuario.habilitaciones
-    // this.concertChoice = this.allConcerts[concert]
     const concert = this.usuario?.habilitaciones;
     this.concertChoice = this.allConcerts.find((value:any) => value.nombre === concert)
-    console.log(this.concertChoice)
-    // if (this.concertChoice === null) {
-    //   this.menusecretonada = true;
-    // } else {
-    //   this.menusecreto = true;
-    // }
 
     
   }

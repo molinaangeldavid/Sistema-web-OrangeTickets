@@ -1,14 +1,26 @@
 import { CommonModule } from '@angular/common';
-import { Component, Input } from '@angular/core';
+import { Component, Input, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 
 import { ShowComponentService } from '../../../core/services/show-component.service';
 import { CookieService } from 'ngx-cookie-service';
 
+import { SidebarModule } from 'primeng/sidebar';
+import { ButtonModule } from 'primeng/button';
+import { RippleModule } from 'primeng/ripple';
+import { StyleClassModule } from 'primeng/styleclass';
+import { Sidebar } from 'primeng/sidebar';
+
 @Component({
   selector: 'app-navbar',
   standalone: true,
-  imports: [CommonModule],
+  imports: [
+    CommonModule,
+    SidebarModule,
+    ButtonModule,
+    RippleModule, 
+    StyleClassModule
+  ],
   templateUrl: './navbar.component.html',
   styleUrl: './navbar.component.css'
 })
@@ -16,12 +28,17 @@ export class NavbarComponent {
   @Input() menusecretoNada: any | undefined
   @Input() menusecreto: any|undefined
   @Input() menusecretoAdmin: any | undefined
+
   
+
   constructor(private showService:ShowComponentService,
     private cookieService:CookieService,
     private router:Router
   ){
     
+  }
+
+  ngOnInit(){
   }
   
   showReservation(){

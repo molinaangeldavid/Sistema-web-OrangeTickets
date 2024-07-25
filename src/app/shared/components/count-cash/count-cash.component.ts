@@ -1,16 +1,18 @@
 import { Component } from '@angular/core';
-import { DataService } from '../../../core/services/data.service';
 import { CommonModule } from '@angular/common';
+import { HttpClient } from '@angular/common/http';
+
+import { DataService } from '../../../core/services/data.service';
+
 import { TableModule } from 'primeng/table';
 import { IconFieldModule } from 'primeng/iconfield';
 import { InputIconModule } from 'primeng/inputicon';
 import { InputTextModule } from 'primeng/inputtext';
 import { ChartModule } from 'primeng/chart';
 import { ButtonModule } from 'primeng/button';
-import { HttpClient } from '@angular/common/http';
 
 
-@Component({
+@Component({ 
   selector: 'app-count-cash',
   standalone: true,
   imports: [
@@ -28,13 +30,12 @@ import { HttpClient } from '@angular/common/http';
 export class CountCashComponent {
   
   byDays: any[] = [{fecha:"09-7-2024",total: 60000},{fecha: '10-7-2024',total:90000}]
-
+  
   byConcerts: any
 
   confirmation: any
   
   byUsers: any
-
   dateNow: any
 
   showUser: boolean | undefined
@@ -48,7 +49,6 @@ export class CountCashComponent {
   constructor(
     private dataService: DataService,
     private http: HttpClient
-    
   ){
 
   }
@@ -60,11 +60,6 @@ export class CountCashComponent {
     this.showUser = true
     this.dateNow = this.getDateNow()
     this.byUsers = this.usersCount()
-    // this.http.get('../../../../assets/date.json').subscribe( value => {
-
-    //   this.byDays = value
-    // })
-
   }
 
   calculateConfirmationsAndTotals(): void {
