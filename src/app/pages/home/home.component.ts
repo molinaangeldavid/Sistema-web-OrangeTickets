@@ -1,6 +1,7 @@
 import { CUSTOM_ELEMENTS_SCHEMA, Component, OnDestroy, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { HTTP_INTERCEPTORS } from '@angular/common/http';
 
 import { ReservatedComponent } from "../../shared/components/reservated/reservated.component";
 import { ScenarioComponent } from "../../shared/components/scenario/scenario.component";
@@ -9,14 +10,16 @@ import { FooterComponent } from "../../shared/components/footer/footer.component
 
 import { Subscription } from 'rxjs';
 
-import { CookieService } from 'ngx-cookie-service';
 import { ShowComponentService } from '../../core/services/show-component.service';
 import { DataService } from '../../core/services/data.service';
-import { AuthService } from '../../core/services/auth.service';
+import { UsuarioService } from '../../core/services/usuario.service';
 
 import { ButtonModule } from 'primeng/button';
 import { CardModule } from 'primeng/card';
 import { DropdownModule } from 'primeng/dropdown';
+import { ProgressSpinnerModule } from 'primeng/progressspinner';
+import { CookieService } from 'ngx-cookie-service';
+
 
 @Component({
   selector: 'app-home',
@@ -32,15 +35,17 @@ import { DropdownModule } from 'primeng/dropdown';
     FormsModule,
     ButtonModule,
     DropdownModule,
-    CardModule
+    CardModule,
+    ProgressSpinnerModule
   ],
   schemas:[
     CUSTOM_ELEMENTS_SCHEMA
-  ]  
-  
+  ],
 })
 export class HomeComponent implements OnInit,OnDestroy {
   
+  loading: any = true
+
   private subscription: Subscription | undefined;
   
   currentComponent: string | undefined 
@@ -67,26 +72,25 @@ export class HomeComponent implements OnInit,OnDestroy {
 
   constructor(
     private showComponentService: ShowComponentService,
-    private cookieService: CookieService,
-    private authService: AuthService,
-    private dataService: DataService
+    private dataService: DataService,
+    private usuarioService: UsuarioService,
+    private cookieService: CookieService
   ){
   }
   
   async ngOnInit(){
-    this.dni = this.cookieService.get("dni")
-    this.allConcerts = this.dataService.getData("jsonConcerts")["concerts"]
+    const token = this.cookieService.get('token')
+    // this.allConcerts = this.dataService.getData("jsonConcerts")["concerts"]
+    this.usuarioService.getHabilitation().subscribe(event => {
+      this.concertChoice = event.evento
+      this.loading = false
+    })
+
     this.currentComponent! = 'scenario'
     this.subscription = this.showComponentService.componentEvent$.subscribe(name => {
       this.currentComponent = name;
     })
-    const usuario = this.dataService.getData('jsonUsers').usuarios
-
-    this.usuario = usuario.find((u:any) => u.dni == this.dni)
-    const concert = this.usuario?.habilitaciones;
-    this.concertChoice = this.allConcerts.find((value:any) => value.nombre === concert)
-
-    
+    this.usuario = this.dataService.getData('data')
   }
   
   changePage(value:any){

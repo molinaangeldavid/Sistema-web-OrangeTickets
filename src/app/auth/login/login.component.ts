@@ -83,39 +83,39 @@ export class LoginComponent implements OnInit{
     // })
     
     
-    const existeData = this.dataService.getData('jsonData')
-    this.scenarioService.getScenario().subscribe(value => {
-      this.scenario = value
-      if(!existeData){
-        this.dataService.saveData('jsonData',this.scenario)
-      }
-    })
-    const existConfirmados = this.dataService.getData('jsonConfirm')
-    this.confirmadoService.getDatos().subscribe(value => {
-      this.confirmados = value
-      if(!existConfirmados){
-        this.dataService.saveData('jsonConfirm',this.confirmados)
-      }
-    })
+    // const existeData = this.dataService.getData('jsonData')
+    // this.scenarioService.getScenario().subscribe(value => {
+    //   this.scenario = value
+    //   if(!existeData){
+    //     this.dataService.saveData('jsonData',this.scenario)
+    //   }
+    // })
+    // const existConfirmados = this.dataService.getData('jsonConfirm')
+    // this.confirmadoService.getDatos().subscribe(value => {
+    //   this.confirmados = value
+    //   if(!existConfirmados){
+    //     this.dataService.saveData('jsonConfirm',this.confirmados)
+    //   }
+    // })
     
-    const concerts = this.dataService.getData('jsonConcerts')
-    if(!concerts){
-      this.concertService.getDatos().subscribe(data => {
-        this.concerts = data;
-        if(!concerts){
-          this.dataService.saveData('jsonConcerts',this.concerts)
-        }
-      })
-    }
-    const existeReserva = this.dataService.getData('jsonReservation')
-    if(!existeReserva){
-      this.reservationService.getReservation().subscribe(value=> {
-        this.reservas = value 
-        if(!existeReserva){
-          this.dataService.saveData('jsonReservation',this.reservas)
-        }
-      })
-    }
+    // const concerts = this.dataService.getData('jsonConcerts')
+    // if(!concerts){
+    //   this.concertService.getDatos().subscribe(data => {
+    //     this.concerts = data;
+    //     if(!concerts){
+    //       this.dataService.saveData('jsonConcerts',this.concerts)
+    //     }
+    //   })
+    // }
+    // const existeReserva = this.dataService.getData('jsonReservation')
+    // if(!existeReserva){
+    //   this.reservationService.getReservation().subscribe(value=> {
+    //     this.reservas = value 
+    //     if(!existeReserva){
+    //       this.dataService.saveData('jsonReservation',this.reservas)
+    //     }
+    //   })
+    // }
   }
   
   async onSubmit(){
@@ -123,10 +123,10 @@ export class LoginComponent implements OnInit{
     // const dniAdmin = this.users.admin.find((value:any) => this.dni == value.dni)
     try {
       const tokenUser = await firstValueFrom(this.authService.authUser(this.dni))
-      console.log(tokenUser)
       if(tokenUser){
         this.cookieService.set("dni",`${this.dni}`);
-        this.cookieService.set("token",tokenUser);
+        this.cookieService.set("token",tokenUser.token);
+        this.dataService.saveData("data",tokenUser.myUser)
         this.router.navigate(['home'])
       }
     } catch (error:any) {

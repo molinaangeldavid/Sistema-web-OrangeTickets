@@ -8,6 +8,7 @@ import { firstValueFrom } from 'rxjs';
 import { AuthService } from '../../core/services/auth.service';
 import { CookieService } from 'ngx-cookie-service';
 import { Router } from '@angular/router';
+import { DataService } from '../../core/services/data.service';
 
 @Component({
   selector: 'app-admin',
@@ -34,7 +35,8 @@ export class AdminComponent {
   constructor(
     private authService: AuthService,
     private cookieService: CookieService,
-    private router: Router
+    private router: Router,
+    private dataService: DataService
   ){
   }
   
@@ -48,6 +50,8 @@ export class AdminComponent {
       if(tokenAdmin){
         this.cookieService.set("dniAdmin",this.dni)
         this.cookieService.set("token",tokenAdmin.token)
+        this.dataService.saveData('data',tokenAdmin.myUser)
+
         this.router.navigate(['admin'])
       }
     }

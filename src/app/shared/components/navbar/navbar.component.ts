@@ -67,10 +67,12 @@ export class NavbarComponent {
   
   goOut(){
     if(this.menusecreto){
+      this.cookieService.delete('token')
       this.cookieService.delete('dni')
+      localStorage.removeItem('data')
     }else{
       if(this.menusecretoAdmin){
-        this.cookieService.delete('dniAdmin')
+        this.cookieService.delete('token')
       }
     }
     this.router.navigate(['login'])

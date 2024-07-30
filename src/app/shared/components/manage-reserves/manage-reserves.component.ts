@@ -190,7 +190,7 @@ deleteSelectedReserves(dni:any,event:Event) {
 }
 // Fin
 //////////////////////////////
-
+// Aca data es la distribucion del escenario
 updateScenario(data: any) {
   this.scenarioService.notifyScenarioUpdate(data);
 }

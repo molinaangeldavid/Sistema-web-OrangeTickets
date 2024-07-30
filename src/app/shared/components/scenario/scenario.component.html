@@ -1,4 +1,4 @@
-<div class="scenario-container">
+<div class="scenario-container" *ngIf="!loading">
     <!-- <div class="scenario-teatro">Escenario</div> -->
     <div class="scenario">
         <table class="sala" *ngIf="admin"> 
@@ -9,44 +9,47 @@
                 <tr *ngFor="let row of seats[escenario.sala];let rowIndex = index" class="row">
                     <!-- El administrador aca debe saber quien reservo quien pago y los disponibles-->
                     <td *ngFor="let seat of row" [ngClass]="{
-                        'seat': seat, 
-                        'reservated-seat': seat && isReservated(seat),
-                        'paid-seat': seat && isPaid(seat),
-                        'disabled': seat && isDisabledSeat(seat),
-                        'empty-seat':!seat
+                        'seat': existSeat(seat), 
+                        'reservated-seat': existSeat(seat) && isReservated(seat),
+                        'paid-seat': existSeat(seat) && isPaid(seat),
+                        'disabled': existSeat(seat) && isDisabledSeat(seat),
+                        'empty-seat':!existSeat(seat)
                     }" >
-                    </td>
-                    <td class="row-number">
-                        {{ rowIndex + 1 }}
-                    </td>
-                </tr>
-            </tbody>
-        </table>
-        <table class="sala" *ngIf="!admin"> 
-            <thead>
-                <th>Escenario</th>
-            </thead>
-            <tbody class="tbody">
-                <tr *ngFor="let row of seats[escenario.sala];let rowIndex = index" class="row">
-                    <td *ngFor="let seat of row" [ngClass]="{
-                        'seat': seat, 
-                        'disabled': seat && isDisabledSeat(seat),
-                        'seat-available': seat && isAvailable(seat),
-                        'selected-seat': seat && isSelected(seat.fila, seat.asiento),
-                        'reservated-seat': seat && isReservated(seat),
-                        'paid-seat': seat && isPaid(seat) && !mySeat(seat),
-                        'seat-user': seat && mySeat(seat),
-                        'empty-seat':!seat
-                    }" (click)="seat && isAvailable(seat) && toggleSeatSelection(seat.fila, seat.asiento)">
-                    </td>
-                    <td class="row-number">
-                        {{ rowIndex + 1 }}
-                    </td>
-                </tr>
-            </tbody>
-        </table>
-    </div>
+                </td>
+                <td class="row-number">
+                    {{ rowIndex + 1 }}
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="sala" *ngIf="!admin">
+        <thead>
+            <th>Escenario</th>
+        </thead>
+        <tbody class="tbody">
+            <tr *ngFor="let row of seats; let rowIndex = index" class="row">
+                <td *ngFor="let seat of row" [ngClass]="{
+                    'seat': existSeat(seat), 
+                    'disabled': existSeat(seat) && isDisabledSeat(seat),
+                    'seat-available': existSeat(seat) && isAvailable(seat),
+                    'selected-seat': existSeat(seat) && isSelected(seat.fila, seat.butaca),
+                    'reservated-seat': existSeat(seat) && isReservated(seat),
+                    'paid-seat': existSeat(seat) && isPaid(seat),
+                    'empty-seat':!existSeat(seat)
+                }" (click)="existSeat(seat) && isAvailable(seat) && toggleSeatSelection(seat.fila, seat.butaca)">
+            </td>
+            <td class="row-number">
+                {{ rowIndex + 1 }}
+            </td>
+        </tr>
+    </tbody>
+</table>
+</div>
+<div style="text-align: center;">
+    <p-progressSpinner ariaLabel="loading" *ngIf="loading"/>
+</div>
 <div class="guia-color" *ngIf="!admin">
+    <div>
         <div class="guia-row">
             <div class="mis-asientos"></div> 
             <span>Mis Asientos</span>
@@ -55,32 +58,35 @@
             <div class="asientos-disponibles"></div> 
             <span>Disponibles</span>
         </div>
-        <div class="guia-row">
+    </div>
+    <div class="right-position">
+        <div class="guia-row2">
+            <span style="margin-right: 3px;">Reservados </span> 
             <div class="asientos-reservados"></div> 
-            <span>Reservados</span> 
         </div>
-        <div class="guia-row">
+        <div class="guia-row2">
+            <span style="margin-right: 3px;">No disponibles </span> 
             <div class="asientos-pagados"></div> 
-            <span>No disponibles</span> 
         </div>
     </div>
-    <div class="guia-color" *ngIf="admin">
-        <div class="guia-row">
-            <div class="asientos-disponibles"></div> 
-            <span>Disponibles</span>
-        </div>
-        <div class="guia-row">
-            <div class="asientos-reservados"></div> 
-            <span>Reservados</span> 
-        </div>
-        <div class="guia-row">
-            <div class="asientos-pagados"></div> 
-            <span>Confirmados</span> 
-        </div>
+</div>
+<div class="guia-color" *ngIf="admin">
+    <div class="guia-row">
+        <div class="asientos-disponibles"></div> 
+        <span>Disponibles</span>
     </div>
-    
-    <div *ngIf="mostrarBoton" class="btn-content" style="margin-top: 30px;">
-        <p-button label="Confirmar" class="button-scenario" (click)="confirmSeat()" size="small" [disabled]="selectedSeats.size === 0"></p-button>
+    <div class="guia-row">
+        <div class="asientos-reservados"></div> 
+        <span>Reservados</span> 
     </div>
-    
+    <div class="guia-row">
+        <div class="asientos-pagados"></div> 
+        <span>Confirmados</span> 
+    </div>
+</div>
+
+<div *ngIf="mostrarBoton" class="btn-content" style="margin-top: 30px;">
+    <p-button label="Confirmar" class="button-scenario" (click)="confirmSeat()" size="small" [disabled]="selectedSeats.size === 0"></p-button>
+</div>
+
 </div>

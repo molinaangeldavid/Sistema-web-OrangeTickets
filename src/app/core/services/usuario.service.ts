@@ -1,6 +1,8 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { CookieService } from 'ngx-cookie-service';
 import { BehaviorSubject, Observable } from 'rxjs';
+import { AuthService } from './auth.service';
 
 @Injectable({
   providedIn: 'root'
@@ -9,16 +11,17 @@ export class UsuarioService {
 
   usuario: any
 
-  // sala: any
-  // cantidadReservas: any
-  // concert: any
-  path:any = '../../../assets/usuario.json'
-  dataConcert: any
+  // path:any = '../../../assets/usuario.json'
+  path: any = "http://localhost:3000"
 
-  dataUsuario: any
+  token: any
 
   constructor(
-  ) { }
+    private http: HttpClient,
+    private cookieService: CookieService,
+    private authService: AuthService
+  ) { 
+  }
 
   getDni(){
     return this.usuario
@@ -27,17 +30,12 @@ export class UsuarioService {
   setDni(value:string){
     this.usuario = value
   }
-
-  // getReservaInfo(){
-  //   return {
-  //     sala: this.sala,
-  //     cantidad: this.cantidadReservas,
-  //     concert: this.concert
-  //   }
-  // }           
   
-  getData(): any{
-    
+  getHabilitation():Observable<any>{
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${this.authService.getToken()}` 
+    });
+    return this.http.get<any>(`${this.path}/api/estudiantes/estudiante`,{headers})
   }
 
 }

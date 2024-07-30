@@ -81,7 +81,15 @@ tbody:before {
     background: url('../../../../assets/HandSeat.jpg');
     background-size: cover;
 }
-
+.disabled::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none; /* Permite que los clics pasen a través de la capa superpuesta */
+  }
 .empty-seat{
     border: 1px solid #fff;
 }
@@ -93,13 +101,17 @@ tbody:before {
 }
 .guia-color{
     display: flex;
-    flex-direction: column;
     justify-content: center;
     align-items: center;
 }
 .guia-row{
     display: flex;
     justify-content: flex-start;
+}
+.guia-row2{
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
 }
 .mis-asientos,.no-disponibles,.asientos-disponibles,.asientos-reservados,.asientos-pagados{
     width: 7px;
@@ -118,7 +130,38 @@ tbody:before {
 .asientos-pagados{
     background: url('../../../../assets/SoldSeat.jpg');
     background-size: cover;
+} 
+
+.right-position{
+    margin-left: 50px;
 }
+/* .guia-color {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .guia-row {
+    display: flex;
+    justify-content: space-between;
+  }
+  
+  .col {
+    display: flex;
+    align-items: center;
+  }
+  
+  .mis-asientos,
+  .asientos-disponibles,
+  .asientos-reservados,
+  .asientos-pagados {
+    width: 7px;
+    padding: 7px;
+    border: 1px solid #000;
+    border-radius: 3px;
+    margin: 0 6px 6px 0;
+  }
+*/  
 
 .button-scenario{
     margin-top: 15px;

@@ -8,7 +8,8 @@
     </div>
     <div style="display: flex; flex-direction: column; align-items: start;">
         <span class="data-information">Ciclo: {{usuario!.ciclo}}</span>
-        <span class="data-information">Grado/año: {{usuario!.grado}}</span>
+        <span class="data-information">Grado/año: {{usuario!.anio}}</span>
+        <span class="data-information">Division: {{usuario!.division}}</span>
     </div>
 </p-card>
 </div>
@@ -26,24 +27,25 @@
         optionLabel="nombre"
         placeholder="Elegir Concierto" 
         [ngModelOptions]="{standalone: true}"/>
-
     </div>
 </div>
 </div> -->
-
-<div class="display-details" style="margin-bottom: 0;"> 
+<div style="text-align: center;">
+    <p-progressSpinner ariaLabel="loading" *ngIf="loading"/>
+</div>
+<div *ngIf="concertChoice! == undefined">
+    <p style="text-align: center; font-weight: 700;">Este usuario no tiene Concert habilitado. Comuniquese con administracion para mas detalles</p>
+</div>
+<div class="display-details" style="margin-bottom: 0;" *ngIf="concertChoice != undefined"> 
     <div>
         <span style="text-align: center;">{{concertChoice!.nombre}}</span>
-        <span style="text-align: center;">Fecha: {{concertChoice!.fecha}}</span>
+        <span style="text-align: center;">Fecha: {{concertChoice!.fecha | date }}</span>
         <span style="text-align: center;">Hora: {{concertChoice!.hora}}</span>
     </div>
 </div>
 
-<div *ngIf="concertChoice! == null">
-    <p style="text-align: center; font-weight: 700;">Este usuario no tiene Concert habilitado. Comuniquese con administracion para mas detalles</p>
-</div>
 
-<div class="content" style="margin-bottom: 120px" *ngIf="concertChoice! != null">
+<div class="content" style="margin-bottom: 120px" *ngIf="concertChoice! != undefined">
     
     <app-scenario [admin]="admin" [escenario]="concertChoice!" *ngIf="currentComponent === 'scenario' && concertChoice!" (changePage)="changePage($event)"></app-scenario>
     

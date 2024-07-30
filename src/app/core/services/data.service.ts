@@ -17,7 +17,6 @@ export class DataService {
       const data = localStorage.getItem(keyStorage);
       return data ? JSON.parse(data) : null;
     } else {
-      console.warn('localStorage is not available');
       return null
     }
   }
@@ -26,9 +25,7 @@ export class DataService {
   saveData(keyStorage:any,data: any): void {
     if (isPlatformBrowser(this.platformId)) {
       localStorage.setItem(keyStorage, JSON.stringify(data));
-    } else {
-      console.warn('localStorage is not available');
-    }
+    } 
   }
 
   

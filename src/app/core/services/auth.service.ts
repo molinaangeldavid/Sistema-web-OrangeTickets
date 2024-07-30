@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, map} from 'rxjs';
+import { Observable} from 'rxjs';
+import { CookieService } from 'ngx-cookie-service';
 
 @Injectable({
   providedIn: 'root'
@@ -8,13 +9,25 @@ import { Observable, map} from 'rxjs';
 export class AuthService {
 
   path: any = "http://localhost:3000"
+  token: any
 
   constructor(
-    private http: HttpClient
-  ) { }
+    private http: HttpClient,
+    private cookieService: CookieService
+  ) {
+    this.loadToken()
+   }
 
+  private loadToken() {
+    this.token = this.cookieService.get('token');
+  }
 
-
+  getToken(): string {
+    if (!this.token) {
+      this.loadToken();
+    }
+    return this.token;
+  }
   // getDatos(): Observable<any> {
   //   return this.http.get<any>('../../../assets/usuario.json');
   // }
@@ -24,6 +37,7 @@ export class AuthService {
   //     map(value => value.usuarios.find((user:any)=> dni == user.dni))
   //   )
   // }
+
   authUser(dni:any): Observable<any>{
     return this.http.post<any>(`${this.path}/api/estudiantes/login`,{dni})
   }
