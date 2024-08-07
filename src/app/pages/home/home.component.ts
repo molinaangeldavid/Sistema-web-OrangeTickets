@@ -1,4 +1,4 @@
-import { CUSTOM_ELEMENTS_SCHEMA, Component, OnDestroy, OnInit } from '@angular/core';
+import { CUSTOM_ELEMENTS_SCHEMA, Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HTTP_INTERCEPTORS } from '@angular/common/http';
@@ -19,6 +19,7 @@ import { CardModule } from 'primeng/card';
 import { DropdownModule } from 'primeng/dropdown';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { CookieService } from 'ngx-cookie-service';
+import { ElementRefService } from '../../core/services/element-ref.service';
 
 
 @Component({
@@ -70,17 +71,20 @@ export class HomeComponent implements OnInit,OnDestroy {
   menusecreto:any
   menusecretonada: any
 
+  @ViewChild('perfil') perfil!: ElementRef;
+  @ViewChild('concert') concert!: ElementRef;
+
   constructor(
     private showComponentService: ShowComponentService,
     private dataService: DataService,
     private usuarioService: UsuarioService,
-    private cookieService: CookieService
+    private cookieService: CookieService,
+    private elementRefService: ElementRefService
   ){
   }
-  
+
   async ngOnInit(){
     const token = this.cookieService.get('token')
-    // this.allConcerts = this.dataService.getData("jsonConcerts")["concerts"]
     this.usuarioService.getHabilitation().subscribe(event => {
       this.concertChoice = event.evento
       this.loading = false
@@ -93,6 +97,11 @@ export class HomeComponent implements OnInit,OnDestroy {
     this.usuario = this.dataService.getData('data')
   }
   
+  ngAfterViewInit(){
+    this.elementRefService.setElement('perfil',this.perfil.nativeElement)
+    this.elementRefService.setElement('concert',this.concert.nativeElement)
+  }
+
   changePage(value:any){
     this.currentComponent = value
   }

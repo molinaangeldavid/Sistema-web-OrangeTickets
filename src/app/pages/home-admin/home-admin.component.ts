@@ -22,6 +22,7 @@ import { DataService } from '../../core/services/data.service';
 import { CookieService } from 'ngx-cookie-service';
 
 import { Subscription } from 'rxjs';
+import { ConcertService } from '../../core/services/concert.service';
 
 
 
@@ -66,8 +67,9 @@ export class HomeAdminComponent {
 
   constructor(
     private showComponentService: ShowComponentService,
-    private dataService: DataService,
-    private cookieService: CookieService
+    private cookieService: CookieService,
+    private concertService: ConcertService,
+    private dataService: DataService
   ){}
 
   ngOnInit(){
@@ -75,16 +77,13 @@ export class HomeAdminComponent {
     this.subscription = this.showComponentService.componentEvent$.subscribe(name => {
       this.currentComponent = name;
     }) 
-    this.concerts = this.dataService.getData("jsonConcerts")["concerts"]
+    this.concertService.getEvents().subscribe(value => {
+      this.concerts = value
+    })
     this.dni = this.cookieService.get('dniAdmin')
-    this.usuario = this._usuario()
+    this.usuario = this.dataService.getData('data')
   }
 
-  private _usuario(){
-    const user = this.dataService.getData('jsonUsers')['admin']
-    const getAdmin = user.find((elem: any) => elem.dni == this.dni)
-    return getAdmin
-  }
 
   // private _searchScenario(){
   //   const concerts:any = []

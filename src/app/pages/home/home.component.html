@@ -1,5 +1,5 @@
 <app-navbar [menusecreto]="true"></app-navbar>
-<div class="perfil">
+<div class="perfil" id="perfil">
     <p-card role="region" class="subcontainer-perfil">
         <div style="text-align: center;font-weight: 700; margin-bottom: 10px;">Estudiante</div>
     <div style="display: flex; flex-direction: column; justify-content: center; align-items: start;">
@@ -37,7 +37,7 @@
     <p style="text-align: center; font-weight: 700;">Este usuario no tiene Concert habilitado. Comuniquese con administracion para mas detalles</p>
 </div>
 <div class="display-details" style="margin-bottom: 0;" *ngIf="concertChoice != undefined"> 
-    <div>
+    <div id="concert">
         <span style="text-align: center;">{{concertChoice!.nombre}}</span>
         <span style="text-align: center;">Fecha: {{concertChoice!.fecha | date }}</span>
         <span style="text-align: center;">Hora: {{concertChoice!.hora}}</span>
@@ -50,7 +50,7 @@
     <app-scenario [admin]="admin" [escenario]="concertChoice!" *ngIf="currentComponent === 'scenario' && concertChoice!" (changePage)="changePage($event)"></app-scenario>
     
     <div style="margin: 0 auto;">
-        <app-reservated  *ngIf="currentComponent ==='reservated'"></app-reservated>
+        <app-reservated [escenario]="concertChoice!" *ngIf="currentComponent ==='reservated'"></app-reservated>
     </div>
     
 </div>

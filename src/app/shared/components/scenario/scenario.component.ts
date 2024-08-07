@@ -6,6 +6,7 @@ import { lastValueFrom, Subscription } from 'rxjs';
 import { ScenarioService } from '../../../core/services/scenario.service';
 import { ReservationService } from '../../../core/services/reservation.service';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
+import { DataService } from '../../../core/services/data.service';
 
 @Component({
   selector: 'app-scenario',
@@ -38,19 +39,20 @@ export class ScenarioComponent implements OnInit{
   seatOrder: any[] = []
   // La data de todas las reservas
   reservation: any | undefined
-
+  // La data de las reservas de solo el usuario(DNI)
   reservationDni: any
   // El dni del usuario
   dni: any
   // boton desactivo
   isDisabled: boolean | undefined
   // Todos los usuarios
-  users: any | undefined
+  user: any | undefined
   
   constructor(
     private cookieService: CookieService,
     private scenarioService: ScenarioService,
-    private reservationService: ReservationService
+    private reservationService: ReservationService,
+    private dataService: DataService
   ){
   }
   
@@ -60,6 +62,7 @@ export class ScenarioComponent implements OnInit{
     }else{
       this.dni = this.cookieService.get('dni')
     }
+    this.user = this.dataService.getData('data')
     this.subscription = this.scenarioService.updateScenario$.subscribe(data => {
       if (data) {
         this.seats = data
@@ -85,9 +88,52 @@ export class ScenarioComponent implements OnInit{
   getSeatKey(rowIndex: number, seatIndex: number): string {
     return `${rowIndex}-${seatIndex}`;
   }
+
+  // Funcion para ver si es dentro del 8 de noviembre y  9 de noviembre 
+  isWithinReservationLimit(): boolean {
+    const currentDate = new Date();
+    const startDate = new Date(currentDate.getFullYear(), 7, 5, 7, 0, 0);
+    const endDate = new Date(currentDate.getFullYear(), 7, 6, 7, 0, 0);
+    return currentDate >= startDate && currentDate <= endDate;
+  }
+  // Analiza si esta entre el inicio de tiempo de reserva y dos dias despues
+  hasReachedReservationLimit(): boolean {
+    if (this.isWithinReservationLimit()) {
+      return !this.canReserveMoreSeats(this.user.anio);
+    }
+    return false;
+  }
+  // Retorna un string indicando que parte del dia es
+  getCurrentReservationPhase(): string {
+    const currentDate = new Date();
+    const hours = currentDate.getHours();
+    
+    if (this.isWithinReservationLimit()) {
+      if (hours >= 7 && hours < 13) {
+        return 'morning'; // 7 am - 1 pm
+      } else if (hours >= 14 && hours < 20) {
+        return 'afternoon'; // 2 pm - 8 pm
+      }
+    }
+    return 'none'; // Fuera del rango de restricción de 6-9 de noviembre o fuera de horas específicas
+  }
+  
+  canReserveMoreSeats(nivel:any): boolean {
+    const reservationPhase = this.getCurrentReservationPhase();
+    
+    if (reservationPhase === 'morning' && nivel === 6) {
+      return this.reservationDni && this.reservationDni.length < 2;
+    } else if (reservationPhase === 'afternoon') {
+      return this.reservationDni && this.reservationDni.length < 5;
+    }
+    return true; // Sin restricciones fuera de las fechas y horas especificadas
+  }
   
   toggleSeatSelection(row:any,seat:any){
-    console.log(this.getSeatKey(row,seat))
+    if(this.isWithinReservationLimit() && this.selectedSeats.size >= 5){
+      return;
+    }
+    
     const seatKey = this.getSeatKey(row, seat);
     if (this.selectedSeats.has(seatKey)) {
       this.selectedSeats.delete(seatKey);
@@ -95,58 +141,30 @@ export class ScenarioComponent implements OnInit{
       this.selectedSeats.add(seatKey);
     }
     
-    if((this.reservation.dni == undefined || this.reservation.dni != undefined && this.reservation.dni.length < 5)){
-      const seatKey = this.getSeatKey(row, seat);
-      
-      if (this.selectedSeats.has(seatKey)) {
-        // Si el asiento ya está seleccionado, lo eliminamos del conjunto y de la orden
-        this.selectedSeats.delete(seatKey);
-        this.seatOrder = this.seatOrder.filter(key => key !== seatKey);
+    if (this.selectedSeats.has(seatKey)) {
+      // Si el asiento ya está seleccionado, lo eliminamos del conjunto y de la orden
+      this.selectedSeats.delete(seatKey);
+      this.seatOrder = this.seatOrder.filter(key => key !== seatKey);
+    } else {
+      // Si el asiento no está seleccionado, lo agregamos
+      if (this.selectedSeats.size < 5) {
+        this.selectedSeats.add(seatKey);
+        this.seatOrder.push(seatKey);
       } else {
-        // Si el asiento no está seleccionado, lo agregamos
-        if (this.selectedSeats.size < 5) {
-          this.selectedSeats.add(seatKey);
-          this.seatOrder.push(seatKey);
-        } else {
-          // Si ya hay 5 asientos seleccionados, eliminamos el primero y luego agregamos el nuevo
-          const firstSeatKey = this.seatOrder.shift();
-          if (firstSeatKey) {
-            this.selectedSeats.delete(firstSeatKey);
-          }
-          this.selectedSeats.add(seatKey);
-          this.seatOrder.push(seatKey);
+        // Si ya hay 5 asientos seleccionados, eliminamos el primero y luego agregamos el nuevo
+        const firstSeatKey = this.seatOrder.shift();
+        if (firstSeatKey) {
+          this.selectedSeats.delete(firstSeatKey);
         }
+        this.selectedSeats.add(seatKey);
+        this.seatOrder.push(seatKey);
       }
     }
+    
   }
   
-  // getSeatClass(seat: any): string {
-  //   if (!seat) {
-  //     return 'empty-seat';
-  //   }
-  //   // if (this.mySeat(seat)) {
-  //   //   return 'seat-user';
-  //   // }
-  //   if (this.isPaid(seat)) {
-  //     return 'paid-seat';
-  //   }
-  //   if (this.isReservated(seat)) {
-  //     return 'reservated-seat';
-  //   }
-  //   if (this.isSelected(seat.fila, seat.butaca)) {
-  //     return 'selected-seat';
-  //   }
-  //   if (this.isAvailable(seat)) {
-  //     return 'seat-available';
-  //   }
-  //   if (this.isDisabledSeat(seat)) {
-  //     return 'disabled-seat';
-  //   }
-  //   return 'seat';
-  // }
-  
   isAvailable(seat:any){
-    return seat.estado == 'disponible'
+    return !this.isReservated(seat) && !this.isPaid(seat)
   }
   
   isSelected(row: any, seat: any): boolean{
@@ -158,24 +176,20 @@ export class ScenarioComponent implements OnInit{
   }
   
   isReservated(seat:any):boolean{
-    return seat.estado == 'reservado'
+    return this.reservation.some((reservedSeat:any) => reservedSeat.fila === seat.fila && reservedSeat.butaca === seat.butaca && reservedSeat.estado === "reservado");
   }
   
   isPaid(seat: any):boolean{
-    return seat.estado == 'pagado'
+    return this.reservation.some((reservedSeat:any) => reservedSeat.fila === seat.fila && reservedSeat.butaca === seat.butaca && reservedSeat.estado === "pagado");
   }
   
-  // mySeat(seat:any){
-  //   if(!this.reservation){
-  //     return false
-  //   }
-  //   const isMySeat = this.reservation.some((s:any) => ((s.fila === seat.fila) && (s.asiento === seat.asiento)));
-  //   return isMySeat 
-  // }
+  mySeat(seat:any){
+    return this.reservationDni.some((s:any) => ((s.fila === seat.fila) && (s.butaca === seat.butaca)));
+  }
   
   isDisabledSeat(seat: any){
     if(seat.fila == 8){
-      if(seat.butaca === '51' || seat.butaca === '53' || seat.butaca === '55'){
+      if(seat.tipo == 'd'){
         return true
       }
     }
@@ -190,6 +204,7 @@ export class ScenarioComponent implements OnInit{
     const now = new Date();
     const currentDate = `${now.getFullYear()}-${this.padNumber(now.getMonth() + 1)}-${this.padNumber(now.getDate())}`;
     const currentTime = `${this.padNumber(now.getHours())}:${this.padNumber(now.getMinutes())}`;
+    
     return {
       currentDate,
       currentTime,
@@ -200,59 +215,33 @@ export class ScenarioComponent implements OnInit{
     }
     
     confirmSeat(){
-      
-      //   evento_id: { type: Number, required: true },
-      // fila: { type: Number, required: true },
-      // butaca: { type: String, required: true },
-      // estado: { type: String, default: "disponible" },
-      // dni: { type: Number, default:0 },
-      // admin: { type: Number,default:0 },
-      // fechaDni: { type: Date, default: Date.now },
-      // fechaAdmin: { type: Date, default: Date.now }
       if(this.selectedSeats.size == 0){
         return
       }
       
       const reserveDone: any[] = []
+      
       const now = new Date();
       
-      const currentDate = `${now.getFullYear()}-${this.padNumber(now.getMonth() + 1)}-${this.padNumber(now.getDate())}`;
-      
-      const currentTime = `${this.padNumber(now.getHours())}:${this.padNumber(now.getMinutes())}`;
-      
       this.selectedSeats.forEach(seatKey => {
-        const [fila, asiento] = seatKey.split('-').map(Number);
+        const [fila, butaca] = seatKey.split('-').map(Number);
         reserveDone.push({
+          evento_id:this.escenario.sala,
           fila,
-          asiento,
-          fecha:currentDate,
-          hora: currentTime,
-          concert: this.escenario.nombre,
-          validado: null,
-          estado: 'reservado'
+          butaca,
+          estado: 'reservado',
+          dni: this.dni,
+          fechaDni:now
         })
-        
-        // cambia de estado a reservado solo para en la funcionalidad del usuario
-        for (let row of this.seats[this.escenario.sala]) {
-          if (!row) continue;
-          for (let seat of row) {
-            if (seat && seat.fila === fila && seat.asiento === asiento) {
-              seat.estado = 'reservado';
-            }
-          }
-        }
-        
       });
-      if(this.reservation.hasOwnProperty(this.dni)){
-        this.reservation[this.dni] = this.reservation[this.dni].concat(reserveDone)
-      }else{
-        this.reservation[this.dni] = reserveDone
-        
-      }
-      // this.dataService.saveData(this.storageReserve,this.reservation)
-      
-      // this.dataService.saveData(this.storageScenario,this.seats)
-      
+      this.reservationService.postReservations(reserveDone,this.dni).subscribe(
+        (response) => {
+          console.log('Reservas Guardadas', response)
+        },
+        (error) => {
+          console.log('Error al guardar reservas', error)
+        }
+      )
       const pageReservation = 'reservated'
       this.changePage.emit(pageReservation)
       
