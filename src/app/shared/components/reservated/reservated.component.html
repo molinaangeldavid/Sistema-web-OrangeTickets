@@ -1,5 +1,5 @@
-<div class="card-content" style="margin: auto;">
-  <div class="card" id="card">
+<div class="card-content" style="margin: auto;" >
+  <div class="card" id="card" *ngIf="reserves!">
     <p-table [columns]="cols" [value]="reserves" [tableStyle]="{'width': 'auto', 'margin':'0 auto'}">
       <ng-template pTemplate="header" let-columns>
         <tr>
@@ -34,22 +34,6 @@
       </ng-template>
     </p-table>
   </div>
-  <!-- <div class="pdf-text" id="info">
-    <span style="text-align: center;">Detalles de reserva</span>
-    <div style="display: flex;">
-      <span>Dni: {{info.dni}}</span>
-      <span>Nombre y Apellido{{info.nombre}}</span>
-      <span>Ciclo: {{info.ciclo}}</span>
-      <span>Nivel: {{info.anio}}</span>
-      <span>Division: {{info.division}}</span>
-    </div>
-    <div style="display: flex;">
-      <span><strong>Concert</strong></span>
-      <span>Nombre: {{escenario.nombre}}</span>
-      <span>Fecha: {{escenario.fecha | date:'shortDate'}}</span>
-      <span>hora: {{escenario.hora}}</span>
-    </div>
-  </div> -->
   <div class="download-reserves">
     <button pButton class="p-button-success" (click)="downloadReserves()" icon="pi pi-download" label="Descargar"></button>
   </div>

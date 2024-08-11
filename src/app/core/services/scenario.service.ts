@@ -9,23 +9,17 @@ import { AuthService } from './auth.service';
 })
 export class ScenarioService {
 
-  private updateScenarioSource = new BehaviorSubject<any>(null);
+  private updateScenarioSource = new BehaviorSubject<any>(false);
   updateScenario$ = this.updateScenarioSource.asObservable();
-  
-  // pathScenario: string = '../../../assets/escenario.json'
 
   path: any = 'http://localhost:3000'
+
   // evento: 
   constructor(
     private http: HttpClient, 
-    private cookieService: CookieService,
     private authService:AuthService
   ) { 
   }
-
-  // getScenario(): Observable<any>{
-  //   return this.http.get(this.pathScenario)
-  // }
   
   getScenario(evento:any): Observable<any>{
     const headers = new HttpHeaders({
@@ -33,32 +27,15 @@ export class ScenarioService {
     });
     return this.http.get<any>(`${this.path}/api/estudiantes/sala/${evento}`,{headers})
   }
-
-  notifyScenarioUpdate(data: any) {
-    this.updateScenarioSource.next(data);
+  getScenarioAdmin(evento:any): Observable<any>{
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${this.authService.getToken()}` 
+    });
+    return this.http.get<any>(`${this.path}/api/admin/sala/${evento}`,{headers})
   }
 
-  sendScenario(scenario:any){ 
-    return scenario
+  notifyScenarioUpdate() {
+    this.updateScenarioSource.next(true);
   }
-
-  // getScenario2(): Observable<any>{
-  //   return this.http.get(this.pathScenario2)
-  // }
-  
-  // putScenario(body: any): Observable<any>{  
-  //   const headers = new HttpHeaders({'Content-Type':'application/json'})
-  //   return this.http.post(this.pathScenario,body,{headers})
-  // }
-  
-  // postReserve(seats: any): Observable<any>{
-  //   const headers = new HttpHeaders({'Content-Type':'application/json'})
-  //   return this.http.post(this.pathReserve,seats,{headers})
-  // }
-  
-  // putReserve(seat: any): Observable<any>{
-  //   const headers = new HttpHeaders({'Content-Type':'application/json'})
-  //   return this.http.put(this.pathReserve,seat,{headers})
-  // }
   
 }

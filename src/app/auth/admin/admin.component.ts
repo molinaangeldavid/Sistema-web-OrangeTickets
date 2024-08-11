@@ -50,7 +50,7 @@ export class AdminComponent {
       if(tokenAdmin){
         this.cookieService.set("dniAdmin",this.dni)
         this.cookieService.set("token",tokenAdmin.token)
-        this.dataService.saveData('data',tokenAdmin.myUser)
+        this.dataService.saveData('data',tokenAdmin.myUser) 
 
         this.router.navigate(['admin'])
       }

@@ -23,19 +23,25 @@ export class UsuarioService {
   ) { 
   }
 
-  getDni(){
-    return this.usuario
-  }
+  // getDni(){
+  //   return this.usuario
+  // }
   
-  setDni(value:string){
-    this.usuario = value
-  }
+  // setDni(value:string){
+  //   this.usuario = value
+  // }
   
-  getHabilitation():Observable<any>{
+  getHabilitation(dni:any):Observable<any>{
     const headers = new HttpHeaders({
       'Authorization': `Bearer ${this.authService.getToken()}` 
     });
-    return this.http.get<any>(`${this.path}/api/estudiantes/estudiante`,{headers})
+    return this.http.get<any>(`${this.path}/api/estudiantes/estudiante/${dni}`,{headers})
   }
 
+  getAllUsers(): Observable<any>{
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${this.authService.getToken()}`
+    })
+    return this.http.get<any>(`${this.path}/api/admin/usuarios`,{headers})
+  }
 }

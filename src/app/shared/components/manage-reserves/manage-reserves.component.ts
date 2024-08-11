@@ -1,7 +1,6 @@
 import { CUSTOM_ELEMENTS_SCHEMA, ChangeDetectorRef, Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
-import { DataService } from '../../../core/services/data.service';
 import { ScenarioService } from '../../../core/services/scenario.service';
 
 import { TableModule } from 'primeng/table';
@@ -15,6 +14,11 @@ import { ConfirmationService, MessageService, PrimeNGConfig } from 'primeng/api'
 
 import * as XLSX from 'xlsx';
 import { saveAs } from 'file-saver';
+import { lastValueFrom } from 'rxjs';
+import { ReservationService } from '../../../core/services/reservation.service';
+import { UsuarioService } from '../../../core/services/usuario.service';
+
+import { AdminPipe } from '../../pipes/admin.pipe';
 
 @Component({
   selector: 'app-manage-reserves',
@@ -27,7 +31,8 @@ import { saveAs } from 'file-saver';
     IconFieldModule,
     InputIconModule,
     InputTextModule,
-    ConfirmDialogModule
+    ConfirmDialogModule,
+    AdminPipe
   ],
   templateUrl: './manage-reserves.component.html',
   styleUrl: './manage-reserves.component.css',
@@ -50,17 +55,19 @@ export class ManageReservesComponent implements OnInit,OnChanges {
   
   allUsers: any  = []
   
-  allSeats: any
+  // allSeats: any
   
-  selectedProducts: any
+  selectedReserves: any
   
   constructor(
-    private dataService: DataService,
     private confirmationService: ConfirmationService,
     private messageService: MessageService,
     private primengConfig: PrimeNGConfig,
     private scenarioService:ScenarioService,
+    private reservationService: ReservationService,
+    private usuarioService: UsuarioService,
     private cdr: ChangeDetectorRef
+
   ){
     this.primengConfig.setTranslation({
       accept: 'Sí',
@@ -68,39 +75,46 @@ export class ManageReservesComponent implements OnInit,OnChanges {
     });
   }
   
-  ngOnInit(){
-    this.allSeats = this.dataService.getData('jsonData')
-    this.reserves = this.dataService.getData('jsonReservation');
-    this.allUsers = this.dataService.getData('jsonUsers')
-    this.users = this.allUsers.usuarios.filter((user: any) => {
-      const userReservations = this.reserves[user.dni] || [];
-      return userReservations.some((reserva: any) => {
-        reserva.concert === this.escenario && 
-        (reserva.estado === 'reservado' || reserva.estado === 'pagado')
-      });
+  async ngOnInit(){
+    try {
+      const [reservation,users] = await Promise.all([
+        lastValueFrom(this.reservationService.getAllReservations(this.escenario.sala)),
+        lastValueFrom(this.usuarioService.getAllUsers())
+      ])
+  
+      this.reserves = reservation
+      this.allUsers = users
+    } catch (error) {
+      console.log(error)
+    }
+    const userReservations = this.reserves.filter((reserva:any) => {
+      return reserva.evento_id === this.escenario.id && 
+      (reserva.estado === 'reservado' || reserva.estado === 'pagado')
+    });
+    const validUser = new Set(userReservations.map((reserva:any)=> reserva.dni))
+    this.users = this.allUsers.filter((user: any) => {
+      return validUser.has(user.dni)
     });
 }
-ngOnChanges(changes:SimpleChanges){
+async ngOnChanges(changes:SimpleChanges){
   if (changes['escenario'] && changes['escenario'].currentValue) {
-    this.reserves = this.dataService.getData('jsonReservation')
+    const reservation = await lastValueFrom(this.reservationService.getAllReservations(this.escenario.sala))
+    this.reserves = reservation
     setTimeout(() => {
-      this.allUsers = this.dataService.getData('jsonUsers');
-      const updatedUsers = this.allUsers.usuarios.filter((user: any) => {
-        const userReservations = this.reserves[user.dni] || [];
-        const escenarioNombre = changes['escenario'].currentValue.nombre;
-        return userReservations.some((reserva: any) => 
-          reserva.concert === escenarioNombre && 
+      const userReservations = this.reserves.filter((reserva:any) => {
+        return reserva.evento_id === this.escenario.id && 
         (reserva.estado === 'reservado' || reserva.estado === 'pagado')
-      );
-    });
-    
-    // Reemplazar el array completo para que Angular detecte el cambio
-    this.users = [...updatedUsers];
-    
-    // Forzar la detección de cambios
-    this.cdr.detectChanges();
-  }, 0);
-} 
+      });
+      const validUser = new Set(userReservations.map((reserva:any)=> reserva.dni))
+      const updatedUsers = this.allUsers.filter((user:any) => {
+        return validUser.has(user.dni)
+      })
+      // Reemplazar el array completo para que Angular detecte el cambio
+      this.users = [...updatedUsers];
+      // Forzar la detección de cambios
+      this.cdr.detectChanges();
+    },0);
+  } 
 }
 
 //////////////////////////////////////
@@ -108,8 +122,8 @@ ngOnChanges(changes:SimpleChanges){
 confirmSelectedReserves(dni:any,event:Event){
   const now = new Date();
   
-  const currentDate = `${this.padNumber(now.getDate())}-${this.padNumber(now.getMonth() + 1)}-${now.getFullYear()}`;
-  const currentTime = `${this.padNumber(now.getHours())}:${this.padNumber(now.getMinutes())}`;
+  // const currentDate = `${this.padNumber(now.getDate())}-${this.padNumber(now.getMonth() + 1)}-${now.getFullYear()}`;
+  // const currentTime = `${this.padNumber(now.getHours())}:${this.padNumber(now.getMinutes())}`;
   
   this.confirmationService.confirm({
     message: 'Estas seguro/a de confirmar las reservas seleccionadas?',
@@ -117,39 +131,29 @@ confirmSelectedReserves(dni:any,event:Event){
     target: event.target as EventTarget,
     icon: 'pi pi-exclamation-triangle',
     accept: () => {
-      const userConfirm = this.dniSelected.filter((val:any) => this.selectedProducts?.includes(val));
+      const userConfirm = this.dniSelected.filter((val:any) => this.selectedReserves?.includes(val));
       userConfirm.forEach((value:any) => {
-        const [fila, asiento] = [value.fila,value.asiento]
-        value.fecha = currentDate
-        value.hora = currentTime
+        value.admin = this.admin.dni 
+        value.fechaAdmin = now
         value.estado = 'pagado'
-        value.validado = `${this.admin.nombre} ${this.admin.apellido}`
-        
-        for (let row of this.allSeats[this.escenario.sala]) {
-          if (!row) continue;
-          for (let seat of row) {
-            if (seat && seat.fila === fila && seat.asiento === asiento) {
-              seat.estado = 'pagado';
-            }
-          }
-        }
       })
-      this.updateScenario(this.allSeats)
-      this.dataService.saveData('jsonData',this.allSeats)
-      
-      this.reserves = {...this.reserves}
-      console.log(this.reserves)
-      this.reserves[dni] = this.dniSelected
-      console.log(this.reserves[dni])
-      this.dataService.saveData('jsonReservation',this.reserves)
-      
-      this.selectedProducts = null;
-      
-      const confirm = this.dataService.getData('jsonConfirm')
-      confirm[dni] = this.reserves[dni]
-      this.dataService.saveData('jsonConfirm',confirm)
-      
-      this.messageService.add({ severity: 'success', summary: 'Confirmacion Exitosa', detail: 'Reservas eliminadas', life: 3000 });
+      try {
+        this.reservationService.confirmReserves(dni,this.admin.dni,userConfirm).subscribe({
+          next: () => {
+            this.reserves = {...this.reserves}
+            this.selectedReserves = null;
+            this.scenarioService.notifyScenarioUpdate()
+            this.messageService.add({ severity: 'success', summary: 'Confirmacion Exitosa', detail: 'Reservas eliminadas', life: 3000 });
+          },
+          error: () => {
+            this.scenarioService.notifyScenarioUpdate()
+            this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Ocurrió un error al confirmar las reservas', life: 3000 });
+          }
+        });
+      } catch (error) {
+        this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Ocurrió un error inesperado', life: 3000 });
+      }   
+
     }
   });
 }
@@ -162,38 +166,31 @@ deleteSelectedReserves(dni:any,event:Event) {
     header: 'Eliminacion',
     icon: 'pi pi-exclamation-triangle',
     accept: () => {
-      // this.dniSelected = reserves[user.dni].filter((val:any) => !this.selectedProducts?.includes(val));
-      const eliminadas = this.dniSelected.filter((val:any) => this.selectedProducts?.includes(val));
-      this.dniSelected = this.dniSelected.filter((val:any) => !this.selectedProducts?.includes(val));
-      eliminadas.forEach((value:any) => {
-        const [fila, asiento] = [value.fila,value.asiento]
-        
-        for (let row of this.allSeats[this.escenario.sala]) {
-          if (!row) continue;
-          for (let seat of row) {
-            if (seat && seat.fila === fila && seat.asiento === asiento) {
-              seat.estado = 'disponible';
-              
-            }
-          }
-        }
+      const eliminadas = this.dniSelected.filter((val:any) => this.selectedReserves?.includes(val));
+      this.dniSelected = this.dniSelected.filter((val:any) => !this.selectedReserves?.includes(val));
+      this.reservationService.deleteReserves(dni,this.selectedReserves).subscribe({
+        next: () => {
+          this.reserves = {...this.reserves}
+          this.selectedReserves = null
+          this.scenarioService.notifyScenarioUpdate()
+          this.messageService.add({ severity: 'success', summary: 'Exito', detail: 'Reservas eliminadas satisfactoriamente', life: 3000 });
+        },
+        error: () => {
+          this.scenarioService.notifyScenarioUpdate()
+          this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Erro al eliminar las reservas', life: 3000 });
+        },
       })
       
-      this.updateScenario(this.allSeats)
-      this.reserves[dni] = this.dniSelected
-      this.dataService.saveData('jsonReservation',this.reserves)
-      this.dataService.saveData('jsonData',this.allSeats)
-      this.selectedProducts = null;
-      this.messageService.add({ severity: 'success', summary: 'Successful', detail: 'Products Deleted', life: 3000 });
+      // this.updateScenario(this.allSeats)
     }
   });
 }
 // Fin
 //////////////////////////////
 // Aca data es la distribucion del escenario
-updateScenario(data: any) {
-  this.scenarioService.notifyScenarioUpdate(data);
-}
+// updateScenario(data: any) {
+//   this.scenarioService.notifyScenarioUpdate(data);
+// }
 ///////////////////////////////
 ///////////////////////////////////
 // Aqui se quitan todas las reservas por usuario y los asientos vuelven a estar disponible
@@ -255,31 +252,32 @@ acceptAllReserves(user:any,event:Event){
     rejectIcon:"none",
     rejectButtonStyleClass:"p-button-text",
     accept: () => {
-      this.reserves[user.dni].forEach((reserve:any) => {
-        const [fila, asiento] = [reserve.fila,reserve.asiento]
-        reserve.fecha = currentDate
-        reserve.hora = currentTime
-        reserve.estado = 'pagado'
-        reserve.validado = `${this.admin.nombre} ${this.admin.apellido}`
+      console.log(user)
+      // this.reserves[user.dni].forEach((reserve:any) => {
+      //   const [fila, asiento] = [reserve.fila,reserve.asiento]
+      //   reserve.fecha = currentDate
+      //   reserve.hora = currentTime
+      //   reserve.estado = 'pagado'
+      //   reserve.validado = `${this.admin.nombre} ${this.admin.apellido}`
         
         // cambia de estado a reservado solo para en la funcionalidad del usuario
-        for (let row of this.allSeats[this.escenario.sala]) {
-          if (!row) continue;
-          for (let seat of row) {
-            if (seat && seat.fila === fila && seat.asiento === asiento) {
-              seat.estado = 'pagado';
-            }
-          }
-        }
-      })
-      this.reserves = {...this.reserves}
-      const confirm = this.dataService.getData('jsonConfirm')
-      confirm[user.dni] = this.reserves[user.dni]
-      user = {...user}
-      this.updateScenario(this.allSeats)
-      this.dataService.saveData('jsonReservation',this.reserves)
-      this.dataService.saveData('jsonConfirm',confirm)
-      this.dataService.saveData('jsonData',this.allSeats)
+        // for (let row of this.allSeats[this.escenario.sala]) {
+        //   if (!row) continue;
+        //   for (let seat of row) {
+        //     if (seat && seat.fila === fila && seat.asiento === asiento) {
+        //       seat.estado = 'pagado';
+        //     }
+        //   }
+        // }
+      // })
+      // this.reserves = {...this.reserves}
+      // const confirm = this.dataService.getData('jsonConfirm')
+      // confirm[user.dni] = this.reserves[user.dni]
+      // user = {...user}
+      // this.updateScenario(this.allSeats)
+      // this.dataService.saveData('jsonReservation',this.reserves)
+      // this.dataService.saveData('jsonConfirm',confirm)
+      // this.dataService.saveData('jsonData',this.allSeats)
       this.messageService.add({ severity: 'info', summary: 'Confirmado', detail: 'Todas las reservas pasaron a ser confirmadas' });
     },
     reject: () => {
@@ -333,7 +331,9 @@ descarga(){
 showDialog(dni: any):void{
   // DNISELECTED es el array de reservas de ese dni
   this.aloneDni = dni
-  this.dniSelected = this.reserves[dni] || [];
+  this.reservationService.getReservationAdmin(dni).subscribe(value=>{
+    this.dniSelected = value
+  })
   this.dialogVisible = true;
 }
 }

@@ -78,17 +78,22 @@ export class HomeComponent implements OnInit,OnDestroy {
     private showComponentService: ShowComponentService,
     private dataService: DataService,
     private usuarioService: UsuarioService,
-    private cookieService: CookieService,
-    private elementRefService: ElementRefService
+    private elementRefService: ElementRefService,
+    private cookieService: CookieService
   ){
   }
 
   async ngOnInit(){
-    const token = this.cookieService.get('token')
-    this.usuarioService.getHabilitation().subscribe(event => {
-      this.concertChoice = event.evento
+    this.dni = this.cookieService.get('dni')
+    try {
+      this.usuarioService.getHabilitation(this.dni).subscribe(event => {
+        this.concertChoice = event.evento
+      })
+    } catch (error) {
+      console.log(error)
+    }finally{
       this.loading = false
-    })
+    }
 
     this.currentComponent! = 'scenario'
     this.subscription = this.showComponentService.componentEvent$.subscribe(name => {
@@ -98,8 +103,8 @@ export class HomeComponent implements OnInit,OnDestroy {
   }
   
   ngAfterViewInit(){
-    this.elementRefService.setElement('perfil',this.perfil.nativeElement)
-    this.elementRefService.setElement('concert',this.concert.nativeElement)
+    this.elementRefService.setElement('perfil',this.perfil!.nativeElement)
+    this.elementRefService.setElement('concert',this.concert!.nativeElement)
   }
 
   changePage(value:any){

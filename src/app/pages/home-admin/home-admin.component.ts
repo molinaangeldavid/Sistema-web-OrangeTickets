@@ -69,9 +69,11 @@ export class HomeAdminComponent {
     private showComponentService: ShowComponentService,
     private cookieService: CookieService,
     private concertService: ConcertService,
-    private dataService: DataService
-  ){}
+    private dataService: DataService,
+  ){
 
+  }
+  
   ngOnInit(){
     this.currentComponent! = 'reserveManage'
     this.subscription = this.showComponentService.componentEvent$.subscribe(name => {
@@ -80,18 +82,10 @@ export class HomeAdminComponent {
     this.concertService.getEvents().subscribe(value => {
       this.concerts = value
     })
+
     this.dni = this.cookieService.get('dniAdmin')
     this.usuario = this.dataService.getData('data')
   }
 
-
-  // private _searchScenario(){
-  //   const concerts:any = []
-  //   for(let i in this.concerts){
-  //     const c = this.concerts[i]
-  //     concerts.push(c)
-  //   }
-  //   return concerts
-  // }
 
 }

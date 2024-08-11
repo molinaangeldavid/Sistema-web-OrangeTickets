@@ -12,9 +12,6 @@ export class ConcertService {
 
   constructor(private http: HttpClient,private authService: AuthService) { }
 
-  // getDatos(): Observable<any> {
-  //   return this.http.get<any>('../../../assets/concert.json');
-  // }
 
   getEvents(): Observable<any>{
     const headers = new HttpHeaders({
