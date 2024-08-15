@@ -1,33 +1,24 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { HttpClient } from '@angular/common/http';
 
 import { TableModule } from 'primeng/table';
-import { FormsModule } from '@angular/forms';
 import { ToolbarModule } from 'primeng/toolbar';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { ButtonModule } from 'primeng/button';
 import { ToastModule } from 'primeng/toast';
 import { CalendarModule } from 'primeng/calendar';
 import { InputNumberModule } from 'primeng/inputnumber';
-
-
-import { DataService } from '../../../core/services/data.service';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { DialogModule } from 'primeng/dialog';
 import { InputTextModule } from 'primeng/inputtext';
-import {HttpClient } from '@angular/common/http';
+import { DropdownModule } from 'primeng/dropdown';
 
-interface Concert{
-  id?: string,
-  nombre?: string,
-  sala?: string,
-  nombreSala?: string,
-  fecha?: string,
-  hora?: string,
-  teatro?: string,
-  valor?: number
-}
 
+import { DataService } from '../../../core/services/data.service';
+import { ConcertService } from '../../../core/services/concert.service';
+import { ScenarioService } from '../../../core/services/scenario.service';
 
 @Component({
   selector: 'app-events',
@@ -43,7 +34,8 @@ interface Concert{
     DialogModule,
     InputTextModule,
     CalendarModule,
-    InputNumberModule
+    InputNumberModule,
+    DropdownModule
   ],
   templateUrl: './events.component.html',
   styleUrl: './events.component.css',
@@ -53,7 +45,7 @@ export class EventsComponent {
   
   concerts: any | undefined
   
-  concert: Concert | undefined
+  concert: any | undefined
   
   selectedConcerts!: any | null;
   
@@ -61,38 +53,39 @@ export class EventsComponent {
   
   submitted: boolean = false
   
-  copiaSala: any
-  
+  selectedSala:any
+
   fecha: any
   hora: any
   
+  salas: any
+
   constructor(
     private dataService: DataService,
     private messageService: MessageService, 
     private confirmationService: ConfirmationService,
-    private http: HttpClient
+    private concertService: ConcertService,
+    private scenarioService:ScenarioService
   ){
   }
   
   ngOnInit(){
-    this.concerts = this.dataService.getData('jsonConcerts')["concerts"]
-    this.concert = {
-      id: undefined,
-      nombre: "",
-      sala: undefined,
-      nombreSala: "Pablo Neruda",
-      fecha:"",
-      hora:"",
-      teatro:"Paseo La Plaza",
-      valor:0
-    }
-    this.concert ={}
-    this.http.get('../../../../assets/salaCopia.json').subscribe((value:any) => {
-      this.copiaSala = value["salaCopia"]
+    this.concertService.getEvents().subscribe(e => {
+      this.scenarioService.getSalasAdmin().subscribe(salas => {
+        this.salas = salas
+        this.concerts = e.map((c:any) => ({
+          ...c,
+          salaNombre: this.getSalaNombre(c.sala)
+        }))
+      })
     })
-
   }
   
+  getSalaNombre(salaId: number): string {
+    const sala = this.salas.find((s:any) => s.sala === salaId);
+    return sala ? sala.nombre : 'Sala desconocida';
+  }
+
   new(){
     this.concert = {};
     this.submitted = false;
@@ -111,7 +104,6 @@ export class EventsComponent {
       icon: 'pi pi-exclamation-triangle',
       accept: () => {
           this.concerts = this.concerts.filter((val:any) => !this.selectedConcerts?.includes(val));
-          this.dataService.saveData('jsonConcerts',{"concerts":this.concerts})
           this.selectedConcerts = null;
           this.messageService.add({ severity: 'success', summary: 'Exito', detail: 'Concerts eliminados', life: 3000 });
       }
@@ -170,7 +162,7 @@ export class EventsComponent {
       } else {
         const dataConcerts = this.dataService.getData('jsonData')
         this.concert!.id = this.createId();
-        dataConcerts[this.concert!.id] = this.copiaSala
+        // dataConcerts[this.concert!.id] = this.copiaSala
         this.concert!.sala = this.concert!.id
         this.concert!.fecha = this.getFormattedDate(this.fecha);
         this.concert!.hora = this.getFormattedTime(this.hora);

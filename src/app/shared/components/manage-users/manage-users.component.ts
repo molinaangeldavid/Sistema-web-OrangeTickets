@@ -15,6 +15,9 @@ import { CalendarModule } from 'primeng/calendar';
 import { FloatLabelModule } from 'primeng/floatlabel';
 
 import { DataService } from '../../../core/services/data.service';
+import { UsuarioService } from '../../../core/services/usuario.service';
+import { ConcertService } from '../../../core/services/concert.service';
+import { AdminService } from '../../../core/services/admin.service';
 
 @Component({
   selector: 'app-manage-users',
@@ -39,16 +42,17 @@ import { DataService } from '../../../core/services/data.service';
 })
 export class ManageUsersComponent {
 
-  users: any | undefined
+  habilitarDiv: boolean = false;
+  deshabilitarDiv: boolean = false;
 
-  // dniSelected: any
+  users: any | undefined
  
   concerts: any | undefined
   concertChoice: any | undefined
 
   ciclos: any
   cicloChoice: any
-
+  
   niveles:any
   nivelChoice: any
 
@@ -57,42 +61,70 @@ export class ManageUsersComponent {
 
   dateFrom: Date | undefined
   dateTo: Date | undefined
+  today: Date = new Date();
 
   filteredUsers:any
+
+  habilitaciones: any
+
+  loading: boolean = true;
+  totalRecords: number = 0;
+  rowsPerPage: number = 50;
 
   constructor(private dataService: DataService,
     private confirmationService:ConfirmationService,
     private messageService: MessageService,
     private primengConfig: PrimeNGConfig,
+    private adminService:AdminService,
+    private concertService: ConcertService
   ){
     this.primengConfig.setTranslation({
       accept: 'Sí',
       reject: 'No',
     });
-    this.ciclos = [{ciclo:"Kinder"},{ciclo:"Primaria"},{ciclo:"Secundaria"}]
-    this.divisiones = [{division:"A"},{division:"B"}]
+    this.ciclos = [{ciclo:"Todos"},{ciclo:"Kinder"},{ciclo:"Primario"},{ciclo:"Secundario"}]
+    this.divisiones = [{division:"Todos"},{division:"A"},{division:"B"}]
   }
 
   ngOnInit(){
-    this.users = this.dataService.getData('jsonUsers').usuarios
-    this.filteredUsers = [...this.users];
-    this.concerts = this.dataService.getData('jsonConcerts')["concerts"]
+    this.loadData({ first: 0, rows: this.rowsPerPage })
+  }
 
-    // Object.keys(allconcerts).forEach(key => {
-    //   arr.push(allconcerts[key])
-    // })
-    // this.concerts = arr
+  loadData(event:any){
+    this.loading = true
+
+    this.adminService.getAllUsers().subscribe((data:any) => {
+      this.filteredUsers = data.results;  // Resultado filtrado y ordenado
+      this.totalRecords = data.totalRecords;  // Número total de registros después del filtrado
+      this.loading = false;  // Detener el indicador de carga
+  });
+
+    setTimeout(() => {
+      this.adminService.getAllUsers().subscribe(users => {
+        this.users = users
+        this.filteredUsers = [...this.users];
+        this.loading = false;
+      })
+      this.concertService.getEvents().subscribe(concerts => {
+        this.concerts = concerts
+      })
+      this.adminService.getAllHabilitation().subscribe(h => {
+        this.habilitaciones = h
+      })
+    }, 1000)
   }
 
   onCicloChange(selectedCiclo: any) {
     if (selectedCiclo.ciclo === 'Kinder') {
       this.niveles = [
+        { nivel: "Todos" },
         { nivel: 3 },
         { nivel: 4 },
         { nivel: 5 }
       ];
     } else {
       this.niveles = [
+        { nivel: "Todos" },
         { nivel: 1 },
         { nivel: 2 },
         { nivel: 3 },
@@ -106,11 +138,24 @@ export class ManageUsersComponent {
   }
 
   verFiltro(){
-    this.filteredUsers = this.users.filter((user:any) => {
-      return (!this.cicloChoice || user.ciclo === this.cicloChoice.ciclo) &&
-             (!this.nivelChoice || user.nivel === this.nivelChoice.nivel) &&
-             (!this.divisionChoice || user.division === this.divisionChoice.division);
-    });
+    if(this.cicloChoice.ciclo == "Todos" || this.divisionChoice == "Todos"){
+      this.filteredUsers = this.users
+    }else{
+      this.filteredUsers = this.users.filter((user:any) => {
+        return (!this.cicloChoice || user.ciclo === this.cicloChoice.ciclo) &&
+               (!this.nivelChoice || user.nivel === this.nivelChoice.anio) &&
+               (!this.divisionChoice || user.division === this.divisionChoice.division);
+      });
+    }
+  }
+
+  mostrarDiv(){
+    this.deshabilitarDiv = false
+    this.habilitarDiv = true
+  }
+  mostrarDiv2(){
+    this.habilitarDiv = false
+    this.deshabilitarDiv = true
   }
 
   habilitar(concert:any,event:Event){
@@ -144,6 +189,10 @@ export class ManageUsersComponent {
         this.messageService.add({severity: 'reject', summary: 'Rechazar', detail: 'No se modifico', life: 3000})
       }
     })
+  }
+
+  deshabilitar(concert:any,event:Event){
+
   }
 
   // showDialog(dni:any){

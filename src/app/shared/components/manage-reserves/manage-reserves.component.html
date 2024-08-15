@@ -174,7 +174,7 @@ styleClass="p-datatable-gridlines"
             {{reserve.estado}}
         </td>
         <td *ngIf="reserve.estado == 'pagado'">
-            {{reserve.dni ? (reserve.dni | admin | async) : 'DNI no disponible'}}
+            {{ reserve.dni ? adminMap.get(reserve.dni) : 'DNI no disponible' }}
         </td>
     </tr>
 </ng-template>

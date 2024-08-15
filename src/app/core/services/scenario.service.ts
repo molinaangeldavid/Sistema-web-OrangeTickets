@@ -1,6 +1,5 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { CookieService } from 'ngx-cookie-service';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { AuthService } from './auth.service';
 
@@ -32,6 +31,12 @@ export class ScenarioService {
       'Authorization': `Bearer ${this.authService.getToken()}` 
     });
     return this.http.get<any>(`${this.path}/api/admin/sala/${evento}`,{headers})
+  }
+  getSalasAdmin(): Observable<any>{
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${this.authService.getToken()}` 
+    });
+    return this.http.get<any>(`${this.path}/api/admin/salas`,{headers})
   }
 
   notifyScenarioUpdate() {

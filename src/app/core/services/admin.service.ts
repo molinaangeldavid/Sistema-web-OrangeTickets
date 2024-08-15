@@ -15,6 +15,12 @@ export class AdminService {
     private authService: AuthService
   ) { }
 
+  getAllUsers(): Observable<any>{
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${this.authService.getToken()}`
+    })
+    return this.http.get<any>(`${this.path}/usuarios`,{headers})
+  }
   getAdmins(): Observable<any>{
     const headers = new HttpHeaders({
       'Authorization': `Bearer ${this.authService.getToken()}`
@@ -27,4 +33,12 @@ export class AdminService {
     })
     return this.http.get<any>(`${this.path}/administradores/${dni}`,{headers})
   }
+
+  getAllHabilitation(){
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${this.authService.getToken()}`
+    })
+    return this.http.get<any>(`${this.path}/habilitaciones`,{headers})
+  }
+
 }

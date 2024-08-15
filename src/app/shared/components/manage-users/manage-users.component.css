@@ -1,17 +1,31 @@
-.container-choose,.content-habilitation{
+::ng-deep .p-button {
+    font-size: 14px; /* Cambia el valor según lo que necesites */
+    padding: 8px;
+}
+
+.button-habilitation button{
+    margin-bottom: 10px;
+
+}
+
+.container-choose{
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
     justify-content: center;
+    align-items: center;
     margin-bottom: 15px;
 }
 
 .dropdown-content{
+    width: 100%;
     display: flex;
     justify-content: center;
 }
 
 .content-habilitation{
     margin-top: 25px;
+    display: flex;
+    justify-content: center;
 }
 
 p-dropdown{
@@ -30,11 +44,20 @@ p-calendar{
     padding: 5px !important;
 }
 
+.confirm-habilitation{
+    margin: 10px 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
 .container-table{
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
+    margin-top: 15px;
 }
 
 table div div{

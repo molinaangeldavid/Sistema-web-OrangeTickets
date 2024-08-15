@@ -80,8 +80,15 @@ export class HomeAdminComponent {
       this.currentComponent = name;
     }) 
     this.concertService.getEvents().subscribe(value => {
-      this.concerts = value
-    })
+      this.concerts = value.map((evento:any) => {
+        const fecha = new Date(evento.fecha);
+        const opcionesFecha: Intl.DateTimeFormatOptions = { day: '2-digit', month: '2-digit', year: 'numeric' };
+        return {
+          ...evento,
+          displayLabel: `${evento.nombre} - ${fecha.toLocaleDateString('es-ES', opcionesFecha)} ${evento.hora}`
+        }
+      });
+    });
 
     this.dni = this.cookieService.get('dniAdmin')
     this.usuario = this.dataService.getData('data')

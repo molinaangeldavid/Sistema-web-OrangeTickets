@@ -16,32 +16,19 @@ export class UsuarioService {
 
   token: any
 
+  allUsers: any
+
   constructor(
     private http: HttpClient,
     private cookieService: CookieService,
     private authService: AuthService
   ) { 
   }
-
-  // getDni(){
-  //   return this.usuario
-  // }
-  
-  // setDni(value:string){
-  //   this.usuario = value
-  // }
   
   getHabilitation(dni:any):Observable<any>{
     const headers = new HttpHeaders({
       'Authorization': `Bearer ${this.authService.getToken()}` 
     });
     return this.http.get<any>(`${this.path}/api/estudiantes/estudiante/${dni}`,{headers})
-  }
-
-  getAllUsers(): Observable<any>{
-    const headers = new HttpHeaders({
-      'Authorization': `Bearer ${this.authService.getToken()}`
-    })
-    return this.http.get<any>(`${this.path}/api/admin/usuarios`,{headers})
   }
 }

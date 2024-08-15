@@ -66,28 +66,35 @@ export class ScenarioComponent implements OnInit{
       this.dni = this.cookieService.get('dni')
     }
     this.user = this.dataService.getData('data')
-    this.subscription = this.scenarioService.updateScenario$.subscribe(data => {
-      if (data) {
-        this.seats = data
-      }
+    this.subscription = this.scenarioService.updateScenario$.subscribe(() => {
+      this.refreshScenario()
     });
-    if(!this.admin){
-      try {
-        const [scenarioData,allReservation ,reservationData] = await Promise.all([
-          lastValueFrom(this.scenarioService.getScenario(this.escenario.sala)),
-          lastValueFrom(this.reservationService.getAllReservations(this.escenario.sala)),
-          lastValueFrom(this.reservationService.getReservation(this.dni))
-        ]) 
-        this.seats = scenarioData
-        this.reservation = allReservation
+    await this.loadScenario()
+  }
+  
+  async loadScenario(){
+    try {
+      const [scenarioData,allReservation ,reservationData] = await Promise.all([
+        lastValueFrom(this.scenarioService.getScenario(this.escenario.sala)),
+        lastValueFrom(this.reservationService.getAllReservations(this.escenario.sala)),
+        lastValueFrom(this.reservationService.getReservation(this.dni))
+      ]) 
+      this.seats = scenarioData
+      this.reservation = allReservation
+      if(!this.admin){
         this.reservationDni = reservationData
-      } catch (error) {
-        console.error('Error al cargar datos', error)
       }
-      finally{
-        this.loading = false
-      }
+    } catch (error) {
+      console.error('Error al cargar datos', error)
     }
+    finally{
+      this.loading = false
+    }
+  }
+  
+  private async refreshScenario(){
+    this.loading = true;
+    await this.loadScenario()
   }
   
   async ngOnChanges(changes:SimpleChanges){
@@ -126,7 +133,7 @@ export class ScenarioComponent implements OnInit{
     }
     return false;
   }
-
+  
   // Retorna un string indicando que parte del dia es
   getCurrentReservationPhase(): string {
     const currentDate = new Date();
@@ -155,7 +162,7 @@ export class ScenarioComponent implements OnInit{
   
   toggleSeatSelection(row:any,seat:any){
     const seatKey = this.getSeatKey(row, seat);
-
+    
     if (this.selectedSeats.has(seatKey)) {
       this.selectedSeats.delete(seatKey);
     } else {
@@ -240,7 +247,7 @@ export class ScenarioComponent implements OnInit{
       minutes: this.padNumber(now.getMinutes())
     }
   }
-
+  
   confirmSeat(){
     if(this.selectedSeats.size == 0){
       return;
@@ -295,23 +302,24 @@ export class ScenarioComponent implements OnInit{
       }
       
     }
-    );
+  );
+  
+}
+showOccupiedSeatsError() {
+  // Aquí puedes implementar la lógica para mostrar un mensaje al usuario
+  alert('Algunos de los asientos seleccionados ya están ocupados. Por favor, selecciona otros asientos.');
+  setTimeout(() => {
+    // Redirigir a la misma página o componente actual
+    this.router.navigateByUrl(this.router.url)
+  }, 3000); // Espera de 3 segundos antes de redirigir
+}
 
+
+ngOnDestroy(){
+  if (this.subscription) {
+    this.subscription.unsubscribe();
   }
-  
-  showOccupiedSeatsError() {
-    // Aquí puedes implementar la lógica para mostrar un mensaje al usuario
-    alert('Algunos de los asientos seleccionados ya están ocupados. Por favor, selecciona otros asientos.');
-    setTimeout(() => {
-      // Redirigir a la misma página o componente actual
-      this.router.navigateByUrl(this.router.url)
-    }, 3000); // Espera de 3 segundos antes de redirigir
-  }
-  // ngOnDestroy(){
-  // if (this.subscription) {
-  //   this.subscription.unsubscribe();
-  // }
-  // }
-  
+}
+
 }
 
