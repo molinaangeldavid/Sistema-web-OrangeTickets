@@ -53,7 +53,7 @@ export class ManageReservesComponent implements OnInit,OnChanges {
   dniSelected: any | undefined
   aloneDni: any
   
-  allUsers: any  = []
+  allUsers: any
   allAdmins: any 
   selectedReserves: any
   
@@ -84,7 +84,7 @@ export class ManageReservesComponent implements OnInit,OnChanges {
       ])
       
       this.reserves = reservation
-      this.allUsers = users
+      this.allUsers = users.users
       this.allAdmins = admins
 
       this.adminMap = new Map<string, string>();

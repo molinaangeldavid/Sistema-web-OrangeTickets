@@ -1,7 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { HttpClient } from '@angular/common/http';
 
 import { TableModule } from 'primeng/table';
 import { ToolbarModule } from 'primeng/toolbar';
@@ -70,6 +69,14 @@ export class EventsComponent {
   }
   
   ngOnInit(){
+    this.concert = {
+      id: undefined,
+      nombre: "",
+      fecha: new Date(),
+      hora: "",
+      sala:undefined,
+      valor: 0
+    }
     this.concertService.getEvents().subscribe(e => {
       this.scenarioService.getSalasAdmin().subscribe(salas => {
         this.salas = salas
@@ -119,7 +126,6 @@ export class EventsComponent {
         break;
       }
     }
-    
     return index;
   }
   
@@ -146,29 +152,23 @@ export class EventsComponent {
     const minutes = ('0' + time.getMinutes()).slice(-2);
     return `${hours}:${minutes}`;
   }
+
   saveConcert(){
-    this.concert!.nombreSala = "Pablo Neruda"
-    this.concert!.teatro = "Paseo la Plaza"
-    console.log(this.concert?.nombreSala)
     this.submitted = true;
-    
     if (this.concert!.nombre?.trim()) {
       if (this.concert!.id) {
-        this.concert!.fecha = this.getFormattedDate(this.fecha);
+        // this.concert!.fecha = this.getFormattedDate(this.fecha);
+        this.concert!.fecha = this.fecha
         this.concert!.hora = this.getFormattedTime(this.hora);
         this.concerts[this.findIndexById(this.concert!.id)] = this.concert;
-        this.dataService.saveData('jsonConcerts',{"concerts":this.concerts})
         this.messageService.add({ severity: 'success', summary: 'Exito', detail: 'Concert actualizado', life: 3000 });
       } else {
-        const dataConcerts = this.dataService.getData('jsonData')
         this.concert!.id = this.createId();
         // dataConcerts[this.concert!.id] = this.copiaSala
-        this.concert!.sala = this.concert!.id
-        this.concert!.fecha = this.getFormattedDate(this.fecha);
+        this.concert!.salaNombre = this.selectedSala.nombre
+        this.concert!.fecha = this.fecha;
         this.concert!.hora = this.getFormattedTime(this.hora);
         this.concerts.push(this.concert!);
-        this.dataService.saveData('jsonData',dataConcerts)
-        this.dataService.saveData('jsonConcerts',{"concerts":this.concerts})
         this.messageService.add({ severity: 'success', summary: 'Exito', detail: 'Concert creado', life: 3000 });
       }
       
@@ -177,6 +177,7 @@ export class EventsComponent {
       this.concert! = {};
     }
   }
+
   hideDialog() {
     this.concertDialog = false;
     this.submitted = false;

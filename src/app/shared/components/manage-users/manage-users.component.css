@@ -5,7 +5,6 @@
 
 .button-habilitation button{
     margin-bottom: 10px;
-
 }
 
 .container-choose{
@@ -19,7 +18,15 @@
 .dropdown-content{
     width: 100%;
     display: flex;
+    flex-direction: column;
     justify-content: center;
+    align-items: center;
+}
+
+.sub-dropdown-content{
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 .content-habilitation{
@@ -43,14 +50,14 @@ p-calendar{
 #to{
     padding: 5px !important;
 }
-
+/* 
 .confirm-habilitation{
     margin: 10px 0;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
-}
+} */
 
 .container-table{
     display: flex;

@@ -152,8 +152,8 @@ styleClass="p-fluid">
         [(ngModel)]="concert!.valor" 
         inputId="minmaxfraction" 
         mode="decimal" 
-        [minFractionDigits]="2" 
-        [maxFractionDigits]="5" /> 
+        [minFractionDigits]="0" 
+        [maxFractionDigits]="0" /> 
         <small *ngIf="submitted && !concert!.valor">
             El valor es requerido
         </small>

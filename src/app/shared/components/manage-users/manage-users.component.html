@@ -1,10 +1,11 @@
+<h2 style="text-align: center;">
+    Habilitacion de Usuarios
+</h2>
+
 <div class="container-choose">
-    <div style="display: flex; flex-direction: column;" class="button-habilitation">
-        <button pButton type="button" (click)="mostrarDiv()" severity="success" *ngIf="!habilitarDiv">Habilitar Estudiantes</button>
-        <button pButton type="button" (click)="mostrarDiv2()" severity="danger" *ngIf="!deshabilitarDiv">Deshabilitar Estudiantes</button>
-    </div>
-    <div class="dropdown-content" *ngIf="habilitarDiv || deshabilitarDiv">
-        <div *ngIf="habilitarDiv">
+    <div class="dropdown-content">
+        <div style="margin-bottom: 10px; display: flex; flex-direction: column;">
+            <label for="concert">Concert</label>
             <p-dropdown 
             [options]="concerts" 
             [(ngModel)]="concertChoice" 
@@ -12,71 +13,74 @@
             placeholder="Elegir Concierto" 
             [ngModelOptions]="{standalone: true}"/>
         </div>
-        <div>
-            <p-dropdown 
-            [options]="ciclos" 
-            [(ngModel)]="cicloChoice" 
-            (ngModelChange)="onCicloChange($event)"
-            optionLabel="ciclo"
-            placeholder="Elegir Ciclo" 
-            [ngModelOptions]="{standalone: true}"/>
+        <div class="sub-dropdown-content" *ngIf="concertChoice" >
+            <div style="margin-bottom: 10px; display: flex; flex-direction: column;">
+                <label for="Ciclo">Ciclo</label>
+                <p-dropdown 
+                [options]="ciclos" 
+                [(ngModel)]="cicloChoice" 
+                (ngModelChange)="onCicloChange($event)"
+                optionLabel="ciclo"
+                [ngModelOptions]="{standalone: true}"/>
+            </div>
+            <div style="margin-bottom: 10px; display: flex; flex-direction: column;">
+                <label for="anio">Año</label>
+                <p-dropdown
+                [options]="niveles" 
+                [(ngModel)]="nivelChoice" 
+                optionLabel="nivel"
+                [ngModelOptions]="{standalone: true}"/>
+            </div>
+            <div style="margin-bottom: 10px; display: flex; flex-direction: column;">
+                <label for="division">Division</label>
+                <p-dropdown 
+                [options]="divisiones" 
+                [(ngModel)]="divisionChoice" 
+                optionLabel="division"
+                [ngModelOptions]="{standalone: true}"/>
+            </div>
+            <button pButton type="button" (click)="verFiltro()" class="pi pi-search" ></button>
         </div>
-        <div>
-            <p-dropdown
-            [options]="niveles" 
-            [(ngModel)]="nivelChoice" 
-            optionLabel="nivel"
-            placeholder="Elegir Nivel" 
-            [ngModelOptions]="{standalone: true}"/>
-        </div>
-        <div>
-            <p-dropdown 
-            [options]="divisiones" 
-            [(ngModel)]="divisionChoice" 
-            optionLabel="division"
-            placeholder="Elegir Division" 
-            [ngModelOptions]="{standalone: true}"/>
-        </div>
-        <button pButton type="button" (click)="verFiltro()" class="pi pi-search"></button>
     </div>
 </div>
 
-<div class="content-habilitation" *ngIf="concertChoice && habilitarDiv">
+<div class="content-habilitation" *ngIf="concertChoice">
     <p-floatLabel>
         <p-calendar 
         [(ngModel)]="dateFrom" 
         inputId="from" 
         [minDate]="today"
-        dateFormat="dd/mm/yy"/>
+        dateFormat="dd/mm/yy"
+        (ngModelChange)="onDateFromChange()"/>
         <label for="from">Desde</label>
     </p-floatLabel>
     <p-floatLabel>
         <p-calendar 
         [(ngModel)]="dateTo" 
         inputId="to"
-        [minDate]="today"
+        [minDate]="minDateTo"
         dateFormat="dd/mm/yy"/>
         <label for="to">Hasta</label>
     </p-floatLabel>
 </div>
-<div class="confirm-habilitation">
+<!-- <div class="confirm-habilitation">
     <button 
-        pButton 
-        type="button" 
-        (click)="habilitar(concertChoice,$event)" 
-        severity="success" 
-        icon="pi pi-check" 
-        *ngIf="habilitarDiv" 
-        [disabled]="!dateFrom && !dateTo && !concertChoice"></button>
+    pButton 
+    type="button" 
+    (click)="habilitar(concertChoice,$event)" 
+    severity="success" 
+    icon="pi pi-check" 
+    *ngIf="habilitarDiv" 
+    [disabled]="!dateFrom && !dateTo && !concertChoice"></button>
     <button 
-        pButton 
-        type="button" 
-        (click)="deshabilitar(concertChoice,$event)" 
-        severity="danger" 
-        icon="pi pi-times-circle" 
-        *ngIf="deshabilitarDiv"
-        [disabled]="!cicloChoice || !divisionChoice || !nivelChoice"></button>
-</div>
+    pButton 
+    type="button" 
+    (click)="deshabilitar(concertChoice,$event)" 
+    severity="danger" 
+    icon="pi pi-times-circle" 
+    *ngIf="deshabilitarDiv"
+    [disabled]="!cicloChoice || !divisionChoice || !nivelChoice"></button>
+</div> -->
 <p-confirmDialog />
 
 <div class="container-table">
@@ -86,12 +90,7 @@
     [scrollable]="true" 
     scrollHeight="400px" 
     [tableStyle]="{'width': 'auto', 'margin':'0 auto'}"
-    [lazy]="true"
-    [loading]="loading"
-    [totalRecords]="totalRecords"
-    [rows]="rowsPerPage"
-    [globalFilterFields]="['dni', 'apellido', 'nombre', 'ciclo','nivel','division','concert']"
-    (onlazy)="loadData($event)">
+    [globalFilterFields]="['dni', 'apellido', 'nombre', 'ciclo','nivel','division','concert']">
     <ng-template pTemplate="caption" style="width: 50%;">
         <div class="caption">
             <p-iconField iconPosition="right" class="ml-auto">
@@ -127,7 +126,7 @@
                 Division <p-sortIcon field="division" />
             </th>
             <th pSortableColumn="concert">
-                Concert habilitado
+                Habilitado
             </th>
         </tr>
     </ng-template>
@@ -139,8 +138,18 @@
             <td>{{ user.ciclo }}</td>
             <td>{{ user.anio }}</td>
             <td>{{ user.division }}</td>
-            <td>{{ user.dni }}</td>
+            <td>
+                <input type="checkbox" name="habilitado" id="habilitado" [checked]="user.habilitado" 
+                [disabled]="!concertChoice && !dateFrom && !dateTo" (change)="canHabilitar(user, $event)">
+            </td>
         </tr>
     </ng-template>
 </p-table>
+
+<button
+pButton
+type="button"
+(click)="habilitar($event)"
+>Guardar</button>
+
 </div>

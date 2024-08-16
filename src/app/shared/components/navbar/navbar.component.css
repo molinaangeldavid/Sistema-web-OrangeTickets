@@ -46,6 +46,10 @@
     margin-right: 5px;
 }
 
+.hover-list:target{
+    color: rgb(34, 32, 30)
+}
+
 .hover-list a{
     padding: 10px;
     cursor: pointer;

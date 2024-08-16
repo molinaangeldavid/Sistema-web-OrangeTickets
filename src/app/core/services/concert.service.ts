@@ -12,7 +12,6 @@ export class ConcertService {
 
   constructor(private http: HttpClient,private authService: AuthService) { }
 
-
   getEvents(): Observable<any>{
     const headers = new HttpHeaders({
       'Authorization': `Bearer ${this.authService.getToken()}`
@@ -20,5 +19,25 @@ export class ConcertService {
     return this.http.get<any>(`${this.path}/eventos`,{headers})
   }
 
+  postEvent(body:any): Observable<any>{
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${this.authService.getToken()}`
+    })
+    return this.http.post<any>(`${this.path}/evento`,body,{headers})
+  }
+
+  putEvent(body:any): Observable<any>{
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${this.authService.getToken()}`
+    })
+    return this.http.put<any>(`${this.path}/evento`,body,{headers})
+  }
+
+  deleteEvent(): Observable<any>{
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${this.authService.getToken()}`
+    })
+    return this.http.delete<any>(`${this.path}/evento`,{headers})
+  }
 
 }
