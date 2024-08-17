@@ -2,7 +2,61 @@
     font-family: 'Wittenberger Fraktur MT';
     src: url('../../../../assets/wittenberger-fraktur-mt-std-bold.ttf');
 }
-.container{
+/* ::ng-deep .p-menubar{
+    background-color: #FF6F61 !important;
+    border: none; 
+}
+::ng-deep .p-menubar .p-menubar-end .p-menuitem{
+    color: white !important;
+}
+::ng-deep .p-menubar .p-menuitem-link {
+    color: #000000; /* Color del texto de los ítems 
+  } */
+.container {
+    max-width: 100%;
+  }
+  .container img{
+    width:100px;
+    height: auto;
+    padding-left: 10px;
+}
+  .subcontainer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #FF6F61;
+    padding: 10px;
+    text-align: center;
+  }
+  
+  .titulo {
+    color: white;
+    font-size: 2rem;
+    margin: 0;
+  }
+  
+  .hamburger-button {
+    background-color: #1b1818;
+    border: none;
+    margin: 10px;
+  }
+  
+  .p-tieredmenu {
+    background-color: #FF6F61;
+  }
+  
+  .p-tieredmenu .p-menuitem-link {
+    color: white;
+  }
+  
+  .p-tieredmenu .p-menuitem-link:hover {
+    background-color: #FF4B3E;
+  }
+  
+  .p-button {
+    color: white;
+  }
+/* .container{
     display: flex;
     justify-content: space-evenly;
     align-items: center;
@@ -60,7 +114,7 @@
 .hover-list a:hover{
     color: rgb(83, 57, 150);
     transition: .5s;
-}
+} */
 
 @media screen and (max-width: 720px) {
     .container{

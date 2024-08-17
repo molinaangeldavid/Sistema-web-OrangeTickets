@@ -11,13 +11,13 @@ import { InputIconModule } from 'primeng/inputicon';
 import { InputTextModule } from 'primeng/inputtext';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { ConfirmationService, MessageService, PrimeNGConfig } from 'primeng/api';
+import { ProgressSpinnerModule } from 'primeng/progressspinner';
 
 import * as XLSX from 'xlsx';
 import { saveAs } from 'file-saver';
 import { lastValueFrom } from 'rxjs';
 import { ReservationService } from '../../../core/services/reservation.service';
 
-import { AdminPipe } from '../../pipes/admin.pipe';
 import { AdminService } from '../../../core/services/admin.service';
 
 @Component({
@@ -32,7 +32,7 @@ import { AdminService } from '../../../core/services/admin.service';
     InputIconModule,
     InputTextModule,
     ConfirmDialogModule,
-    AdminPipe
+    ProgressSpinnerModule
   ],
   templateUrl: './manage-reserves.component.html',
   styleUrl: './manage-reserves.component.css',
@@ -44,6 +44,8 @@ export class ManageReservesComponent implements OnInit,OnChanges {
   @Input() escenario: any
   @Input() admin: any
   
+  isLoading: boolean = true
+
   users: any | undefined
   
   reserves: any | undefined
@@ -90,9 +92,13 @@ export class ManageReservesComponent implements OnInit,OnChanges {
       this.adminMap = new Map<string, string>();
       this.allAdmins.forEach((admin: any) => {
         this.adminMap.set(admin.dni, `${admin.nombre} ${admin.apellido}`);
-    });
+      });
+      console.log(this.adminMap)
     } catch (error) {
       console.log(error)
+    }
+    finally{
+      this.isLoading = false
     }
     const userReservations = this.reserves.filter((reserva:any) => {
       return reserva.evento_id === this.escenario.id && 
@@ -105,24 +111,38 @@ export class ManageReservesComponent implements OnInit,OnChanges {
   }
   
   async ngOnChanges(changes:SimpleChanges){
-    if (changes['escenario'] && changes['escenario'].currentValue) {
-      const reservation = await lastValueFrom(this.reservationService.getAllReservations(this.escenario.sala))
-      this.reserves = reservation
-      setTimeout(() => {
-        const userReservations = this.reserves.filter((reserva:any) => {
-          return reserva.evento_id === this.escenario.id && 
-          (reserva.estado === 'reservado' || reserva.estado === 'pagado')
-        });
-        const validUser = new Set(userReservations.map((reserva:any)=> reserva.dni))
-        const updatedUsers = this.allUsers.filter((user:any) => {
-          return validUser.has(user.dni)
-        })
-        // Reemplazar el array completo para que Angular detecte el cambio
-        this.users = [...updatedUsers];
-        // Forzar la detección de cambios
-        this.cdr.detectChanges();
-      },0);
-    } 
+    try {
+      if (changes['escenario'] && changes['escenario'].currentValue) {
+        const [reservation,users,admins] = await Promise.all([
+          lastValueFrom(this.reservationService.getAllReservations(this.escenario.sala)),
+          lastValueFrom(this.adminService.getAllUsers()),
+          lastValueFrom(this.adminService.getAdmins())
+        ])
+        this.reserves = reservation
+        this.allUsers = users.users
+        this.allAdmins = admins
+        setTimeout(() => {
+          const userReservations = this.reserves.filter((reserva:any) => {
+            return reserva.evento_id === this.escenario.id && 
+            (reserva.estado === 'reservado' || reserva.estado === 'pagado')
+          });
+          const validUser = new Set(userReservations.map((reserva:any)=> reserva.dni))
+          const updatedUsers = this.allUsers.filter((user:any) => {
+            return validUser.has(user.dni)
+          })
+          // Reemplazar el array completo para que Angular detecte el cambio
+          this.users = [...updatedUsers];
+          // Forzar la detección de cambios
+          this.cdr.detectChanges();
+        },0);
+      
+      } 
+    }catch (error) {
+      console.log(error)
+    }
+    finally{
+      this.isLoading = false
+    }
   }
   
   //////////////////////////////////////
@@ -146,7 +166,7 @@ export class ManageReservesComponent implements OnInit,OnChanges {
           value.estado = 'pagado'
         })
         try {
-          this.reservationService.confirmReserves(dni,this.admin.dni,userConfirm).subscribe({
+          this.reservationService.confirmReserves({dniAdmin:this.admin.dni,selectedReserves:userConfirm}).subscribe({
             next: () => {
               this.reserves = {...this.reserves}
               this.selectedReserves = null;
@@ -176,7 +196,7 @@ export class ManageReservesComponent implements OnInit,OnChanges {
       accept: () => {
         const eliminadas = this.dniSelected.filter((val:any) => this.selectedReserves?.includes(val));
         this.dniSelected = this.dniSelected.filter((val:any) => !this.selectedReserves?.includes(val));
-        this.reservationService.deleteReserves(dni,this.selectedReserves).subscribe({
+        this.reservationService.deleteReserves({dniAdmin:this.admin.dni,selectedReserves:eliminadas}).subscribe({
           next: () => {
             this.reserves = {...this.reserves}
             this.selectedReserves = null
@@ -269,7 +289,7 @@ export class ManageReservesComponent implements OnInit,OnChanges {
             }
           })
           try {
-            this.reservationService.confirmReserves(user.dni,this.admin.dni,reservesDni).subscribe({
+            this.reservationService.confirmReserves({dniAdmin:this.admin.dni,selectedReserves:reservesDni}).subscribe({
               next: () => {
                 this.reserves = {...this.reserves}
                 user = {...user}

@@ -1,4 +1,4 @@
-<div class="container">
+<!-- <div class="container">
     <div class="subcontainer">
         <img src="../../../../assets/oie_transparent.png" alt="" srcset="">
         <h1 class="titulo">Orange Day School</h1>
@@ -8,7 +8,7 @@
             <li class="hover-list"><a (click)="showReservation()">Sala</a></li>
             <li class="hover-list"><a (click)="showReservated()">Detalles</a></li>
             <li class="hover-list"><a (click)="goOut()">Salir</a></li>
-        </ul>
+        </ul>qews,
     </div>
     <div class="container-menu" *ngIf="menusecretoNada">
         <ul>
@@ -23,13 +23,31 @@
             <li class="hover-list"><a (click)="showEvents()">Eventos</a></li>
             <li class="hover-list"><a (click)="goOut()">Salir</a></li>
         </ul>
-        <!-- <p-sidebar [(visible)]="sidebarVisible2" position="left" styleClass="width:20rem">
-            <h3>Right Sidebar</h3>
-        </p-sidebar>
-        <p-button 
-            type="button" 
-            class="mr-2" 
-            (onClick)="sidebarVisible2 = true" 
-            icon="pi pi-arrow-right" /> -->
+        
     </div>
+</div> -->
+
+<div class="container">
+    <!-- <div class="subcontainer">
+        <img src="../../../../assets/oie_transparent.png" alt="Orange Day School Logo">
+        <h1 class="titulo">Orange Day School</h1>
+    </div> -->
+    
+    <p-menubar *ngIf="menusecreto" [model]="menuItems" [autoDisplay]="false">
+        <ng-template pTemplate="start">
+            <img src="../../../../assets/oie_transparent.png" alt="Orange Day School Logo" height="40" class="mr-2">
+        </ng-template>
+    </p-menubar>
+
+    <p-menubar *ngIf="menusecretoAdmin" [model]="adminMenuItems" [autoDisplay]="false">
+        <ng-template pTemplate="start">
+            <img src="../../../../assets/oie_transparent.png" alt="Orange Day School Logo" height="40" class="mr-2">
+        </ng-template>
+    </p-menubar>
+
+    <p-menubar *ngIf="menusecretoNada" [model]="logoutMenuItems" [autoDisplay]="false">
+        <ng-template pTemplate="start">
+            <img src="../../../../assets/oie_transparent.png" alt="Orange Day School Logo" height="40" class="mr-2">
+        </ng-template>
+    </p-menubar>
 </div>

@@ -20,17 +20,17 @@ export class ScenarioService {
   ) { 
   }
   
-  getScenario(evento:any): Observable<any>{
+  getScenario(evento:any,evento_id:any): Observable<any>{
     const headers = new HttpHeaders({
       'Authorization': `Bearer ${this.authService.getToken()}` 
     });
-    return this.http.get<any>(`${this.path}/api/estudiantes/sala/${evento}`,{headers})
+    return this.http.get<any>(`${this.path}/api/estudiantes/sala/${evento}/${evento_id}`,{headers})
   }
-  getScenarioAdmin(evento:any): Observable<any>{
+  getScenarioAdmin(evento:any,evento_id:any): Observable<any>{
     const headers = new HttpHeaders({
       'Authorization': `Bearer ${this.authService.getToken()}` 
     });
-    return this.http.get<any>(`${this.path}/api/admin/sala/${evento}`,{headers})
+    return this.http.get<any>(`${this.path}/api/admin/sala/${evento}/${evento_id}`,{headers})
   }
   getSalasAdmin(): Observable<any>{
     const headers = new HttpHeaders({

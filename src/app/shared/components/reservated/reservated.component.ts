@@ -12,7 +12,6 @@ import { DialogModule } from 'primeng/dialog';
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
 import FileSaver, { saveAs } from 'file-saver';
-import { image } from 'html2canvas/dist/types/css/types/image';
 import pdfMake from "pdfmake/build/pdfmake";
 import pdfFonts from 'pdfmake/build/vfs_fonts';
 
@@ -51,6 +50,8 @@ export class ReservatedComponent {
 
   info: any
 
+  hasReserves: boolean = true
+
   constructor(
     private cookieService: CookieService,
     private reservationService: ReservationService,
@@ -72,9 +73,11 @@ export class ReservatedComponent {
     // this.reserves = this.dataService.getData('jsonReservation')[this.dni]
     this.reservationService.getReservation(this.dni).subscribe(value => {
       this.reserves = value
+      if(value.length == 0){
+        this.hasReserves = false
+      }
       this.calcularTotalReservado()
     })
-
     this.info = this.dataService.getData('data')
   }
 

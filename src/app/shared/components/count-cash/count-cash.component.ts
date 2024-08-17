@@ -11,7 +11,6 @@ import { InputTextModule } from 'primeng/inputtext';
 import { ChartModule } from 'primeng/chart';
 import { ButtonModule } from 'primeng/button';
 
-
 @Component({ 
   selector: 'app-count-cash',
   standalone: true,
@@ -48,14 +47,11 @@ export class CountCashComponent {
 
   constructor(
     private dataService: DataService,
-    private http: HttpClient
   ){
 
   }
   
   ngOnInit(){
-    this.confirmation = this.dataService.getData('jsonConfirm')
-    this.concerts = this.dataService.getData('jsonConcerts')
     this.calculateConfirmationsAndTotals();
     this.showUser = true
     this.dateNow = this.getDateNow()

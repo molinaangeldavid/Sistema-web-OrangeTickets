@@ -1,3 +1,7 @@
+
+<h2 style="text-align: center;">
+    Gestion de eventos
+</h2>
 <div class="content-table">
     <p-toast />
     <!-- <p-toolbar class="style-button"> -->
@@ -99,7 +103,6 @@
 <p-dialog 
 [(visible)]="concertDialog" 
 [style]="{ 'min-width': '600px','min-height': '700px' }" 
-
 header="Concerts" 
 [modal]="true" 
 styleClass="p-fluid">
@@ -131,7 +134,7 @@ styleClass="p-fluid">
         [(ngModel)]="hora" 
         [timeOnly]="true"
         hourFormat="24" required/>
-        <small *ngIf="submitted && !concert!.hora">
+        <small *ngIf="submitted && !concert!.hora" >
             La hora es requerida
         </small>
     </div>
@@ -141,7 +144,7 @@ styleClass="p-fluid">
         [options]="salas" 
         [(ngModel)]="selectedSala" 
         optionLabel="nombre" 
-        placeholder="Seleccione una sala" />
+        placeholder="Seleccione una sala" required/>
         <small *ngIf="submitted && !concert!.valor">
             La sala es requerida
         </small>
@@ -154,7 +157,7 @@ styleClass="p-fluid">
         mode="decimal" 
         [minFractionDigits]="0" 
         [maxFractionDigits]="0" /> 
-        <small *ngIf="submitted && !concert!.valor">
+        <small *ngIf="submitted && !concert!.valor" required>
             El valor es requerido
         </small>
     </div>

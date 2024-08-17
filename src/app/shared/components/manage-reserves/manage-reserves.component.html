@@ -1,4 +1,6 @@
-
+<div style="display: flex; justify-content: center;align-items: center;">
+    <p-progressSpinner ariaLabel="loading" *ngIf="isLoading" />
+</div>
 <div class="card">
 
     <p-table 
@@ -175,7 +177,7 @@ styleClass="p-datatable-gridlines"
             {{reserve.estado}}
         </td>
         <td *ngIf="reserve.estado == 'pagado'">
-            {{ reserve.dni ? adminMap.get(reserve.dni) : 'DNI no disponible' }}
+            {{ reserve.admin ? adminMap.get(reserve.admin) : 'DNI no disponible' }}
         </td>
     </tr>
 </ng-template>

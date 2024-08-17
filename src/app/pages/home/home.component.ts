@@ -71,8 +71,8 @@ export class HomeComponent implements OnInit,OnDestroy {
   menusecreto:any
   menusecretonada: any
 
-  @ViewChild('perfil') perfil!: ElementRef;
-  @ViewChild('concert') concert!: ElementRef;
+  // @ViewChild('perfil') perfil!: ElementRef;
+//   @ViewChild('concert') concert!: ElementRef;
 
   constructor(
     private showComponentService: ShowComponentService,
@@ -102,10 +102,10 @@ export class HomeComponent implements OnInit,OnDestroy {
     this.usuario = this.dataService.getData('data')
   }
   
-  ngAfterViewInit(){
-    this.elementRefService.setElement('perfil',this.perfil!.nativeElement)
-    this.elementRefService.setElement('concert',this.concert!.nativeElement)
-  }
+  // ngAfterViewInit(){
+  //   // this.elementRefService.setElement('perfil',this.perfil!.nativeElement)
+  //   this.elementRefService.setElement('concert',this.concert!.nativeElement)
+  // }
 
   changePage(value:any){
     this.currentComponent = value

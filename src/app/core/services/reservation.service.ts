@@ -1,6 +1,5 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { CookieService } from 'ngx-cookie-service';
 import { Observable } from 'rxjs';
 import { AuthService } from './auth.service';
 
@@ -36,7 +35,7 @@ export class ReservationService {
 
   postReservations(dni:any,reserves:any): Observable<any>{
     const headers = this.headers
-    return this.http.post<any>(`${this.path}/reservas/${dni}`,reserves,{headers})
+    return this.http.put<any>(`${this.path}/reservas/${dni}`,reserves,{headers})
   }
 
   checkSeatAvailable(evento_id:any,seats:any): Observable<any>{
@@ -58,14 +57,24 @@ export class ReservationService {
     return this.http.get<any>(`${this.pathAdmin}/allReservas/${sala}`,{headers})
   }
 
-  confirmReserves(dni:any,dniAdmin:any,selectedReserves:any[]): Observable<any>{
+  // confirmReserves(dni:any,dniAdmin:any,selectedReserves:any[]): Observable<any>{
+  //   const headers = this.headers
+  //   return this.http.put<any>(`${this.pathAdmin}/confirmacion/${dni}`,{dniAdmin,selectedReserves},{headers})
+  // }
+
+  confirmReserves(selectedReserves:any):Observable<any>{
     const headers = this.headers
-    return this.http.put<any>(`${this.pathAdmin}/confirmacion/${dni}`,{dniAdmin,selectedReserves},{headers})
+    return this.http.put<any>(`${this.pathAdmin}/reservas/reservado/pagado`,selectedReserves,{headers})
   }
 
-  deleteReserves(dni:any,selectedReserves:any):Observable<any>{
+  // deleteReserves(dni:any,selectedReserves:any):Observable<any>{
+  //   const headers = this.headers
+  //   return this.http.post<any>(`${this.pathAdmin}/eliminar-reserves/${dni}`,selectedReserves,{headers})
+  // }
+
+  deleteReserves(selectedReserves:any):Observable<any>{
     const headers = this.headers
-    return this.http.post<any>(`${this.pathAdmin}/eliminar-reserves/${dni}`,selectedReserves,{headers})
+    return this.http.put<any>(`${this.pathAdmin}/reservas/reservado/disponible`,selectedReserves,{headers})
   }
 
 }

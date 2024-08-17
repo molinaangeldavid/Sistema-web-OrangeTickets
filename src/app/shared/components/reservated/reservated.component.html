@@ -1,5 +1,8 @@
-<div class="card-content" style="margin: auto;" >
-  <div class="card" id="card" *ngIf="reserves!">
+<div *ngIf="!hasReserves" class="alert-no-reserves">
+  <span><strong>No tienes ninguna reserva todavia.</strong></span>
+</div>
+<div class="card-content" style="margin: auto;" *ngIf="hasReserves" >
+  <div class="card" id="card" *ngIf="reserves">
     <p-table [columns]="cols" [value]="reserves" [tableStyle]="{'width': 'auto', 'margin':'0 auto'}">
       <ng-template pTemplate="header" let-columns>
         <tr>
@@ -34,10 +37,10 @@
       </ng-template>
     </p-table>
   </div>
-  <div class="download-reserves">
+  <div class="download-reserves" *ngIf="hasReserves">
     <button pButton class="p-button-success" (click)="downloadReserves()" icon="pi pi-download" label="Descargar"></button>
   </div>
-  <div class="info">
+  <div class="info" *ngIf="hasReserves">
     <button pButton class="p-button-success" (click)="openDialog()" icon="pi pi-exclamation-circle" severity="help" label="Ver informacion"></button>
   </div>
   <p-dialog 

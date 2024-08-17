@@ -74,15 +74,23 @@ export class ScenarioComponent implements OnInit{
   
   async loadScenario(){
     try {
-      const [scenarioData,allReservation ,reservationData] = await Promise.all([
-        lastValueFrom(this.scenarioService.getScenario(this.escenario.sala)),
-        lastValueFrom(this.reservationService.getAllReservations(this.escenario.sala)),
-        lastValueFrom(this.reservationService.getReservation(this.dni))
-      ]) 
-      this.seats = scenarioData
-      this.reservation = allReservation
       if(!this.admin){
+        const [scenarioData,allReserves,reservationData] = await Promise.all([
+          lastValueFrom(this.scenarioService.getScenario(this.escenario.sala,this.escenario.id)),
+          lastValueFrom(this.reservationService.getAllReservations(this.escenario.id)),
+          lastValueFrom(this.reservationService.getReservation(this.dni))
+        ]) 
+        this.seats = scenarioData,
+        this.reservation = allReserves
         this.reservationDni = reservationData
+      }
+      if(this.admin){
+        const [scenarioData,allReserves] = await Promise.all([
+          lastValueFrom(this.scenarioService.getScenarioAdmin(this.escenario.sala,this.escenario.id)),
+          lastValueFrom(this.reservationService.getAllReservationsAdmin(this.escenario.id)),
+        ]) 
+        this.seats = scenarioData,
+        this.reservation = allReserves
       }
     } catch (error) {
       console.error('Error al cargar datos', error)
@@ -100,11 +108,12 @@ export class ScenarioComponent implements OnInit{
   async ngOnChanges(changes:SimpleChanges){
     if(changes['escenario'] && changes['escenario'].currentValue && this.admin){
       try {
-        const [scenarioData,allReservation] = await Promise.all([
-          lastValueFrom(this.scenarioService.getScenarioAdmin(this.escenario.sala)),
-          lastValueFrom(this.reservationService.getAllReservationsAdmin(this.escenario.sala)),
-        ]) 
-        this.seats = scenarioData
+        console.log(this.escenario)
+        const [scenarioSeats,allReservation ] = await Promise.all([
+          lastValueFrom(this.scenarioService.getScenarioAdmin(this.escenario.sala,this.escenario.id)),
+          lastValueFrom(this.reservationService.getAllReservationsAdmin(this.escenario.id))
+        ])
+        this.seats = scenarioSeats;
         this.reservation = allReservation
       } catch (error) {
         console.error('Error al cargar datos', error)
@@ -209,7 +218,7 @@ export class ScenarioComponent implements OnInit{
   }
   
   isReservated(seat:any):boolean{
-    return this.reservation.some((reservedSeat:any) => reservedSeat.fila === seat.fila && reservedSeat.butaca === seat.butaca && reservedSeat.estado === "reservado");
+    return this.reservation.some((reservedSeat:any) => reservedSeat.fila == seat.fila && reservedSeat.butaca == seat.butaca && reservedSeat.estado == "reservado");
   }
   
   isPaid(seat: any):boolean{
@@ -255,8 +264,6 @@ export class ScenarioComponent implements OnInit{
     
     const reserveDone: any[] = []
     
-    const now = new Date();
-    
     const seatsToCheck: { fila: number, butaca: number }[] = [];
     
     this.selectedSeats.forEach(seatKey => {
@@ -272,12 +279,12 @@ export class ScenarioComponent implements OnInit{
           this.selectedSeats.forEach(seatKey => {
             const [fila, butaca] = seatKey.split('-').map(Number);
             reserveDone.push({
-              evento_id:this.escenario.sala,
+              evento_id:this.escenario.id,
               fila,
               butaca,
               estado: 'reservado',
               dni: this.dni,
-              fechaDni:now
+              fechaDni:new Date()
             })
           });
           this.reservationService.postReservations(this.dni,reserveDone).subscribe({

@@ -26,18 +26,18 @@ export class ConcertService {
     return this.http.post<any>(`${this.path}/evento`,body,{headers})
   }
 
-  putEvent(body:any): Observable<any>{
+  putEvent(id:any, body:any): Observable<any>{
     const headers = new HttpHeaders({
       'Authorization': `Bearer ${this.authService.getToken()}`
     })
-    return this.http.put<any>(`${this.path}/evento`,body,{headers})
+    return this.http.put<any>(`${this.path}/evento/${id}`,body,{headers})
   }
 
-  deleteEvent(): Observable<any>{
+  deleteEvent(id:any,body:any): Observable<any>{
     const headers = new HttpHeaders({
       'Authorization': `Bearer ${this.authService.getToken()}`
     })
-    return this.http.delete<any>(`${this.path}/evento`,{headers})
+    return this.http.put<any>(`${this.path}/eventoEliminar/${id}`,body,{headers})
   }
 
 }

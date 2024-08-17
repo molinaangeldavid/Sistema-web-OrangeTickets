@@ -101,6 +101,9 @@ export class EventsComponent {
   
   editConcert(concert:any){
     this.concert = { ...concert };
+    this.fecha = new Date(this.concert.fecha)
+    this.hora = this.concert.hora
+    this.selectedSala = this.salas.find((s:any) => s.id == this.concert.sala)
     this.concertDialog = true;
   }
   
@@ -157,18 +160,33 @@ export class EventsComponent {
     this.submitted = true;
     if (this.concert!.nombre?.trim()) {
       if (this.concert!.id) {
-        // this.concert!.fecha = this.getFormattedDate(this.fecha);
-        this.concert!.fecha = this.fecha
-        this.concert!.hora = this.getFormattedTime(this.hora);
+        console.log(this.concert)
+        this.concertService.putEvent(this.concert.id, this.concert).subscribe({
+          next: (response) => {
+            console.log(response)
+          },
+          error: (error) => {
+            console.log(error)
+          }
+        })
         this.concerts[this.findIndexById(this.concert!.id)] = this.concert;
         this.messageService.add({ severity: 'success', summary: 'Exito', detail: 'Concert actualizado', life: 3000 });
       } else {
         this.concert!.id = this.createId();
         // dataConcerts[this.concert!.id] = this.copiaSala
         this.concert!.salaNombre = this.selectedSala.nombre
+        this.concert!.sala = this.selectedSala.sala
         this.concert!.fecha = this.fecha;
         this.concert!.hora = this.getFormattedTime(this.hora);
         this.concerts.push(this.concert!);
+        this.concertService.postEvent(this.concert).subscribe({
+          next: (response) => {
+            console.log(response)
+          },
+          error: (error) => {
+            console.log(error)
+          }
+        })
         this.messageService.add({ severity: 'success', summary: 'Exito', detail: 'Concert creado', life: 3000 });
       }
       
@@ -190,15 +208,19 @@ export class EventsComponent {
       header: 'Confirmar',
       icon: 'pi pi-exclamation-triangle',
       accept: () => {
-        let concertRemoved = this.concerts.filter((val: any) => val.id == concert.id)
-        let data = this.dataService.getData('jsonData')
-        delete data[concertRemoved.sala]
-        this.dataService.saveData('jsonData',data)
+        // let concertRemoved = this.concerts.filter((val: any) => val.id == concert.id)
+        this.concertService.deleteEvent(concert.id,concert).subscribe({
+          next: (response) => {
+            console.log(response)
+            this.messageService.add({ severity: 'success', summary: 'Exito', detail: 'Concert Eliminado', life: 3000 });
+          },
+          error: (error) => {
+            console.log(error)
+            this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Error al eliminarse el evento', life: 3000 });
+          }
+        })
         this.concerts = this.concerts.filter((val:any) => val.id !== concert.id);
-        
-        this.dataService.saveData('jsonConcerts',{"concerts": this.concerts})
         this.concert = {};
-        this.messageService.add({ severity: 'success', summary: 'Exito', detail: 'Concert Eliminado', life: 3000 });
       }
     });
   }
