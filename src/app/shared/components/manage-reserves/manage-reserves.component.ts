@@ -80,7 +80,7 @@ export class ManageReservesComponent implements OnInit,OnChanges {
   async ngOnInit(){
     try {
       const [reservation,users,admins] = await Promise.all([
-        lastValueFrom(this.reservationService.getAllReservations(this.escenario.sala)),
+        lastValueFrom(this.reservationService.getAllReservations(this.escenario.id)),
         lastValueFrom(this.adminService.getAllUsers()),
         lastValueFrom(this.adminService.getAdmins())
       ])
@@ -93,7 +93,6 @@ export class ManageReservesComponent implements OnInit,OnChanges {
       this.allAdmins.forEach((admin: any) => {
         this.adminMap.set(admin.dni, `${admin.nombre} ${admin.apellido}`);
       });
-      console.log(this.adminMap)
     } catch (error) {
       console.log(error)
     }
@@ -113,8 +112,9 @@ export class ManageReservesComponent implements OnInit,OnChanges {
   async ngOnChanges(changes:SimpleChanges){
     try {
       if (changes['escenario'] && changes['escenario'].currentValue) {
+        console.log("hola")
         const [reservation,users,admins] = await Promise.all([
-          lastValueFrom(this.reservationService.getAllReservations(this.escenario.sala)),
+          lastValueFrom(this.reservationService.getAllReservations(this.escenario.id)),
           lastValueFrom(this.adminService.getAllUsers()),
           lastValueFrom(this.adminService.getAdmins())
         ])
@@ -127,11 +127,10 @@ export class ManageReservesComponent implements OnInit,OnChanges {
             (reserva.estado === 'reservado' || reserva.estado === 'pagado')
           });
           const validUser = new Set(userReservations.map((reserva:any)=> reserva.dni))
-          const updatedUsers = this.allUsers.filter((user:any) => {
+          this.users = this.allUsers.filter((user:any) => {
             return validUser.has(user.dni)
           })
           // Reemplazar el array completo para que Angular detecte el cambio
-          this.users = [...updatedUsers];
           // Forzar la detección de cambios
           this.cdr.detectChanges();
         },0);

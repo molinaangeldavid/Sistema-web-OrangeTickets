@@ -1,25 +1,39 @@
 
+<div style="display: flex; justify-content: center; margin: 30px 0;font-size: 1.5rem;">
+    <span><strong>Reporte de la Caja</strong></span>
+</div>
 
 <div class="contain-cash">
     <!-- //////////////// -->
-    <div style="display: flex; justify-content: center; margin: 30px 0;font-size: 1.5rem;">
-        <span><strong>Reporte de la Caja</strong></span>
-    </div>
-
+    
     <div class="button-choose">
-        <button pButton class="button" label="Por usuario" (click)="showByUser()"></button> 
-        <button pButton class="button" label="Por dia" (click)="showByDate()"></button> 
+        <button pButton class="button" label="Por Usuarios" (click)="showByUser()"></button> 
+        <button pButton class="button" label="Por Fecha" (click)="showByDate()"></button> 
         <button pButton class="button" label="Por concierto" (click)="showByConcert()"></button>
     </div>
-    <div>
-
+    <div *ngIf="showDate" class="dates">   
+        <div class="field">
+            <label for="fecha">Desde</label>
+            <p-calendar [(ngModel)]="desde" dateFormat="dd-mm-yy" [maxDate]="dateNow" required/>
+        </div>
+        <div class="field">
+            <label for="fecha">Hasta</label>
+            <p-calendar [(ngModel)]="hasta"  [maxDate]="dateNow" (onChange)="onHastaChange($event)" required/>
+        </div>
+        <button pButton class="pi pi-search" (click)="searchFecha()"></button>
     </div>
-
-    
+    <!-- <div *ngIf="showConcert">
+        <p-dropdown 
+        [options]="concerts" 
+        [(ngModel)]="eventSelected" 
+        optionLabel="nombre" 
+        placeholder="Seleccione el evento" />
+        <button pButton class="pi pi-search" (click)="searchConcert()"></button>
+    </div> -->
     <div class="container-table1" *ngIf="showUser">
         <h3 style="padding: 5px 0; text-align: center;">Resumen Caja por Usuario</h3>
         
-        <p-table #dt2 [value]="byUsers"  [scrollable]="true" scrollHeight="400px" [tableStyle]="{'width': 'auto', 'margin': '0 auto'}"
+        <p-table #dt [value]="byUsers" [scrollable]="true" scrollHeight="400px" [tableStyle]="{'width': 'auto', 'margin': '0 auto'}"
         [globalFilterFields]="['dni', 'apellido', 'nombre', 'total']">
         <ng-template pTemplate="caption">
             <div class="flex">
@@ -30,7 +44,7 @@
                     <input 
                     pInputText 
                     type="text" 
-                    (input)="dt2.filterGlobal($any($event.target).value, 'contains')" 
+                    (input)="dt.filterGlobal($any($event.target).value, 'contains')" 
                     placeholder="Buscar..." />
                 </p-iconField>
             </div>
@@ -56,15 +70,21 @@
                 <td>{{ user.dni }}</td>
                 <td>{{ user.apellido }}</td>
                 <td>{{ user.nombre }}</td>
-                <td>{{ user.total | currency:'':'symbol':'1.0-0' }}</td>
+                <td>{{ user.totalValor | currency:'':'symbol':'1.0-0' }}</td>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="footer">
+            <tr>
+                <td colspan="3" style="text-align: right;"><strong>Total:</strong></td>
+                <td>{{ totalByUsers | currency:'':'symbol':'1.0-0' }}</td>
             </tr>
         </ng-template>
     </p-table>
-    </div>
-    <div class="container-table2" *ngIf="showDate">
+</div>
+<div class="container-table2" *ngIf="showDate">
     <h3 style="text-align: center; padding: 5px 0;">Resumen Caja por fecha</h3>
     
-    <p-table #dt3 [value]="byDays" [scrollable]="true" scrollHeight="400px" [tableStyle]="{'width': 'auto','margin': '0 auto'}" 
+    <p-table #dt2 [value]="byDate" [scrollable]="true" scrollHeight="400px" [tableStyle]="{'width': 'auto','margin': '0 auto'}" 
     [globalFilterFields]="['dni','total']">
     <ng-template pTemplate="caption">
         <div class="flex">
@@ -75,7 +95,7 @@
                 <input 
                 pInputText 
                 type="text" 
-                (input)="dt3.filterGlobal($any($event.target).value, 'contains')" 
+                (input)="dt2.filterGlobal($any($event.target).value, 'contains')" 
                 placeholder="Buscar..." />
             </p-iconField>
         </div>
@@ -101,11 +121,11 @@
         <div class="flex align-items-center justify-content-between">
         </div>
     </ng-template> -->
-    </p-table>
-    </div>
-    <div class="container-table3" *ngIf="showConcert" style="display: flex; justify-content: center;">
-        <h3 style="text-align: center; padding: 5px 0;">Resumen Caja por Concert</h3>
-    <p-table #dt4 [value]="result" [scrollable]="true" scrollHeight="400px" [tableStyle]="{'width': 'auto','margin': '0 auto'}"
+</p-table>
+</div>
+<div class="container-table3" *ngIf="showConcert" style="display: flex; justify-content: center;">
+    <h3 style="text-align: center; padding: 5px 0;">Resumen Caja por Concert</h3>
+    <p-table #dt3 [value]="byConcerts" [scrollable]="true" scrollHeight="400px" [tableStyle]="{'width': 'auto','margin': '0 auto'}"
     [globalFilterFields]="['dni', 'nombre', 'total']">
     <ng-template pTemplate="caption">
         <div class="flex">
@@ -116,7 +136,7 @@
                 <input 
                 pInputText 
                 type="text" 
-                (input)="dt4.filterGlobal($any($event.target).value, 'contains')" 
+                (input)="dt3.filterGlobal($any($event.target).value, 'contains')" 
                 placeholder="Buscar..." />
             </p-iconField>
         </div>
@@ -136,13 +156,13 @@
     </ng-template>
     <ng-template pTemplate="body" let-concert>
         <tr>
-            <td>{{ concert.id }}</td>
-            <td>{{ concert.nombre }}</td>
-            <td>{{ concert.total | currency:'':'symbol':'1.0-0' }}</td>
+            <td>{{ concert.evento_id }}</td>
+            <td>{{ concert.evento_id ? this.getEventName(concert.evento_id) : "nada" }}</td>
+            <td>{{ concert.totalValor | currency:'':'symbol':'1.0-0' }}</td>
         </tr>
     </ng-template>
 </p-table>
-    </div>
+</div>
 <!-- /////////////////////////////////// -->
 
 </div>

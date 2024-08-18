@@ -8,10 +8,21 @@
 .button-choose{
     display: flex;
     justify-content: space-between;
+    gap: 15px;
 }
 .button-choose button{
     padding: 5px !important;
     margin-right: 4px !important;
+}
+.dates{
+    display: flex;
+    justify-content: center;
+    margin: 20px 0;
+}
+.dates .field{
+    display: flex;
+    flex-direction: column;
+    margin: 10px 10px;
 }
 
 @media screen and (max-width: 800px) {

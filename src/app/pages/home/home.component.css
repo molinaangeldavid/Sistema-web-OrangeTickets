@@ -35,9 +35,11 @@
 
 .display-details{
     display: flex;
-    flex-direction: column;
     justify-content: center;
     font-weight: 500;
+}
+.display-details span{
+    display: inline-block;
 }
 .display-details span{
     display: block;

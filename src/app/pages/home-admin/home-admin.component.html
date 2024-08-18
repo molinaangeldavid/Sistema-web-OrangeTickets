@@ -32,15 +32,18 @@
             </div>
         </div>
     </div>  
+
     <div class="showScenario">
         <app-scenario [admin]="admin" [escenario]="concertChoice!" [mostrarBoton]="false" *ngIf="currentComponent === 'reserveManage' && concertChoice"></app-scenario>
     </div>
     <div class="showReserves">
         <app-manage-reserves [admin]="usuario" [escenario]="concertChoice" *ngIf="currentComponent === 'reserveManage' && concertChoice"></app-manage-reserves>
     </div>
+
     <div class="showUsers">
         <app-manage-users *ngIf="currentComponent === 'userManage'"></app-manage-users>
     </div>
+
     <div class="showAdmin">
         <app-administracion-manage *ngIf="currentComponent === 'adminManage'"></app-administracion-manage>
     </div>
@@ -48,8 +51,9 @@
     <div class="showCash" style="margin-bottom: 100px;">
         <app-count-cash *ngIf="currentComponent === 'countCash'"></app-count-cash>
     </div>
-    <div class="showCash" style="margin-bottom: 100px;">
-        <app-count-cash *ngIf="currentComponent === 'historialReport'"></app-count-cash>
+    
+    <div class="showHistorial" style="margin-bottom: 100px;">
+        <app-historial-reports *ngIf="currentComponent === 'historialReport'"></app-historial-reports>
     </div>
 
     <div class="showEvents">

@@ -46,6 +46,10 @@ export class ReservationService {
     }, {headers});
   }
 
+
+
+  // ===========================================
+  // ===================================================
   // Peticiones http del admin
   getReservationAdmin(dni: any):Observable<any>{
     const headers = this.headers
@@ -57,20 +61,10 @@ export class ReservationService {
     return this.http.get<any>(`${this.pathAdmin}/allReservas/${sala}`,{headers})
   }
 
-  // confirmReserves(dni:any,dniAdmin:any,selectedReserves:any[]): Observable<any>{
-  //   const headers = this.headers
-  //   return this.http.put<any>(`${this.pathAdmin}/confirmacion/${dni}`,{dniAdmin,selectedReserves},{headers})
-  // }
-
   confirmReserves(selectedReserves:any):Observable<any>{
     const headers = this.headers
     return this.http.put<any>(`${this.pathAdmin}/reservas/reservado/pagado`,selectedReserves,{headers})
   }
-
-  // deleteReserves(dni:any,selectedReserves:any):Observable<any>{
-  //   const headers = this.headers
-  //   return this.http.post<any>(`${this.pathAdmin}/eliminar-reserves/${dni}`,selectedReserves,{headers})
-  // }
 
   deleteReserves(selectedReserves:any):Observable<any>{
     const headers = this.headers

@@ -38,12 +38,20 @@
 </div>
 <div class="display-details" style="margin-bottom: 0;" *ngIf="concertChoice != undefined"> 
     <div id="concert">
-        <span style="text-align: center;">{{concertChoice!.nombre}}</span>
-        <span style="text-align: center;">Fecha: {{concertChoice!.fecha | date }}</span>
-        <span style="text-align: center;">Hora: {{concertChoice!.hora}}</span>
+        <p style="text-align: center; display: block;">
+            <span style="font-weight: 900;display: inline;">Concert:</span> 
+            {{concertChoice!.nombre}}
+        </p>
+        <p style="text-align: center;display: block;">
+            <span style="font-weight: 900;display: inline;">Fecha:</span> 
+            {{concertChoice!.fecha | date }}
+        </p>
+        <p style="text-align: center;display: block;">
+            <span style="font-weight: 900;display: inline;">Hora:</span> 
+            {{concertChoice!.hora}}
+        </p>
     </div>
 </div>
-
 
 <div class="content" style="margin-bottom: 120px" *ngIf="concertChoice! != undefined">
     

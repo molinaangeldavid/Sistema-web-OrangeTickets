@@ -108,7 +108,6 @@ export class ScenarioComponent implements OnInit{
   async ngOnChanges(changes:SimpleChanges){
     if(changes['escenario'] && changes['escenario'].currentValue && this.admin){
       try {
-        console.log(this.escenario)
         const [scenarioSeats,allReservation ] = await Promise.all([
           lastValueFrom(this.scenarioService.getScenarioAdmin(this.escenario.sala,this.escenario.id)),
           lastValueFrom(this.reservationService.getAllReservationsAdmin(this.escenario.id))

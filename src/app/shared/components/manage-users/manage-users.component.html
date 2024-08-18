@@ -150,6 +150,8 @@
 pButton
 type="button"
 (click)="habilitar($event)"
+*ngIf="filteredUsers != undefined"
+style="margin-top: 20px;"
 >Guardar</button>
 
 </div>
