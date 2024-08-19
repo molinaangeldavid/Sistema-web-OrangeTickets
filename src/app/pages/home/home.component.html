@@ -1,5 +1,8 @@
-<app-navbar [menusecreto]="true"></app-navbar>
-<div class="perfil" id="perfil">
+<app-navbar [menusecreto]="true" [user]="usuario"></app-navbar>
+
+<h2 style="text-align: center;" *ngIf="currentComponent=='reservated'">Detalle de las Reservas</h2>
+<h2 style="text-align: center;" *ngIf="currentComponent!='reservated'">Reserva de butacas</h2>
+<div class="perfil" id="perfil" *ngIf="currentComponent == 'reservated'">
     <p-card role="region" class="subcontainer-perfil">
         <div style="text-align: center;font-weight: 700; margin-bottom: 10px;">Estudiante</div>
     <div style="display: flex; flex-direction: column; justify-content: center; align-items: start;">
@@ -15,11 +18,14 @@
 </div>
 
 
-<!-- <div *ngIf="currentComponent === 'scenario'" style="display: flex; flex-direction: column; justify-content: center; align-items: center;">
-<div style="margin-bottom: 5px;">
-    <span>Concerts habilitados</span>
-</div>
-<div class="container-choose">
+<div *ngIf="currentComponent === 'scenario'" style="display: flex; flex-direction: column; justify-content: center; align-items: center;">
+    <div *ngIf="!concerts">
+        <p style="text-align: center; font-weight: 700;">Este usuario no tiene Concert habilitado. Comuniquese con administracion para mas detalles</p>
+    </div>
+<div class="container-choose" *ngIf="concerts">
+    <div style="margin-bottom: 5px;">
+        <span>Concerts habilitados</span>
+    </div>
     <div class="dropdown-content">
         <p-dropdown 
         [options]="concerts" 
@@ -29,22 +35,19 @@
         [ngModelOptions]="{standalone: true}"/>
     </div>
 </div>
-</div> -->
+</div>
 <div style="text-align: center;">
     <p-progressSpinner ariaLabel="loading" *ngIf="loading"/>
 </div>
-<div *ngIf="concertChoice! == undefined">
-    <p style="text-align: center; font-weight: 700;">Este usuario no tiene Concert habilitado. Comuniquese con administracion para mas detalles</p>
-</div>
-<div class="display-details" style="margin-bottom: 0;" *ngIf="concertChoice != undefined"> 
-    <div id="concert">
+<div class="display-details" style="margin-bottom: 0;" *ngIf="concertChoice != undefined && currentComponent != 'reservated'"> 
+    <div id="concert.length > 0">
         <p style="text-align: center; display: block;">
             <span style="font-weight: 900;display: inline;">Concert:</span> 
             {{concertChoice!.nombre}}
         </p>
         <p style="text-align: center;display: block;">
             <span style="font-weight: 900;display: inline;">Fecha:</span> 
-            {{concertChoice!.fecha | date }}
+            {{concertChoice!.fecha | date:'dd/MM/yyyy' }}
         </p>
         <p style="text-align: center;display: block;">
             <span style="font-weight: 900;display: inline;">Hora:</span> 
@@ -53,7 +56,7 @@
     </div>
 </div>
 
-<div class="content" style="margin-bottom: 120px" *ngIf="concertChoice! != undefined">
+<div class="content" style="margin-bottom: 120px" *ngIf="habilitado()">
     
     <app-scenario [admin]="admin" [escenario]="concertChoice!" *ngIf="currentComponent === 'scenario' && concertChoice!" (changePage)="changePage($event)"></app-scenario>
     

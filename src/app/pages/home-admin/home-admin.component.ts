@@ -2,8 +2,6 @@ import { CUSTOM_ELEMENTS_SCHEMA, Component, SimpleChanges } from '@angular/core'
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 
-
-
 import { NavbarComponent } from '../../shared/components/navbar/navbar.component';
 import { FooterComponent } from '../../shared/components/footer/footer.component';
 import { ScenarioComponent } from '../../shared/components/scenario/scenario.component';
@@ -23,6 +21,8 @@ import { CookieService } from 'ngx-cookie-service';
 
 import { Subscription } from 'rxjs';
 import { ConcertService } from '../../core/services/concert.service';
+import { AdminManageComponent } from '../../shared/components/admin-manage/admin-manage.component';
+import { HistorialReservesComponent } from '../../shared/components/historial-reserves/historial-reserves.component';
 
 
 
@@ -42,7 +42,9 @@ import { ConcertService } from '../../core/services/concert.service';
     CommonModule,
     ButtonModule,
     DropdownModule,
-    CardModule
+    CardModule,
+    AdminManageComponent,
+    HistorialReservesComponent
   ],
   templateUrl: './home-admin.component.html',
   styleUrl: './home-admin.component.css',

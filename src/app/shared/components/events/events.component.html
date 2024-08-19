@@ -122,7 +122,7 @@ styleClass="p-fluid">
     </div>
     <div class="field">
         <label for="fecha">Fecha</label>
-        <p-calendar [(ngModel)]="fecha" dateFormat="dd-mm-yy" required/>
+        <p-calendar [(ngModel)]="fecha" dateFormat="dd-mm-yy" [minDate]="today" m required/>
         <small *ngIf="submitted && !concert!.fecha">
             La fecha es requerida.
         </small>

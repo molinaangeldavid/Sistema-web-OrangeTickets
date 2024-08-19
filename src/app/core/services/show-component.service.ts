@@ -12,9 +12,7 @@ export class ShowComponentService {
   constructor() { }
 
   triggerComponentEvent(componentName: string){
-    console.log(componentName)
     this.componentEvent.next(componentName)
-    
   }
 
 

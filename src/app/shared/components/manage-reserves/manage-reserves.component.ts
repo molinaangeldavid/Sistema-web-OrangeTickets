@@ -79,15 +79,13 @@ export class ManageReservesComponent implements OnInit,OnChanges {
   
   async ngOnInit(){
     try {
-      const [reservation,users,admins] = await Promise.all([
+      const [reservation,users] = await Promise.all([
         lastValueFrom(this.reservationService.getAllReservations(this.escenario.id)),
         lastValueFrom(this.adminService.getAllUsers()),
-        lastValueFrom(this.adminService.getAdmins())
       ])
-      
       this.reserves = reservation
       this.allUsers = users.users
-      this.allAdmins = admins
+      this.allAdmins = users.adminUsers
 
       this.adminMap = new Map<string, string>();
       this.allAdmins.forEach((admin: any) => {
@@ -112,15 +110,13 @@ export class ManageReservesComponent implements OnInit,OnChanges {
   async ngOnChanges(changes:SimpleChanges){
     try {
       if (changes['escenario'] && changes['escenario'].currentValue) {
-        console.log("hola")
-        const [reservation,users,admins] = await Promise.all([
+        const [reservation,users] = await Promise.all([
           lastValueFrom(this.reservationService.getAllReservations(this.escenario.id)),
           lastValueFrom(this.adminService.getAllUsers()),
-          lastValueFrom(this.adminService.getAdmins())
         ])
         this.reserves = reservation
         this.allUsers = users.users
-        this.allAdmins = admins
+        this.allAdmins = users.adminUsers
         setTimeout(() => {
           const userReservations = this.reserves.filter((reserva:any) => {
             return reserva.evento_id === this.escenario.id && 
@@ -280,13 +276,18 @@ export class ManageReservesComponent implements OnInit,OnChanges {
       accept: () => {
         this.reservationService.getReservationAdmin(user.dni).subscribe(reservesDni=>{
           // this.dniSelected = value
-          reservesDni.forEach((value:any) => {
-            if(value.estado !== 'pagado'){
-              value.admin = this.admin.dni 
-              value.fechaAdmin = now
-              value.estado = 'pagado'
-            }
-          })
+          if(reservesDni.some((r:any) => r.estado == 'reservado')){
+            alert("Todas las butacas de este usuario ya estan confirmadas")
+            return;
+          }else{
+            reservesDni.forEach((value:any) => {
+              if(value.estado !== 'pagado'){
+                value.admin = this.admin.dni 
+                value.fechaAdmin = now
+                value.estado = 'pagado'
+              }
+            })
+          }
           try {
             this.reservationService.confirmReserves({dniAdmin:this.admin.dni,selectedReserves:reservesDni}).subscribe({
               next: () => {
@@ -354,6 +355,10 @@ export class ManageReservesComponent implements OnInit,OnChanges {
     saveAs(data, `${this.escenario.nombre}-${currentDate}.xlsx`);
   }
   
+  hasReservedSeats(){
+    
+  }
+
   showDialog(dni: any):void{
     // DNISELECTED es el array de reservas de ese dni
     this.aloneDni = dni

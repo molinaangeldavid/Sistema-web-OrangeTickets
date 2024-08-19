@@ -1,0 +1,143 @@
+<h2 style="text-align: center;">
+    Gestion de Administracion
+</h2>
+<div class="content-table">
+    <p-toast />
+            <div class="buttons">
+                <p-button 
+                severity="success" 
+                label="Nuevo" 
+                icon="pi pi-plus" 
+                class="mr-2" 
+                (onClick)="new()" />
+                <p-button 
+                severity="danger" 
+                label="Eliminar" 
+                icon="pi pi-trash" 
+                (onClick)="deleteSelectedAdministrador()" 
+                [disabled]="!selectedAdministrador || !selectedAdministrador.length" />
+            </div>
+    <p-table
+    #dt
+    [value]="administradores"
+    [tableStyle]="{ 'width': 'auto','margin':'0 auto' }"
+    [(selection)]="selectedAdministrador"
+    [rowHover]="true"
+    dataKey="id"
+    >
+    <ng-template pTemplate="header">
+        <tr>
+            <th style="width: 4rem">
+                <p-tableHeaderCheckbox />
+            </th>
+            <th pSortableColumn="dni" style="width:20%">
+                Dni <p-sortIcon field="dni" />
+            </th>
+            <th pSortableColumn="nombre" style="width:20%">
+                Nombre <p-sortIcon field="nombre" />
+            </th>
+            <th pSortableColumn="apellido" style="width:20%">
+                Apellido <p-sortIcon field="apellido" />
+            </th>
+            <th></th>
+        </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-administrador>
+        <tr>
+            <td>
+                <p-tableCheckbox [value]="administrador" />
+            </td>
+            <td>
+                {{ administrador.dni }}
+            </td>
+            <td>
+                {{ administrador.nombre }}
+            </td>
+            <td>
+                {{ administrador.apellido }}
+            </td>
+            <td style="display: flex;">
+                <p-button 
+                icon="pi pi-pencil" 
+                [rounded]="true" 
+                severity="success" 
+                (onClick)="editAdministrador(administrador)" 
+                size="small"
+                />
+                <p-toast />
+                <p-button 
+                icon="pi pi-trash" 
+                severity="danger" 
+                [rounded]="true" 
+                size="small"
+                (onClick)="deleteAdministrador(administrador)" />
+            </td>
+        </tr>
+    </ng-template>
+</p-table>
+</div>
+<p-dialog 
+[(visible)]="administradorDialog" 
+[style]="{ 'min-width': '600px','min-height': '700px' }" 
+header="Administrador" 
+[modal]="true" 
+styleClass="p-fluid">
+<ng-template pTemplate="content">
+    <div class="field">
+        <label for="dni">DNI</label>
+        <input 
+        type="text" 
+        pInputText 
+        id="dni" 
+        [(ngModel)]="administrador!.dni" 
+        required 
+        autofocus />
+        <small *ngIf="submitted && !administrador!.dni">
+            El Dni es requerido.
+        </small>
+    </div>
+    <div class="field">
+        <label for="name">Nombre</label>
+        <input 
+        type="text" 
+        pInputText 
+        id="name" 
+        [(ngModel)]="administrador!.nombre" 
+        required 
+        autofocus />
+        <small *ngIf="submitted && !administrador!.nombre">
+            El nombre es requerido.
+        </small>
+    </div>
+    <div class="field">
+        <label for="apellido">Apellido</label>
+        <input 
+        type="text" 
+        pInputText 
+        id="apellido" 
+        [(ngModel)]="administrador!.apellido" 
+        required 
+        autofocus />
+        <small *ngIf="submitted && !administrador!.apellido">
+            El Apellido es requerido.
+        </small>
+    </div>
+</ng-template>
+
+<ng-template pTemplate="footer">
+    <p-button 
+    label="Cancel" 
+    icon="pi pi-times" 
+    [text]="true" 
+    (onClick)="hideDialog()" />
+    <p-button
+    label="Save" 
+    icon="pi pi-check" 
+    [text]="true" 
+    (onClick)="saveAdministrador()" />
+</ng-template>
+</p-dialog>
+
+<p-confirmDialog [style]="{ width: '450px' }" />
+
+

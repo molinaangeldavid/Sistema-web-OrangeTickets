@@ -14,6 +14,7 @@ import html2canvas from 'html2canvas';
 import FileSaver, { saveAs } from 'file-saver';
 import pdfMake from "pdfmake/build/pdfmake";
 import pdfFonts from 'pdfmake/build/vfs_fonts';
+import { ConcertService } from '../../../core/services/concert.service';
 
 pdfMake.vfs = pdfFonts.pdfMake.vfs;
 
@@ -52,10 +53,13 @@ export class ReservatedComponent {
 
   hasReserves: boolean = true
 
+  allEvents: any
+
   constructor(
     private cookieService: CookieService,
     private reservationService: ReservationService,
-    private dataService: DataService
+    private dataService: DataService,
+    private concertService: ConcertService
   ) {}
   
   ngOnInit() {
@@ -63,6 +67,7 @@ export class ReservatedComponent {
     this.dni = this.cookieService.get('dni')
 
     this.cols = [
+      { field: 'evento_id', header: 'Concert' },
       { field: 'fila', header: 'Nº Fila' },
       { field: 'butaca', header: 'Nº Butaca' },
       { field: 'fecha', header: 'Fecha reserva' },
@@ -70,15 +75,24 @@ export class ReservatedComponent {
       { field: 'estado', header: 'Estado' }
     ];
 
-    // this.reserves = this.dataService.getData('jsonReservation')[this.dni]
+    this.concertService.getEventsUser().subscribe(events => {
+      this.allEvents = events
+    })
+
     this.reservationService.getReservation(this.dni).subscribe(value => {
       this.reserves = value
+      console.log(value)
       if(value.length == 0){
         this.hasReserves = false
       }
       this.calcularTotalReservado()
     })
     this.info = this.dataService.getData('data')
+  }
+
+  getName(id:any){
+    const evento = this.allEvents.find((e:any) => e.id == id)
+    return `${evento.nombre}`
   }
 
   calcularTotalReservado() {

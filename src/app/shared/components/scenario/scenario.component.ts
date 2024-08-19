@@ -49,6 +49,8 @@ export class ScenarioComponent implements OnInit{
   // Todos los usuarios
   user: any | undefined
   
+  total: any = 0
+
   constructor(
     private cookieService: CookieService,
     private scenarioService: ScenarioService,
@@ -75,22 +77,10 @@ export class ScenarioComponent implements OnInit{
   async loadScenario(){
     try {
       if(!this.admin){
-        const [scenarioData,allReserves,reservationData] = await Promise.all([
-          lastValueFrom(this.scenarioService.getScenario(this.escenario.sala,this.escenario.id)),
-          lastValueFrom(this.reservationService.getAllReservations(this.escenario.id)),
-          lastValueFrom(this.reservationService.getReservation(this.dni))
-        ]) 
-        this.seats = scenarioData,
-        this.reservation = allReserves
-        this.reservationDni = reservationData
+        this.seats = await lastValueFrom(this.scenarioService.getScenario(this.escenario.sala,this.escenario.id))
       }
       if(this.admin){
-        const [scenarioData,allReserves] = await Promise.all([
-          lastValueFrom(this.scenarioService.getScenarioAdmin(this.escenario.sala,this.escenario.id)),
-          lastValueFrom(this.reservationService.getAllReservationsAdmin(this.escenario.id)),
-        ]) 
-        this.seats = scenarioData,
-        this.reservation = allReserves
+        this.seats = await lastValueFrom(this.scenarioService.getScenarioAdmin(this.escenario.sala,this.escenario.id))
       }
     } catch (error) {
       console.error('Error al cargar datos', error)
@@ -106,14 +96,12 @@ export class ScenarioComponent implements OnInit{
   }
   
   async ngOnChanges(changes:SimpleChanges){
-    if(changes['escenario'] && changes['escenario'].currentValue && this.admin){
+    if(changes['escenario'] && changes['escenario'].currentValue){
       try {
-        const [scenarioSeats,allReservation ] = await Promise.all([
-          lastValueFrom(this.scenarioService.getScenarioAdmin(this.escenario.sala,this.escenario.id)),
-          lastValueFrom(this.reservationService.getAllReservationsAdmin(this.escenario.id))
-        ])
-        this.seats = scenarioSeats;
-        this.reservation = allReservation
+        this.subscription = this.scenarioService.updateScenario$.subscribe(() => {
+          this.refreshScenario()
+        });
+        await this.loadScenario()
       } catch (error) {
         console.error('Error al cargar datos', error)
       }
@@ -128,55 +116,57 @@ export class ScenarioComponent implements OnInit{
   }
   
   // Funcion para ver si es dentro del 8 de noviembre y  9 de noviembre 
-  isWithinReservationLimit(): boolean {
-    const currentDate = new Date();
-    const startDate = new Date(currentDate.getFullYear(), 7, 8, 7, 0, 0); // 6/08
-    const endDate = new Date(currentDate.getFullYear(), 7, 20, 7, 0, 0); // 6/08
-    return currentDate >= startDate && currentDate <= endDate;
-  }
+  // isWithinReservationLimit(): boolean {
+  //   const currentDate = new Date();
+  //   const startDate = new Date(currentDate.getFullYear(), 7, 8, 7, 0, 0); // 6/08
+  //   const endDate = new Date(currentDate.getFullYear(), 7, 30, 7, 0, 0); // 6/08
+  //   return currentDate >= startDate && currentDate <= endDate;
+  // }
   // Analiza si esta entre el inicio de tiempo de reserva y dos dias despues
-  hasReachedReservationLimit(): boolean {
-    if (this.isWithinReservationLimit()) {
-      return !this.canReserveMoreSeats(this.user.anio);
-    }
-    return false;
-  }
+  // hasReachedReservationLimit(): boolean {
+  //   if (this.isWithinReservationLimit()) {
+  //     return !this.canReserveMoreSeats(this.user.anio);
+  //   }
+  //   return false;
+  // }
   
   // Retorna un string indicando que parte del dia es
-  getCurrentReservationPhase(): string {
-    const currentDate = new Date();
-    const hours = currentDate.getHours();
+  // getCurrentReservationPhase(): string {
+  //   const currentDate = new Date();
+  //   const hours = currentDate.getHours();
     
-    if (this.isWithinReservationLimit()) {
-      if (hours >= 7 && hours < 13) {
-        return 'morning'; // 7 am - 1 pm
-      } else if (hours >= 14 && hours < 19) {
-        return 'afternoon'; // 2 pm - 8 pm
-      }
-    }
-    return 'none'; // Fuera del rango de restricción de 6-9 de noviembre o fuera de horas específicas
-  }
+  //   if (this.isWithinReservationLimit()) {
+  //     if (hours >= 7 && hours < 13) {
+  //       return 'morning'; // 7 am - 1 pm
+  //     } else if (hours >= 14 && hours < 19) {
+  //       return 'afternoon'; // 2 pm - 8 pm
+  //     }
+  //   }
+  //   return 'none'; // Fuera del rango de restricción de 6-9 de noviembre o fuera de horas específicas
+  // }
   
-  canReserveMoreSeats(nivel:any): boolean {
-    const reservationPhase = this.getCurrentReservationPhase();
+  // canReserveMoreSeats(nivel:any): boolean {
+  //   const reservationPhase = this.getCurrentReservationPhase();
     
-    if (reservationPhase === 'morning' && nivel === 6) {
-      return this.reservationDni && this.reservationDni.length < 2;
-    } else if (reservationPhase === 'afternoon') {
-      return this.reservationDni && this.reservationDni.length < 5;
-    }
-    return true; // Sin restricciones fuera de las fechas y horas especificadas
-  }
+  //   if (reservationPhase === 'morning' && nivel === 6) {
+  //     return this.reservationDni && this.reservationDni.length < 2;
+  //   } else if (reservationPhase === 'afternoon') {
+  //     return this.reservationDni && this.reservationDni.length < 5;
+  //   }
+  //   return true; // Sin restricciones fuera de las fechas y horas especificadas
+  // }
   
   toggleSeatSelection(row:any,seat:any){
     const seatKey = this.getSeatKey(row, seat);
     
     if (this.selectedSeats.has(seatKey)) {
       this.selectedSeats.delete(seatKey);
+      this.total -= this.escenario.valor
     } else {
       const maxSelectableSeats = 5 - (this.reservationDni ? this.reservationDni.length : 0);
-      if(this.isWithinReservationLimit() && this.selectedSeats.size < maxSelectableSeats){
+      if(this.selectedSeats.size < maxSelectableSeats){
         this.selectedSeats.add(seatKey);
+        this.total += this.escenario.valor
       }else{
         alert("No se puede seleccionar mas asientos")
       }
@@ -217,15 +207,15 @@ export class ScenarioComponent implements OnInit{
   }
   
   isReservated(seat:any):boolean{
-    return this.reservation.some((reservedSeat:any) => reservedSeat.fila == seat.fila && reservedSeat.butaca == seat.butaca && reservedSeat.estado == "reservado");
+    return seat.estado == "reservado"
   }
   
   isPaid(seat: any):boolean{
-    return this.reservation.some((reservedSeat:any) => reservedSeat.fila === seat.fila && reservedSeat.butaca === seat.butaca && reservedSeat.estado === "pagado");
+    return seat.estado == "pagado"
   }
   
-  mySeat(seat:any){
-    return this.reservationDni.some((s:any) => ((s.fila === seat.fila) && (s.butaca === seat.butaca)));
+  mySeat(seat: any):boolean {
+    return seat.dni == this.dni
   }
   
   isDisabledSeat(seat: any){
@@ -287,14 +277,12 @@ export class ScenarioComponent implements OnInit{
             })
           });
           this.reservationService.postReservations(this.dni,reserveDone).subscribe({
-            next: (response:any) => {
-              console.log('Reservas Guardadas', response)
+            next: () => {
               this.selectedSeats.clear();
               const pageReservation = 'reservated'
               this.changePage.emit(pageReservation)
             },
             error: (error:any) => {
-              console.log('Error al guardar reservas', error)
               this.showOccupiedSeatsError();
               this.selectedSeats.clear();
             }

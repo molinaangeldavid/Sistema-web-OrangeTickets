@@ -74,7 +74,7 @@ export class LoginComponent implements OnInit{
         this.cookieService.set("dni",`${this.dni}`);
         this.cookieService.set("token",tokenUser.token);
         this.dataService.saveData("data",tokenUser.myUser)
-        this.router.navigate(['home'])
+        this.router.navigate(['estudiante'])
       }
     } catch (error:any) {
       if (error.status === 401) {

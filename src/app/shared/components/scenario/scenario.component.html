@@ -70,6 +70,10 @@
         </div>
     </div>
 </div>
+<div style="margin-top: 20px">
+    <span>Total a pagar: <span style="font-weight: 800;">{{total | currency:'':'symbol':'1.0-0'}}</span>
+        </span>
+</div>
 <div class="guia-color2" *ngIf="admin">
     <div class="guia-row3">
         <div class="asientos-disponibles"></div> 
@@ -86,7 +90,7 @@
 </div>
 
 <div *ngIf="mostrarBoton" class="btn-content" style="margin-top: 30px;">
-    <p-button label="Confirmar" class="button-scenario" (click)="confirmSeat()" size="small" [disabled]="isWithinReservationLimit() && hasReachedReservationLimit()"></p-button>
+    <p-button label="Confirmar" class="button-scenario" (click)="confirmSeat()" size="small"></p-button>
 </div>
 
 </div>

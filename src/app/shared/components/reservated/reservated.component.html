@@ -18,7 +18,7 @@
               {{ rowData[col.field] }}
             </ng-container>
             <ng-container *ngIf="col.field === 'fecha'">
-              {{ rowData.fechaDni | date:'shortDate' }} <!-- Solo la fecha -->
+              {{ rowData.fechaDni | date:'dd/MM/yyyy' }} <!-- Solo la fecha -->
             </ng-container>
             <ng-container *ngIf="col.field === 'hora'">
               {{ rowData.fechaDni | date:'shortTime' }} <!-- Solo la hora -->

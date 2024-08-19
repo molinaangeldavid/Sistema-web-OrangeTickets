@@ -10,7 +10,17 @@ export class ConcertService {
 
   path:any = 'http://localhost:3000/api/admin'
 
+  pathUser:any = 'http://localhost:3000/api/estudiantes'
+
   constructor(private http: HttpClient,private authService: AuthService) { }
+
+  getEventsUser(): Observable<any>{
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${this.authService.getToken()}`
+    })
+    return this.http.get<any>(`${this.pathUser}/eventos`,{headers})
+  }
+
 
   getEvents(): Observable<any>{
     const headers = new HttpHeaders({

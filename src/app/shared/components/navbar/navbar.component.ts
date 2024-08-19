@@ -28,14 +28,16 @@ import { MenubarModule } from 'primeng/menubar';
 })
 export class NavbarComponent {
   @Input() menusecretoNada: any | undefined
-  @Input() menusecreto: any|undefined
+  @Input() menusecreto: any| undefined
   @Input() menusecretoAdmin: any | undefined
+  @Input() user: any
   
   menuItems: MenuItem[] | undefined;
   adminMenuItems: MenuItem[] | undefined;
   logoutMenuItems: MenuItem[] | undefined;
   
-  constructor(private showService:ShowComponentService,
+  constructor(
+    private showService:ShowComponentService,
     private cookieService:CookieService,
     private router:Router
   ){
@@ -93,8 +95,8 @@ export class NavbarComponent {
       { label: 'Reservas', icon: 'pi pi-fw pi-calendar', command: () => this.showManageReserves() },
       { label: 'Habilitaciones', icon: 'pi pi-fw pi-users',
         items:[
-          {label: 'Administradores', command: () => this.showManageAdmin() },
           {label: 'Usuarios', command: () => this.showManageUsers() },
+          { label: 'Administradores', command: () => this.showManageAdmin() },
         ] 
       },
       { label: 'Eventos', icon: 'pi pi-fw pi-calendar-plus', command: () => this.showEvents() },
@@ -111,7 +113,7 @@ export class NavbarComponent {
       { label: 'Salir', icon: 'pi pi-fw pi-sign-out', command: () => this.goOut() }
     ];
   }
-  
+
   showReservation() {
     this.showService.triggerComponentEvent('scenario');
   }
@@ -141,8 +143,8 @@ export class NavbarComponent {
     this.showService.triggerComponentEvent('reserveManage'); 
   }
   
-  showManageUsers() {
-    this.showService.triggerComponentEvent('userManage');
+  showManageUsers(){
+    this.showService.triggerComponentEvent('userManage')
   }
   
   showCountCash() {

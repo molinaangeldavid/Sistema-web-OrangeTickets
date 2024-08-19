@@ -15,9 +15,9 @@ import { InputTextModule } from 'primeng/inputtext';
 import { DropdownModule } from 'primeng/dropdown';
 
 
-import { DataService } from '../../../core/services/data.service';
 import { ConcertService } from '../../../core/services/concert.service';
 import { ScenarioService } from '../../../core/services/scenario.service';
+import { forkJoin } from 'rxjs';
 
 @Component({
   selector: 'app-events',
@@ -53,14 +53,14 @@ export class EventsComponent {
   submitted: boolean = false
   
   selectedSala:any
-
+  
+  today: Date = new Date()
   fecha: any
   hora: any
   
   salas: any
-
+  
   constructor(
-    private dataService: DataService,
     private messageService: MessageService, 
     private confirmationService: ConfirmationService,
     private concertService: ConcertService,
@@ -92,7 +92,7 @@ export class EventsComponent {
     const sala = this.salas.find((s:any) => s.sala === salaId);
     return sala ? sala.nombre : 'Sala desconocida';
   }
-
+  
   new(){
     this.concert = {};
     this.submitted = false;
@@ -113,13 +113,28 @@ export class EventsComponent {
       header: 'Confirmar',
       icon: 'pi pi-exclamation-triangle',
       accept: () => {
-          this.concerts = this.concerts.filter((val:any) => !this.selectedConcerts?.includes(val));
+        const deleteObservables = this.selectedConcerts.map((element: any) => 
+          this.concertService.deleteEvent(element.id, element)
+      );
+      
+      forkJoin(deleteObservables).subscribe({
+        next: (responses) => {
+          console.log(responses);
+          this.concerts = this.concerts.filter((val: any) => !this.selectedConcerts.includes(val));
+          this.messageService.add({ severity: 'success', summary: 'Exito', detail: 'Todos los eventos seleccionados han sido eliminados', life: 3000 });
+        },
+        error: (error) => {
+          console.log(error);
+          this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Ocurrió un error al eliminar algunos eventos', life: 3000 });
+        },
+        complete: () => {
           this.selectedConcerts = null;
-          this.messageService.add({ severity: 'success', summary: 'Exito', detail: 'Concerts eliminados', life: 3000 });
-      }
-  });
+        }
+      });
+    }
+    });
     
-  }
+    }
   
   findIndexById(id: string): number {
     let index = -1;
@@ -155,7 +170,7 @@ export class EventsComponent {
     const minutes = ('0' + time.getMinutes()).slice(-2);
     return `${hours}:${minutes}`;
   }
-
+  
   saveConcert(){
     this.submitted = true;
     if (this.concert!.nombre?.trim()) {
@@ -188,6 +203,7 @@ export class EventsComponent {
           }
         })
         this.messageService.add({ severity: 'success', summary: 'Exito', detail: 'Concert creado', life: 3000 });
+        window.location.reload()
       }
       
       this.concerts = [...this.concerts];
@@ -195,7 +211,7 @@ export class EventsComponent {
       this.concert! = {};
     }
   }
-
+  
   hideDialog() {
     this.concertDialog = false;
     this.submitted = false;

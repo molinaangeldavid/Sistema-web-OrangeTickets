@@ -23,15 +23,16 @@ export const routes: Routes = [
         component: AdminComponent
     },
     {
-        path: 'home',
+        path: 'estudiante',
         component: HomeComponent,
-        canActivate: [loginGuard]
+        canActivate: [loginGuard],
     },
     {
         path: 'admin',
         component: HomeAdminComponent,
-        canActivate:[adminGuard]
-    },{
+        canActivate:[adminGuard],
+    },
+    {
         path: '**',
         component: NotFoundComponent
     }
