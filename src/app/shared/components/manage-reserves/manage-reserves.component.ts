@@ -1,4 +1,4 @@
-import { CUSTOM_ELEMENTS_SCHEMA, ChangeDetectorRef, Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges } from '@angular/core';
+import { CUSTOM_ELEMENTS_SCHEMA, ChangeDetectorRef, Component, Input, OnChanges, OnInit, SimpleChanges } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 import { ScenarioService } from '../../../core/services/scenario.service';
@@ -359,12 +359,25 @@ export class ManageReservesComponent implements OnInit,OnChanges {
     
   }
 
+  getInfoUser(dni:any){
+    const reservesDni = this.reserves.filter((reserveUser:any) => reserveUser.dni == dni)
+    return reservesDni
+  }
+
+  haveReservedSeats(dni: any): boolean {
+    return this.reserves.some((s: any) => s.dni === dni && s.estado === "reservado");
+  }
+
+  areAllSeatsConfirmed(dni: any): boolean {
+    return this.reserves
+      .filter((s: any) => s.dni === dni)
+      .every((s: any) => s.estado === "pagado");
+  }
+
   showDialog(dni: any):void{
     // DNISELECTED es el array de reservas de ese dni
     this.aloneDni = dni
-    this.reservationService.getReservationAdmin(dni).subscribe(value=>{
-      this.dniSelected = value
-    })
+    this.dniSelected = this.getInfoUser(dni)
     this.dialogVisible = true;
   }
 }

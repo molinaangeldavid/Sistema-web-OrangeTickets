@@ -50,7 +50,7 @@ export class ScenarioComponent implements OnInit{
   user: any | undefined
   
   total: any = 0
-
+  
   constructor(
     private cookieService: CookieService,
     private scenarioService: ScenarioService,
@@ -134,7 +134,7 @@ export class ScenarioComponent implements OnInit{
   // getCurrentReservationPhase(): string {
   //   const currentDate = new Date();
   //   const hours = currentDate.getHours();
-    
+  
   //   if (this.isWithinReservationLimit()) {
   //     if (hours >= 7 && hours < 13) {
   //       return 'morning'; // 7 am - 1 pm
@@ -147,7 +147,7 @@ export class ScenarioComponent implements OnInit{
   
   // canReserveMoreSeats(nivel:any): boolean {
   //   const reservationPhase = this.getCurrentReservationPhase();
-    
+  
   //   if (reservationPhase === 'morning' && nivel === 6) {
   //     return this.reservationDni && this.reservationDni.length < 2;
   //   } else if (reservationPhase === 'afternoon') {
@@ -156,15 +156,17 @@ export class ScenarioComponent implements OnInit{
   //   return true; // Sin restricciones fuera de las fechas y horas especificadas
   // }
   
-  toggleSeatSelection(row:any,seat:any){
+  toggleSeatSelection(row:any,seat:any,tipo:any){
     const seatKey = this.getSeatKey(row, seat);
-    
     if (this.selectedSeats.has(seatKey)) {
       this.selectedSeats.delete(seatKey);
       this.total -= this.escenario.valor
     } else {
       const maxSelectableSeats = 5 - (this.reservationDni ? this.reservationDni.length : 0);
       if(this.selectedSeats.size < maxSelectableSeats){
+        if(tipo == 'd'){
+          alert('Estas seleccionando una butaca para discapacitados')
+        }
         this.selectedSeats.add(seatKey);
         this.total += this.escenario.valor
       }else{
@@ -219,10 +221,8 @@ export class ScenarioComponent implements OnInit{
   }
   
   isDisabledSeat(seat: any){
-    if(seat.fila == 8){
-      if(seat.tipo == 'd'){
-        return true
-      }
+    if(seat.tipo == 'd'){
+      return true
     }
     return false
   }

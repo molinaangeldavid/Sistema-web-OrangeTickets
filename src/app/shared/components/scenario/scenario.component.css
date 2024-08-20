@@ -76,7 +76,24 @@ tbody:before {
     background: url('../../../../assets/SoldSeat.jpg');
     background-size: cover;
 }
-
+.seat-disabled-selected {
+    background: url('../../../../assets/HandSeat.jpg'); /* Misma imagen */
+    background-size: cover;
+    opacity: 0.5; /* Reduce la opacidad para indicar selección */
+    border: 2px solid orange; /* Añadir un borde para diferenciarla */
+    filter: grayscale(100%); /* Aplicar un filtro de escala de grises */
+    position: relative;
+}
+.seat-disabled-selected::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(255, 165, 0, 0.3); /* Añade un overlay de color naranja con transparencia */
+    pointer-events: none; /* Permite que los clics pasen a través de la capa superpuesta */
+}
 .disabled{
     background: url('../../../../assets/HandSeat.jpg');
     background-size: cover;

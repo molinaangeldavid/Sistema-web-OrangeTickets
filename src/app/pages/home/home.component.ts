@@ -84,8 +84,6 @@ export class HomeComponent implements OnInit,OnDestroy {
       this.usuarioService.getHabilitation(this.dni).subscribe(all => {
         this.habilitation = all.habilitaciones
         this.concerts = all.eventos
-        console.log(this.habilitation)
-        console.log(this.concerts)
       })
     } catch (error) {
       console.log(error)

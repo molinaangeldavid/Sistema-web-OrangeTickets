@@ -4,18 +4,13 @@ import { CommonModule } from '@angular/common';
 import { DataService } from '../../../core/services/data.service';
 import { CookieService } from 'ngx-cookie-service';
 import { ReservationService } from '../../../core/services/reservation.service';
+import { ConcertService } from '../../../core/services/concert.service';
 
 import { TableModule } from 'primeng/table';
 import { ButtonModule } from 'primeng/button';
 import { DialogModule } from 'primeng/dialog';
-
-import jsPDF from 'jspdf';
-import html2canvas from 'html2canvas';
-import FileSaver, { saveAs } from 'file-saver';
-import pdfMake from "pdfmake/build/pdfmake";
-import pdfFonts from 'pdfmake/build/vfs_fonts';
-import { ConcertService } from '../../../core/services/concert.service';
-
+import pdfMake from 'pdfmake/build/pdfmake';
+import pdfFonts from 'pdfmake/build/vfs_fonts'
 pdfMake.vfs = pdfFonts.pdfMake.vfs;
 
 
@@ -42,19 +37,20 @@ export class ReservatedComponent {
   cols!: Column[];
   
   dni: any | undefined
-
+  
   @Input() escenario: any
-
+  @Input() usuario:any
+  
   totalReservado: number = 0;
-
+  
   dialog: boolean = false
-
+  
   info: any
-
+  
   hasReserves: boolean = true
-
+  
   allEvents: any
-
+  
   constructor(
     private cookieService: CookieService,
     private reservationService: ReservationService,
@@ -65,7 +61,7 @@ export class ReservatedComponent {
   ngOnInit() {
     
     this.dni = this.cookieService.get('dni')
-
+    
     this.cols = [
       { field: 'evento_id', header: 'Concert' },
       { field: 'fila', header: 'Nº Fila' },
@@ -74,14 +70,13 @@ export class ReservatedComponent {
       { field: 'hora', header: 'Hora reserva' },
       { field: 'estado', header: 'Estado' }
     ];
-
+    
     this.concertService.getEventsUser().subscribe(events => {
       this.allEvents = events
     })
-
+    
     this.reservationService.getReservation(this.dni).subscribe(value => {
       this.reserves = value
-      console.log(value)
       if(value.length == 0){
         this.hasReserves = false
       }
@@ -89,83 +84,207 @@ export class ReservatedComponent {
     })
     this.info = this.dataService.getData('data')
   }
-
+  
   getName(id:any){
     const evento = this.allEvents.find((e:any) => e.id == id)
     return `${evento.nombre}`
   }
-
+  
+  isPendingPayment(reserva: any): boolean {
+    const paymentDeadline = new Date(); // Ajusta esta fecha según tu lógica
+    const reserveDate = new Date(reserva.fechaDni); // Asegúrate de que `fechaDni` esté en formato de fecha
+    
+    // Si la reserva está en estado 'reservado' y la fecha actual es menor a la fecha límite de pago
+    return reserva.estado === 'reservado' && reserveDate <= paymentDeadline;
+  }
+  
   calcularTotalReservado() {
     this.totalReservado = this.reserves
-      .filter((reserva:any) => reserva.estado === 'reservado')
-      .reduce((total:any, reserva:any) => total + this.escenario.valor, 0);
+    .filter((reserva:any) => reserva.estado === 'reservado')
+    .reduce((total:any) => total + (this.escenario.valor || 0), 0);
   }
-
-  // downloadInformation(){
-
-  // }
-
-  convertToBase64(file: File): Promise<string> {
+  
+  getDataUrlFromImage(url: string): Promise<string>{
     return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.onload = () => {
-        const base64 = (reader.result as string).split(',')[1];
-        resolve(base64);
+      const img = new Image();
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        canvas.width = img.width;
+        canvas.height = img.height;
+        const ctx = canvas.getContext('2d');
+        if (ctx) {
+          ctx.drawImage(img, 0, 0);
+          resolve(canvas.toDataURL());
+        } else {
+          reject('Error creating canvas context');
+        }
       };
-      reader.onerror = (error) => reject(error);
-      reader.readAsDataURL(file);
+      img.onerror = () => reject('Error loading image');
+      img.src = url;
     });
+  };
+  
+  fechaFormatted(date:Date){
+    const fechaUTC = new Date(date); // Tu fecha en formato UTC
+    
+    const opciones: Intl.DateTimeFormatOptions = {
+      weekday: 'long',  // nombre del día (domingo)
+      year: 'numeric',  // año (2024)
+      month: 'long',    // nombre del mes (noviembre)
+      day: 'numeric'    // número del día (29)
+    };
+    
+    const fechaFormateada = fechaUTC.toLocaleDateString('es-ES', opciones);
+    return fechaFormateada // "viernes, 29 de noviembre de 2024"
+  }
+  
+  formatFechaUTC(fechaUTC: any): string {
+    const fecha = new Date(fechaUTC)
+    const year = fecha.getUTCFullYear();
+    const month = String(fecha.getUTCMonth() + 1).padStart(2, '0'); // Mes empieza en 0
+    const day = String(fecha.getUTCDate()).padStart(2, '0');
+    const hours = String(fecha.getUTCHours()).padStart(2, '0');
+    const minutes = String(fecha.getUTCMinutes()).padStart(2, '0');
+  
+    return `${day}-${month}-${year} ${hours}:${minutes}`;
   }
 
-  async downloadReserves(){
-    this.dialog = true
-    const doc = new jsPDF({
-      unit: 'cm',
-      format: 'a4'
-    });
-    const margin = 2.5;
-    let currentHeight = margin;
-
-    const addImageToPDF = async (element: HTMLElement | null, pdf: jsPDF) => {
-      if (element) {
-        const canvas = await html2canvas(element, {
-          scale: 2,
-          useCORS: true
-        });
-        const imgData = canvas.toDataURL('image/png');
-        const imgWidth = pdf.internal.pageSize.getWidth() - margin * 2;
-        const imgHeight = canvas.height * imgWidth / canvas.width;
-
-        // Check if the image will overflow the page height
-        if (currentHeight + imgHeight > pdf.internal.pageSize.getHeight() - margin) {
-          pdf.addPage();
-          currentHeight = margin; // Reset currentHeight for the new page
-        }
-
-        pdf.addImage(imgData, 'PNG', margin, currentHeight, imgWidth, imgHeight);
-        currentHeight += imgHeight; // Update the currentHeight
-      } else {
-        console.error('Element not found');
+  async generarPDF() {
+    const colegioImagen = await this.getDataUrlFromImage('../../../../assets/oie_transparent.png') 
+    const lugar = 'Paseo La Plaza // Sala Pablo Picasso '
+    const detallesEvento = {
+      nombre: this.escenario.nombre,
+      fecha: this.fechaFormatted(this.escenario.fecha),
+      hora: this.escenario.hora,
+      lugar: lugar
+    }
+    const vencimientoReserva =  'Las reservas deben abonarse dentro de los 2 días hábiles siguientes. Luego las reservas seran canceladas caso que no se confirmen';
+    const condiciones = 'Las entradas podrán abonarse sólo en efectivo en Administración (Av. San Martin 1663) en el horario de 8 a 14hs.';
+    const datos = {
+      email: 'concert2024@orangeinternational.edu.ar',
+      telefono: '35306532',
+      direccion: 'Av Gral. San Martin 1663, Ramos Mejia'
+    }
+    pdfMake.vfs["monotype-old-english.ttf"]
+    pdfMake.fonts = {
+      CustomFont: {
+        normal: "monotype-old-english.ttf",
       }
     };
-
-    const div1 = document.getElementById('perfil')
-    await addImageToPDF(div1,doc)
+    const docDefinition:any = {
+      content: [
+        {
+          columns: [
+            {
+              image: colegioImagen,
+              width: 100
+            },
+            {
+              text: 'Orange\n',
+              font: 'CustomFont',
+              alignment: 'right',
+              fontSize:20,
+              margin: [10, 0, 0, 0], // margen entre la imagen y el texto
+              style: 'header',
+              color: '#2153DB'
+            },
+            {
+              text: 'Day School\n',
+              font: 'CustomFont',
+              alignment: 'right',
+              fontSize:16,
+              margin: [10, 0, 0, 0], // margen entre la imagen y el texto
+              style: 'header',
+              color: '#2153DB'
+            }
+          ]
+        },
+        {
+          text: 'Detalles del Evento',
+          style: 'sectionTitle'
+        },
+        {
+          text: `Nombre: ${detallesEvento.nombre}\nFecha: ${this.formatFechaUTC(detallesEvento.fecha)}\nHora: ${detallesEvento.hora}\nLugar: ${detallesEvento.lugar}\n`,
+          style: 'sectionText'
+        },
+        {
+          text: 'Vencimiento de las Reservas',
+          style: 'sectionTitle'
+        },
+        {
+          text: `${vencimientoReserva}\n`,
+          style: 'sectionText'
+        },
+        {
+          text: 'Ubicaciones Reservadas',
+          style: 'sectionTitle'
+        },
+        {
+          table: {
+            headerRows: 1,
+            widths: [100, 100, 100, '*'],
+            body: [
+              ['Fila', 'Asiento', 'Fecha de Reserva','Estado'],
+              ...this.reserves.map((u: any) => [u.fila, u.butaca, u.fechaDni, u.estado])
+            ]
+          },
+        },
+        {
+          text: `Importe a Pagar`,
+          style: 'sectionTitle'
+        },
+        {
+          text: `${this.totalReservado}\n`,
+          style: 'sectionText'
+        },
+        {
+          text: `Condiciones Generales`,
+          style: 'sectionTitle'
+        },
+        {
+          text: `${condiciones}\n\n`,
+          style: 'sectionText'
+        },
+        {
+          text: `Nombre: ${this.usuario.nombre} ${this.usuario.apellido}\nDNI: ${this.usuario.dni}\n\n`,
+          style: 'sectionText'
+        },
+        { 
+          canvas: [{ 
+            type: 'line', 
+            x1: 0, 
+            y1: 0, 
+            x2: 515, 
+            y2: 0, 
+            lineWidth: 1 
+          }],
+          margin: [0, 10, 0, 10]
+        },
+        {
+          text: `Email: ${datos.email} -  Teléfono: ${datos.telefono}\nDirección: ${datos.direccion}\n`,
+          style: 'footer',
+          alignment: 'center'
+        }
+      ],
+      styles: {
+        sectionTitle: {
+          fontSize: 16,
+          bold: true,
+          margin: [0, 15, 0, 5]
+        },
+        sectionText: {
+          fontSize: 12,
+          margin: [0, 0, 0, 10]
+        },
+        footer: {
+          margin: [0, 10, 0, 0],
+          fontSize: 14
+        }
+      }
+    };
     
-    const div2 = document.getElementById('concert')
-    await addImageToPDF(div2,doc)
-  
-    const div3 = document.getElementById('card')
-    await addImageToPDF(div3,doc)
-    
-    const div4 = document.getElementById('todo')
-    await addImageToPDF(div4,doc)
-    
-    const pdfOutput = doc.output('blob')
-    saveAs(pdfOutput, `Reservas de ${this.dni}.pdf`)
-    
+    pdfMake.createPdf(docDefinition).download('reserva_concierto.pdf');
   }
-
   openDialog(){
     this.dialog = true
   }

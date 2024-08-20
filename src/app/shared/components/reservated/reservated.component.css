@@ -19,3 +19,13 @@
     display: flex;
     justify-content: center;
 }
+
+.state-container {
+    display: flex;
+    align-items: center;
+  }
+  
+  .warning-icon {
+    margin-left: 8px;
+    color: red; /* O el color que prefieras para el símbolo de advertencia */
+  }

@@ -24,7 +24,12 @@
               {{ rowData.fechaDni | date:'shortTime' }} <!-- Solo la hora -->
             </ng-container>
             <ng-container *ngIf="col.field === 'estado'">
-              {{ rowData.estado}}
+              <div class="state-container">
+                {{ rowData.estado }}
+                <ng-container *ngIf="isPendingPayment(rowData)">
+                  <i class="pi pi-exclamation-triangle warning-icon"></i> <!-- Símbolo de advertencia -->
+                </ng-container>
+              </div>
             </ng-container>
           </td>
         </tr>
@@ -38,11 +43,11 @@
     </p-table>
   </div>
   <div class="download-reserves" *ngIf="hasReserves">
-    <button pButton class="p-button-success" (click)="downloadReserves()" icon="pi pi-download" label="Descargar"></button>
+    <button pButton class="p-button-success" (click)="generarPDF()" icon="pi pi-download" label="Descargar"></button>
   </div>
-  <div class="info" *ngIf="hasReserves">
+  <!-- <div class="info" *ngIf="hasReserves">
     <button pButton class="p-button-success" (click)="openDialog()" icon="pi pi-exclamation-circle" severity="help" label="Ver informacion"></button>
-  </div>
+  </div> -->
   <p-dialog 
   header="Informacion importante" 
   [modal]="true" 

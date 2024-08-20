@@ -61,7 +61,7 @@
     <app-scenario [admin]="admin" [escenario]="concertChoice!" *ngIf="currentComponent === 'scenario' && concertChoice!" (changePage)="changePage($event)"></app-scenario>
     
     <div style="margin: 0 auto;">
-        <app-reservated [escenario]="concertChoice!" *ngIf="currentComponent ==='reservated'"></app-reservated>
+        <app-reservated [escenario]="concertChoice!" [usuario]="usuario" *ngIf="currentComponent ==='reservated'"></app-reservated>
     </div>
     
 </div>
