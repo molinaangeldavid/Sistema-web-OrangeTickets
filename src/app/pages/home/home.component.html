@@ -17,12 +17,11 @@
 </p-card>
 </div>
 
-
 <div *ngIf="currentComponent === 'scenario'" style="display: flex; flex-direction: column; justify-content: center; align-items: center;">
-    <div *ngIf="!concerts">
+    <div *ngIf="(!concertChoice && (!concerts || concerts.length === 0))" >
         <p style="text-align: center; font-weight: 700;">Este usuario no tiene Concert habilitado. Comuniquese con administracion para mas detalles</p>
     </div>
-<div class="container-choose" *ngIf="concerts">
+<div class="container-choose" *ngIf="concerts && concerts.length > 1">
     <div style="margin-bottom: 5px;">
         <span>Concerts habilitados</span>
     </div>
@@ -39,8 +38,8 @@
 <div style="text-align: center;">
     <p-progressSpinner ariaLabel="loading" *ngIf="loading"/>
 </div>
-<div class="display-details" style="margin-bottom: 0;" *ngIf="concertChoice != undefined && currentComponent != 'reservated'"> 
-    <div id="concert.length > 0">
+<div class="display-details" style="margin-bottom: 0;" *ngIf="concertChoice && currentComponent != 'reservated'"> 
+    <div>
         <p style="text-align: center; display: block;">
             <span style="font-weight: 900;display: inline;">Concert:</span> 
             {{concertChoice!.nombre}}

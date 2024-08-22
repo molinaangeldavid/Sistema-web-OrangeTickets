@@ -18,7 +18,7 @@
         </div>
         <div class="field">
             <label for="fecha">Hasta</label>
-            <p-calendar [(ngModel)]="hasta"  [maxDate]="dateNow" (onChange)="onHastaChange($event)" required/>
+            <p-calendar [(ngModel)]="hasta"  [minDate]="dateNow" (onChange)="onHastaChange($event)" required/>
         </div>
         <button pButton class="pi pi-search" (click)="searchFecha()"></button>
     </div>

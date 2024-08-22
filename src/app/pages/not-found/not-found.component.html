@@ -1,1 +1,16 @@
-<p>not-found works!</p>
+<div class="not-found-container">
+    <img src="../../../assets/oie_transparent.png" alt="" width="500px">
+    <h3 style="font-size: 20px;">Orange Day School</h3>
+    <h1>404</h1>
+    <p>Página no encontrada</p>
+    <p>Lo sentimos, no encontramos lo que estás buscando.</p>
+    <div *ngIf="isDniAdmin">
+        <a routerLink="/admin">Volver a la página de inicio</a>
+    </div>
+    <div *ngIf="isDni">
+        <a routerLink="/estudiante">Volver a la página de inicio</a>
+    </div>
+    <div *ngIf="isNone">
+        <a routerLink="/login">Volver a la página de inicio</a>
+    </div>
+  </div>

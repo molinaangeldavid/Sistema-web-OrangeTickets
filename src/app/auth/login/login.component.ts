@@ -67,7 +67,17 @@ export class LoginComponent implements OnInit{
     this.esAdmin = false
   }
   
+  cleanCookies(){
+    const allCookies = this.cookieService.getAll();
+    for (const cookieName in allCookies) {
+      if (allCookies.hasOwnProperty(cookieName)) {
+        this.cookieService.delete(cookieName);
+      }
+    }
+  }
+
   async onSubmit(){
+    this.cleanCookies()
     try {
       const tokenUser = await firstValueFrom(this.authService.authUser(this.dni))
       if(tokenUser){

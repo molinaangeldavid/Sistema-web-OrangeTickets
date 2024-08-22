@@ -203,7 +203,6 @@ export class EventsComponent {
           }
         })
         this.messageService.add({ severity: 'success', summary: 'Exito', detail: 'Concert creado', life: 3000 });
-        window.location.reload()
       }
       
       this.concerts = [...this.concerts];

@@ -63,24 +63,6 @@
         <label for="to">Hasta</label>
     </p-floatLabel>
 </div>
-<!-- <div class="confirm-habilitation">
-    <button 
-    pButton 
-    type="button" 
-    (click)="habilitar(concertChoice,$event)" 
-    severity="success" 
-    icon="pi pi-check" 
-    *ngIf="habilitarDiv" 
-    [disabled]="!dateFrom && !dateTo && !concertChoice"></button>
-    <button 
-    pButton 
-    type="button" 
-    (click)="deshabilitar(concertChoice,$event)" 
-    severity="danger" 
-    icon="pi pi-times-circle" 
-    *ngIf="deshabilitarDiv"
-    [disabled]="!cicloChoice || !divisionChoice || !nivelChoice"></button>
-</div> -->
 <p-confirmDialog />
 
 <div class="container-table">
@@ -92,7 +74,7 @@
     [tableStyle]="{'width': 'auto', 'margin':'0 auto'}"
     [globalFilterFields]="['dni', 'apellido', 'nombre', 'ciclo','nivel','division','concert']">
     <ng-template pTemplate="caption" style="width: 50%;">
-        <div class="caption">
+        <div class="caption" style="display: flex; justify-content: space-between;">
             <p-iconField iconPosition="right" class="ml-auto">
                 <p-inputIcon>
                     <i class="pi pi-search"></i>
@@ -103,6 +85,16 @@
                 (input)="dt2.filterGlobal($any($event.target).value, 'contains')" 
                 placeholder="Buscar..." />
             </p-iconField>
+            <p-fileUpload 
+            mode="basic" 
+            chooseLabel="Importar" 
+            chooseIcon="pi pi-upload"
+            accept=".xls,.xlsx" 
+            maxFileSize="1000000" 
+            (onSelect)="onFileSelect($event)"
+            [customUpload]="true"
+            />
+            <button pButton type="button" (click)="uploadFile()">Confirmar</button>
         </div>
     </ng-template>
     <ng-template pTemplate="header">

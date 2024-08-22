@@ -313,52 +313,7 @@ export class ManageReservesComponent implements OnInit,OnChanges {
     });
     
   }
-  // Aqui se quita una reserva indicada por el asiento y fila. Ese asiento vuelve a estar disponible
-  // freeOneReserve(reserve:any){
   
-  // }
-  // // Aqui se confirma una reserva y pasa a ser pagada
-  // acceptOneReserve(reserve:any){
-  
-  // }
-  
-  descarga(){
-    const now = new Date();
-    
-    const currentDate = `${this.padNumber(now.getDate())}-${this.padNumber(now.getMonth() + 1)}-${now.getFullYear()}`;
-    
-    const combinedList: any[] = [];
-    
-    // Recorre todos los usuarios
-    this.users.forEach((user:any) => {
-      const dni = user.dni;
-      
-      // Verifica si hay reservas para el DNI del usuario
-      if (this.reserves[dni]) {
-        // Recorre todas las reservas del usuario
-        this.reserves[dni].forEach((reservation:any) => {
-          combinedList.push({ ...user, ...reservation });
-        });
-      }
-    });
-    console.log(combinedList)
-    // Crea una hoja de trabajo (worksheet)
-    const worksheet = XLSX.utils.json_to_sheet(combinedList);
-    
-    // Crea un libro de trabajo (workbook) y agrega la hoja de trabajo
-    const workbook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(workbook, worksheet, `Reporte ${currentDate} `);
-    
-    // Genera el archivo Excel y descarga
-    const excelBuffer: any = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
-    const data: Blob = new Blob([excelBuffer], { type: 'application/octet-stream' });
-    saveAs(data, `${this.escenario.nombre}-${currentDate}.xlsx`);
-  }
-  
-  hasReservedSeats(){
-    
-  }
-
   getInfoUser(dni:any){
     const reservesDni = this.reserves.filter((reserveUser:any) => reserveUser.dni == dni)
     return reservesDni
@@ -372,6 +327,94 @@ export class ManageReservesComponent implements OnInit,OnChanges {
     return this.reserves
       .filter((s: any) => s.dni === dni)
       .every((s: any) => s.estado === "pagado");
+  }
+
+  formatFechaUTC(fechaUTC: any): string {
+    if (!fechaUTC || typeof fechaUTC !== 'string') {
+      throw new Error('Fecha UTC inválida');
+    }
+    const fecha = new Date(fechaUTC);
+    // Verifica si la fecha es válida
+    if (isNaN(fecha.getTime())) {
+      throw new Error('Fecha UTC no válida');
+    }
+    const year = fecha.getUTCFullYear();
+    const month = String(fecha.getUTCMonth() + 1).padStart(2, '0'); // Mes empieza en 0
+    const day = String(fecha.getUTCDate()).padStart(2, '0');
+    const hours = String(fecha.getUTCHours()).padStart(2, '0');
+    const minutes = String(fecha.getUTCMinutes()).padStart(2, '0');
+  
+    return `${day}-${month}-${year} ${hours}:${minutes}`;
+  }
+
+  getAdmin(dni:any){
+    const admin = this.allAdmins.find((e:any) => e.dni == dni)
+    if(!admin){
+      return
+    }
+    return `${admin.nombre} ${admin.apellido}`
+  }
+
+  isDisabledSeat(reserva: any): boolean {
+    return reserva.tipo == 'd'; 
+  }
+
+  descarga(){
+    const now = new Date();
+    
+    const currentDate = `${this.padNumber(now.getDate())}-${this.padNumber(now.getMonth() + 1)}-${now.getFullYear()}`;
+    
+    const combinedList: any[] = [];
+    
+    // Recorre todos los usuarios
+    this.allUsers.forEach((user:any) => {
+      const res = this.getInfoUser(user.dni)
+      // Verifica si hay reservas para el DNI del usuario
+      if (res) {
+        // Recorre todas las reservas del usuario
+        res.forEach((reservation:any) => {
+          combinedList.push({ 
+            DNI: user.dni,
+            NOMBRE: user.nombre,
+            APELLIDO: user.apellido,
+            CICLO: user.ciclo,
+            GRADO_ANIO: user.anio,
+            DIVISION: user.division,
+            FILA: reservation.fila,
+            BUTACA: reservation.butaca,
+            CONFIRMADO_POR: reservation.admin ? this.getAdmin(reservation.admin) : 'No confirmado',
+            FECHA_DE_CONFIRMACION: reservation.fechaAdmin ? this.formatFechaUTC(reservation.fechaAdmin) : 'No confirmado'
+           });
+        });
+      }
+    });
+    const ws: any = XLSX.utils.json_to_sheet(combinedList);
+
+  // Aplicar el formato de centrado
+  const range = XLSX.utils.decode_range(ws['!ref']);
+  for (let R = range.s.r; R <= range.e.r; ++R) {
+    for (let C = range.s.c; C <= range.e.c; ++C) {
+      const cell_ref = XLSX.utils.encode_cell({ r: R, c: C });
+      if (!ws[cell_ref]) ws[cell_ref] = {};
+      ws[cell_ref].s = {
+        alignment: {
+          horizontal: 'center',
+          vertical: 'center'
+        }
+      };
+    }
+  }
+    // Crea una hoja de trabajo (worksheet)
+    const worksheet = XLSX.utils.json_to_sheet(combinedList);
+    
+    // Crea un libro de trabajo (workbook) y agrega la hoja de trabajo
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, `Reporte ${currentDate} `);
+    
+    // Genera el archivo Excel y descarga
+    const excelBuffer: any = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
+    const data: Blob = new Blob([excelBuffer], { type: 'application/octet-stream' });
+    saveAs(data, `${this.escenario.nombre}-${currentDate}.xlsx`);
   }
 
   showDialog(dni: any):void{

@@ -14,10 +14,11 @@ import { DropdownModule } from 'primeng/dropdown';
 import { CalendarModule } from 'primeng/calendar';
 import { FloatLabelModule } from 'primeng/floatlabel';
 import { CheckboxModule } from 'primeng/checkbox';
+import { FileUploadModule, UploadEvent } from 'primeng/fileupload';
 
-import { DataService } from '../../../core/services/data.service';
 import { ConcertService } from '../../../core/services/concert.service';
 import { HabilitacionesService } from '../../../core/services/habilitaciones.service';
+import { AdminService } from '../../../core/services/admin.service';
 
 // interface User{
 //   anio:number,
@@ -47,7 +48,8 @@ import { HabilitacionesService } from '../../../core/services/habilitaciones.ser
     DropdownModule,
     CalendarModule,
     FloatLabelModule,
-    CheckboxModule
+    CheckboxModule,
+    FileUploadModule
   ],
   templateUrl: './manage-users.component.html',
   styleUrl: './manage-users.component.css',
@@ -83,14 +85,15 @@ export class ManageUsersComponent {
   
   loading: boolean = true;
   
-
-
-  constructor(private dataService: DataService,
+  file: any
+  
+  constructor(
     private confirmationService:ConfirmationService,
     private messageService: MessageService,
     private primengConfig: PrimeNGConfig,
     private concertService: ConcertService,
-    private habilitacionesService: HabilitacionesService
+    private habilitacionesService: HabilitacionesService,
+    private adminService: AdminService
   ){
     this.primengConfig.setTranslation({
       accept: 'Sí',
@@ -110,19 +113,9 @@ export class ManageUsersComponent {
   }
   
   loadData(){
-    
-    /* this.adminService.getAllUsers().subscribe(users => {
-    this.users = users
-    this.filteredUsers = [...this.users];
-    this.loading = false;
-    }) */
     this.concertService.getEvents().subscribe(concerts => {
       this.concerts = concerts
     })
-    /*
-    this.habilitacionesService.getAllHabilitation().subscribe(h => {
-    this.habilitaciones = h
-    })*/ 
   }
   
   onCicloChange(selectedCiclo: any) {
@@ -162,25 +155,44 @@ export class ManageUsersComponent {
     });
     } */
   }
-  
-  canHabilitar(user:any,event:any){
-    const checkbox = event.target;
-    const wasChecked = checkbox.checked;
-    
-    // checkbox.disabled = true;
-    
-    const habilitado = wasChecked
-    
-    const desde = this.dateFrom
-    const hasta = this.dateTo
-    if(!desde || !hasta){
-      alert('Debes configurar la fecha de inicio y de fin')
-      checkbox.checked = false
-      checkbox.disabled = false
+
+  onFileSelect(event: {files: File[]}){
+    this.file = event.files[0];
+  }
+
+  uploadFile(){
+    if(this.file){
+      this.adminService.uploadUser(this.file).subscribe({
+        next: (response) => {
+          console.log(response)
+          this.messageService.add({ severity: 'success', summary: 'Exito', detail: 'Usuarios agregados a la base de datos', life: 3000 })
+        },
+        error: (error) => {
+          console.log(error)
+          this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Error al cargar los archivos', life: 3000 })
+        }
+      })
+    }else{
+      console.log("no paso el if")
     }
-    
-    user.habilitado = (checkbox.checked?1:0);
-    
+  }
+
+  canHabilitar(user: any, event: any) {
+    const checkbox = event.target;
+    const desde = this.dateFrom; 
+    const hasta = this.dateTo; 
+  
+    if (checkbox.checked && (!desde || !hasta)) {
+      // Mostrar alerta si las fechas no están configuradas
+      alert('Debes configurar la fecha de inicio y de fin antes de habilitar al usuario.');
+      checkbox.checked = false
+      // Evitar que el checkbox se habilite
+      event.preventDefault();
+      return;
+    }
+  
+    // Asignar el estado del checkbox al usuario si las fechas están configuradas o si se está deshabilitando
+    user.habilitado = checkbox.checked ? 1 : 0;
   }
   
   onDateFromChange(){
@@ -195,7 +207,7 @@ export class ManageUsersComponent {
       }
     }
   }
-
+  
   // habilitar(users:any){
   //   this.habilitacionesService.postHabilitacion(this.concertChoice.id,this.dateFrom,this.dateTo,users).subscribe({
   //     next: (response) => {
@@ -206,7 +218,7 @@ export class ManageUsersComponent {
   //     }
   //   })
   // }
-
+  
   toggleHabilitation(event:any){
     // this.confirmationService.confirm({
     //   message: 'Estas seguro/a de confirmar las reservas seleccionadas?',
@@ -232,48 +244,48 @@ export class ManageUsersComponent {
     //   }
     // })
   }
-
+  
   habilitar(event: any){
     const rango: any = {rango: {desde: this.dateFrom, 
-                                hasta: this.dateTo
-                              }
-                        }
-    const habilitados:any = {habilita: []}
-    const deshabilitados: any = {deshabilita: []}
-    this.filteredUsers.forEach((user:any) => {
-      if(user.habilitado === 1 && user.habilitadoant != user.habilitado){
-        habilitados.habilita.push(user)
-      }else{
-        if(user.habilitado === 0 && user.habilitadoant != user.habilitado){
-          deshabilitados.deshabilita.push(user)
-        }
-      }
-    })
-    const data = {habilita:habilitados.habilita,deshabilita: deshabilitados.deshabilita,rango: rango.rango}
-    console.log(data)
-    this.confirmationService.confirm({
-      message: 'Estas seguro/a de confirmar las reservas seleccionadas?',
-      header: 'Confirmacion',
-      target: event.target as EventTarget,
-      icon: 'pi pi-exclamation-triangle',
-      accept: () => {
-        this.habilitacionesService.postHabilitacion(this.concertChoice.id,data).subscribe({
-          next: (response) => {
-            this.filteredUsers = [...this.filteredUsers]
-            console.log(response)
-            this.messageService.add({ severity: 'success', summary: 'Habilitado', detail: 'Usuario habilitado', life: 3000 })
-          },
-          error: (error:any) => {
-            console.log(error)
-            this.messageService.add({severity: 'error', summary: 'Error', detail: 'Error al habilitar', life: 3000})
-          },
-        })
-      },
-      reject: () => {
-        this.messageService.add({severity: 'reject', summary: 'Rechazar', detail: 'No se modifico', life: 3000})
-      }
-    })
+      hasta: this.dateTo
+    }
   }
+  const habilitados:any = {habilita: []}
+  const deshabilitados: any = {deshabilita: []}
+  this.filteredUsers.forEach((user:any) => {
+    if(user.habilitado === 1 && user.habilitadoant != user.habilitado){
+      habilitados.habilita.push(user)
+    }else{
+      if(user.habilitado === 0 && user.habilitadoant != user.habilitado){
+        deshabilitados.deshabilita.push(user)
+      }
+    }
+  })
+  const data = {habilita:habilitados.habilita,deshabilita: deshabilitados.deshabilita,rango: rango.rango}
+  console.log(data)
+  this.confirmationService.confirm({
+    message: 'Estas seguro/a de confirmar las reservas seleccionadas?',
+    header: 'Confirmacion',
+    target: event.target as EventTarget,
+    icon: 'pi pi-exclamation-triangle',
+    accept: () => {
+      this.habilitacionesService.postHabilitacion(this.concertChoice.id,data).subscribe({
+        next: (response) => {
+          this.filteredUsers = [...this.filteredUsers]
+          console.log(response)
+          this.messageService.add({ severity: 'success', summary: 'Habilitado', detail: 'Usuario habilitado', life: 3000 })
+        },
+        error: (error:any) => {
+          console.log(error)
+          this.messageService.add({severity: 'error', summary: 'Error', detail: 'Error al habilitar', life: 3000})
+        },
+      })
+    },
+    reject: () => {
+      this.messageService.add({severity: 'reject', summary: 'Rechazar', detail: 'No se modifico', life: 3000})
+    }
+  })
+}
 
 
 

@@ -83,8 +83,20 @@ export class HomeComponent implements OnInit,OnDestroy {
     try {
       this.usuarioService.getHabilitation(this.dni).subscribe(all => {
         this.habilitation = all.habilitaciones
-        this.concerts = all.eventos
+        if (all && all.eventos) {
+          if (all.eventos.length === 2) {
+            this.concerts = all.eventos; // Asigna los dos eventos a this.concerts
+          } else if (all.eventos.length === 1) {
+            this.concertChoice = all.eventos[0]; // Asigna el único evento a this.concertchoice
+            console.log(this.concertChoice)
+          } else {
+            // Manejar el caso cuando no hay eventos
+            this.concerts = [];
+            this.concertChoice = null;
+          }
+        }
       })
+
     } catch (error) {
       console.log(error)
     }finally{

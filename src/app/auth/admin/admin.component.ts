@@ -43,8 +43,9 @@ export class AdminComponent {
   ngOnInit(){
     
   }
-  
+
   async onSubmit(){
+    this.cookieService.deleteAll()
     try {
       const tokenAdmin = await firstValueFrom(this.authService.authAdmin(this.dni,this.password))
       if(tokenAdmin){

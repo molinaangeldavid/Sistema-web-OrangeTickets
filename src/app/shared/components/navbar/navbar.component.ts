@@ -88,7 +88,7 @@ export class NavbarComponent {
     this.menuItems = [
       { label: 'Sala', icon: 'pi pi-fw pi-home', command: () => this.showReservation() },
       { label: 'Detalles', icon: 'pi pi-fw pi-info-circle', command: () => this.showReservated() },
-      { label: 'Salir', icon: 'pi pi-fw pi-sign-out', command: () => this.goOut() }
+      // { label: 'Salir', icon: 'pi pi-fw pi-sign-out', command: () => this.goOut() }
     ];
     
     this.adminMenuItems = [
@@ -96,21 +96,21 @@ export class NavbarComponent {
       { label: 'Habilitaciones', icon: 'pi pi-fw pi-users',
         items:[
           {label: 'Usuarios', command: () => this.showManageUsers() },
-          { label: 'Administradores', command: () => this.showManageAdmin() },
+          //{ label: 'Administradores', command: () => this.showManageAdmin() },
         ] 
       },
       { label: 'Eventos', icon: 'pi pi-fw pi-calendar-plus', command: () => this.showEvents() },
-      { label: 'Reportes', icon: 'pi pi-fw pi-calendar-plus', 
+      { label: 'Reportes', icon: 'pi pi-fw pi-clipboard', 
         items: [
           { label: 'Caja', command: () => this.showCountCash() },
-          { label: 'Historial',  command: () => this.showHistorialReports() },
+          //{ label: 'Historial',  command: () => this.showHistorialReports() },
         ]
       }, 
-      {label: 'Salir', icon: 'pi pi-fw pi-sign-out', command: () => this.goOut() }
+      // {label: 'Salir', icon: 'pi pi-fw pi-sign-out', command: () => this.goOut() }
     ];
     
     this.logoutMenuItems = [
-      { label: 'Salir', icon: 'pi pi-fw pi-sign-out', command: () => this.goOut() }
+      // { label: 'Salir', icon: 'pi pi-fw pi-sign-out', command: () => this.goOut() }
     ];
   }
 

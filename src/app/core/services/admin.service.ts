@@ -40,6 +40,16 @@ export class AdminService {
     })
     return this.http.post<any>(`${this.path}/administradores`,body,{headers})
   }
+
+  uploadUser(file:File): Observable<any>{
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${this.authService.getToken()}`
+    })
+    const formData = new FormData();
+    formData.append('file',file,file.name);
+    return this.http.post(`${this.path}/subirUsuarios`,formData,{headers})
+  }
+
   putAdmin(dni:any,body:any):Observable<any>{
     const headers = new HttpHeaders({
       'Authorization': `Bearer ${this.authService.getToken()}`

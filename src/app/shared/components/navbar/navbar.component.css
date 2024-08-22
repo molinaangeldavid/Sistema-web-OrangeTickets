@@ -2,16 +2,20 @@
     font-family: 'Wittenberger Fraktur MT';
     src: url('../../../../assets/wittenberger-fraktur-mt-std-bold.ttf');
 }
-/* ::ng-deep .p-menubar{
-    background-color: #FF6F61 !important;
-    border: none; 
+
+/* ::ng-deep .custom-menubar {
+    background-color: transparent !important; 
+    border: none !important;
 }
-::ng-deep .p-menubar .p-menubar-end .p-menuitem{
-    color: white !important;
+
+::ng-deep .custom-menubar .p-menubar {
+    background-color: transparent !important;
+} */
+
+::ng-deep .p-button{
+    padding: 8px;
 }
-::ng-deep .p-menubar .p-menuitem-link {
-    color: #000000; /* Color del texto de los ítems 
-  } */
+
 .container {
     max-width: 100%;
   }
@@ -53,68 +57,9 @@
     background-color: #FF4B3E;
   }
   
-  .p-button {
+  /* .p-button {
     color: white;
-  }
-/* .container{
-    display: flex;
-    justify-content: space-evenly;
-    align-items: center;
-    background-color: #FF6F61;
-    width: 100vw;
-    padding: 8px 0;
-}
-.subcontainer{
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-.titulo{
-   font-size: 30px;
-   font-family: 'Wittenberger Fraktur MT', Courier, monospace;
-   position: relative;
-   top: 5px;
-   left: 5px;
-   color: #FFFFFF;
-   font-weight: 100;
-}
-.container-menu{
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-}
-.container img{
-    width:100px;
-    height: auto;
-    padding-left: 10px;
-}
-.container ul{
-    display: flex;
-    padding-left: 0;
-    color: #FFFFFF;
-    font-weight: 700;
-}
-.hover-list {
-    list-style: none;
-    margin-right: 5px;
-}
-
-.hover-list:target{
-    color: rgb(34, 32, 30)
-}
-
-.hover-list a{
-    padding: 10px;
-    cursor: pointer;
-    color: #FFFFFF;
-    font-size: 1rem;
-    text-decoration: none;
-}
-.hover-list a:hover{
-    color: rgb(83, 57, 150);
-    transition: .5s;
-} */
+  } */
 
 @media screen and (max-width: 720px) {
     .container{
