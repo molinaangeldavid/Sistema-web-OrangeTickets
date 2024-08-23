@@ -19,6 +19,7 @@
                 icon="pi pi-trash" 
                 (onClick)="deleteSelectedConcerts()" 
                 [disabled]="!selectedConcerts || !selectedConcerts.length" />
+                <p-button icon="pi pi-sync" (click)="refresh()" />
             </div>
         <!-- </ng-template> -->
     <!-- </p-toolbar> -->

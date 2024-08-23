@@ -122,6 +122,19 @@ styleClass="p-fluid">
             El Apellido es requerido.
         </small>
     </div>
+    <div class="field">
+        <label for="pass">contraseña</label>
+        <input 
+        type="password" 
+        pInputText 
+        id="pass" 
+        [(ngModel)]="administrador!.pass" 
+        required 
+        autofocus />
+        <small *ngIf="submitted && !administrador!.pass">
+            La contraseña es requerida
+        </small>
+    </div>
 </ng-template>
 
 <ng-template pTemplate="footer">

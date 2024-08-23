@@ -172,8 +172,6 @@ export class ManageUsersComponent {
           this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Error al cargar los archivos', life: 3000 })
         }
       })
-    }else{
-      console.log("no paso el if")
     }
   }
 

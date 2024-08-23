@@ -2,7 +2,6 @@ import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { NavbarComponent } from '../navbar/navbar.component';
 import { FooterComponent } from '../footer/footer.component';
-import { DataService } from '../../../core/services/data.service';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { ToastModule } from 'primeng/toast';
 import { ButtonModule } from 'primeng/button';
@@ -45,11 +44,14 @@ export class AdminManageComponent {
   administradores:any
   
   administrador:any
+
   selectedAdministrador: any
+
   administradorDialog: boolean = false
   
   submitted: boolean = false
   
+  private readonly userDni = 37760822
   constructor(
     private messageService: MessageService, 
     private confirmationService: ConfirmationService,
@@ -57,6 +59,7 @@ export class AdminManageComponent {
   ){
   }
   
+
   ngOnInit(){
     this.administrador = {
       dni: undefined,
@@ -66,6 +69,8 @@ export class AdminManageComponent {
     }
     this.adminService.getAdmins().subscribe(e => {
       this.administradores = e
+      this.administradores = e.filter((admin:any) => admin.dni !== this.userDni);
+      console.log(this.administradores)
     })
   }
   
@@ -98,31 +103,10 @@ export class AdminManageComponent {
     
   }
   
-  // findIndexById(id: string): number {
-  //   let index = -1;
-  //   for (let i = 0; i < this.administradores.length; i++) {
-  //     if (this.administradores[i].id === id) {
-  //       index = i;
-  //       break;
-  //     }
-  //   }
-  //   return index;
-  // }
-  
-  // createId(): string {
-  //   let maxId = 0;
-  //   for (const concert of this.administradores) {
-  //     if (concert.id > maxId) {
-  //       maxId = parseInt(concert.id);
-  //     }
-  //   }
-  //   return `${maxId + 1}`;
-  // }
-  
   saveAdministrador(){
     this.submitted = true;
-    if (this.administrador!.dni) {
-      console.log("hola")
+    const exist = this.administradores.some((a:any) => a.dni == this.administrador.dni)
+    if (exist) {
       this.adminService.putAdmin(this.administrador.dni, this.administrador).subscribe({
         next: (response) => {
           console.log(response)
@@ -131,9 +115,10 @@ export class AdminManageComponent {
           console.log(error)
         }
       })
-      this.messageService.add({ severity: 'success', summary: 'Exito', detail: 'Concert actualizado', life: 3000 });
+      this.messageService.add({ severity: 'success', summary: 'Exito', detail: 'Administrador actualizado', life: 3000 });
     } else {
       this.administradores.push(this.administrador!);
+      console.log(this.administrador)
       this.adminService.postAdmin(this.administrador).subscribe({
         next: (response) => {
           console.log(response)
@@ -143,7 +128,7 @@ export class AdminManageComponent {
         }
       })
       this.administrador = {}
-      this.messageService.add({ severity: 'success', summary: 'Exito', detail: 'Concert creado', life: 3000 });
+      this.messageService.add({ severity: 'success', summary: 'Exito', detail: 'Administrador creado', life: 3000 });
     }
     
     this.administradores = [...this.administradores];
@@ -167,11 +152,11 @@ export class AdminManageComponent {
         this.adminService.deleteAdmin(administrador.id).subscribe({
           next: (response) => {
             console.log(response)
-            this.messageService.add({ severity: 'success', summary: 'Exito', detail: 'Concert Eliminado', life: 3000 });
+            this.messageService.add({ severity: 'success', summary: 'Exito', detail: 'Administrador Eliminado', life: 3000 });
           },
           error: (error) => {
             console.log(error)
-            this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Error al eliminarse el evento', life: 3000 });
+            this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Error al eliminarse el administrador', life: 3000 });
           }
         })
         this.administradores = this.administradores.filter((val:any) => val.id !== administrador.id);

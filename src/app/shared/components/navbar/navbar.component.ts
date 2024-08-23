@@ -35,7 +35,7 @@ export class NavbarComponent {
   menuItems: MenuItem[] | undefined;
   adminMenuItems: MenuItem[] | undefined;
   logoutMenuItems: MenuItem[] | undefined;
-  
+  adminSuper: boolean =  false
   constructor(
     private showService:ShowComponentService,
     private cookieService:CookieService,
@@ -84,6 +84,9 @@ export class NavbarComponent {
   //   this.router.navigate(['login'])
   // }
   
+  private readonly ADMIN_DNI1 = 37760822
+  private readonly ADMIN_DNI2 = 35902759
+
   ngOnInit() {
     this.menuItems = [
       { label: 'Sala', icon: 'pi pi-fw pi-home', command: () => this.showReservation() },
@@ -91,13 +94,17 @@ export class NavbarComponent {
       // { label: 'Salir', icon: 'pi pi-fw pi-sign-out', command: () => this.goOut() }
     ];
     
+    if(this.user != undefined){
+      this.adminSuper = this.user.dni == this.ADMIN_DNI1 || this.user.dni == this.ADMIN_DNI2
+    }
+
     this.adminMenuItems = [
       { label: 'Reservas', icon: 'pi pi-fw pi-calendar', command: () => this.showManageReserves() },
       { label: 'Habilitaciones', icon: 'pi pi-fw pi-users',
         items:[
           {label: 'Usuarios', command: () => this.showManageUsers() },
-          //{ label: 'Administradores', command: () => this.showManageAdmin() },
-        ] 
+          ...(this.adminSuper ? [{ label: 'Administradores', command: () => this.showManageAdmin() }] :[]),
+        ],
       },
       { label: 'Eventos', icon: 'pi pi-fw pi-calendar-plus', command: () => this.showEvents() },
       { label: 'Reportes', icon: 'pi pi-fw pi-clipboard', 

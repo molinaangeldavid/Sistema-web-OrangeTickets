@@ -30,6 +30,7 @@ export class ScenarioComponent implements OnInit{
   @Input() mostrarBoton = true
   @Input() escenario: any
   @Input() admin:boolean | undefined
+  @Input() habilitation: any
   
   @Output() changePage = new EventEmitter<string>()
   
@@ -51,6 +52,8 @@ export class ScenarioComponent implements OnInit{
   
   total: any = 0
   
+  isReservationAllowed: boolean | undefined;
+  
   constructor(
     private cookieService: CookieService,
     private scenarioService: ScenarioService,
@@ -61,17 +64,24 @@ export class ScenarioComponent implements OnInit{
   }
   
   async ngOnInit(){
+    this.habilitation = this.habilitation.find((h:any) => h.evento_id == this.escenario.id)
     this.loading = true
     if(this.admin){
       this.dni = this.cookieService.get('dniAdmin')
     }else{
       this.dni = this.cookieService.get('dni')
     }
+    
     this.user = this.dataService.getData('data')
+    
+    const currentDate = new Date()
+    this.isReservationAllowed = this.checkReservationPermission(this.user.anio,currentDate)
+    
     this.subscription = this.scenarioService.updateScenario$.subscribe(() => {
       this.refreshScenario()
     });
     await this.loadScenario()
+    
   }
   
   async loadScenario(){
@@ -115,86 +125,94 @@ export class ScenarioComponent implements OnInit{
     return `${rowIndex}-${seatIndex}`;
   }
   
-  // Funcion para ver si es dentro del 8 de noviembre y  9 de noviembre 
-  // isWithinReservationLimit(): boolean {
-  //   const currentDate = new Date();
-  //   const startDate = new Date(currentDate.getFullYear(), 7, 8, 7, 0, 0); // 6/08
-  //   const endDate = new Date(currentDate.getFullYear(), 7, 30, 7, 0, 0); // 6/08
-  //   return currentDate >= startDate && currentDate <= endDate;
-  // }
-  // Analiza si esta entre el inicio de tiempo de reserva y dos dias despues
-  // hasReachedReservationLimit(): boolean {
-  //   if (this.isWithinReservationLimit()) {
-  //     return !this.canReserveMoreSeats(this.user.anio);
-  //   }
-  //   return false;
-  // }
+  checkReservationPermission(userGrade:number,currentDate: Date): boolean {
+    if(this.habilitation){
+      const habilitationStart = new Date(this.habilitation.desde);
+      const habilitationThirdDay = new Date(habilitationStart.getTime() + 3 * 24 * 60 * 60 * 1000);
+      const habilitationFinish = new Date(this.habilitation.hasta)
+      
+      if(currentDate > habilitationThirdDay && currentDate < habilitationFinish){
+        return true; 
+      }
+      
+      if(currentDate < habilitationStart){
+        return false
+      }
+      
+      const currentHour = currentDate.getHours();
+      const isMorningWindow = currentHour >= 7 && currentHour < 13;
+      const isAfternoonWindow = currentHour >= 14 && currentHour < 20;
+      
+      if (userGrade === 6) {
+        if (isMorningWindow || isAfternoonWindow) {
+          return true; // Puede reservar en el periodo correcto
+        }
+      } else if (userGrade >= 1 && userGrade <= 5) {
+        if (isAfternoonWindow) {
+          return true; // Puede reservar en la ventana de tarde
+        }
+      }
+      return false;
+    }
+    return false
+  }
   
-  // Retorna un string indicando que parte del dia es
-  // getCurrentReservationPhase(): string {
-  //   const currentDate = new Date();
-  //   const hours = currentDate.getHours();
+  getMaxSeatsAllowed(userGrade: number, currentDateTime: Date, existingReservations:any): number {
+    const habilitationStart = new Date(this.habilitation.desde);
+    const habilitationThirdDay = new Date(habilitationStart.getTime() + 3 * 24 * 60 * 60 * 1000);
+    const habilitationFinish = new Date(this.habilitation.hasta) 
+    
+    const currentHour = currentDateTime.getHours();
+    const isMorningWindow = currentHour >= 7 && currentHour < 13;
+    const isAfternoonWindow = currentHour >= 14 && currentHour < 20;
+    
+    let maxSeats: any = 0
+    if (currentDateTime > habilitationThirdDay && currentDateTime < habilitationFinish) {
+      return Infinity; // Puede reservar cualquier cantidad de asientos
+    }
+    
+    if (userGrade === 6) {
+      if (isMorningWindow) {
+        console.log("egresado maniana")
+        maxSeats = Math.max(2 - existingReservations, 0);
+      } else if (isAfternoonWindow) {
+        console.log("egresado tarde")
+        maxSeats = Math.max(5 - existingReservations, 0); // Máximo 5 asientos en la tarde
+      }
+    } else if (userGrade >= 1 && userGrade <= 5) {
+      if (isAfternoonWindow) {
+        console.log("no egresado")
+        maxSeats = Math.max(5 - existingReservations, 0); // Máximo 5 asientos en la tarde
+      }
+    }
+    
+    return maxSeats; // No puede reservar fuera del horario permitido
+  }
   
-  //   if (this.isWithinReservationLimit()) {
-  //     if (hours >= 7 && hours < 13) {
-  //       return 'morning'; // 7 am - 1 pm
-  //     } else if (hours >= 14 && hours < 19) {
-  //       return 'afternoon'; // 2 pm - 8 pm
-  //     }
-  //   }
-  //   return 'none'; // Fuera del rango de restricción de 6-9 de noviembre o fuera de horas específicas
-  // }
-  
-  // canReserveMoreSeats(nivel:any): boolean {
-  //   const reservationPhase = this.getCurrentReservationPhase();
-  
-  //   if (reservationPhase === 'morning' && nivel === 6) {
-  //     return this.reservationDni && this.reservationDni.length < 2;
-  //   } else if (reservationPhase === 'afternoon') {
-  //     return this.reservationDni && this.reservationDni.length < 5;
-  //   }
-  //   return true; // Sin restricciones fuera de las fechas y horas especificadas
-  // }
-  
-  toggleSeatSelection(row:any,seat:any,tipo:any){
+  async toggleSeatSelection(row:any,seat:any,tipo:any){
     const seatKey = this.getSeatKey(row, seat);
     if (this.selectedSeats.has(seatKey)) {
       this.selectedSeats.delete(seatKey);
       this.total -= this.escenario.valor
     } else {
-      const maxSelectableSeats = 5 - (this.reservationDni ? this.reservationDni.length : 0);
-      if(this.selectedSeats.size < maxSelectableSeats){
-        if(tipo == 'd'){
-          alert('Estas seleccionando una butaca para discapacitados')
-        }
-        this.selectedSeats.add(seatKey);
-        this.total += this.escenario.valor
-      }else{
-        alert("No se puede seleccionar mas asientos")
+      const totalReservation = await lastValueFrom(this.reservationService.getReservation(this.user.dni))
+      
+      const maxSeatsAllowed = this.getMaxSeatsAllowed(this.user.anio, new Date(),totalReservation.length);
+      console.log(maxSeatsAllowed)
+      if (this.selectedSeats.size >= maxSeatsAllowed) {
+        alert("No puede seleccionar mas asientos. Pruebe mas tarde")
+        this.isReservationAllowed = false
+        return;
       }
+      if(tipo == 'd'){
+        alert('Estas seleccionando una butaca para discapacitados')
+      }
+      this.selectedSeats.add(seatKey);
+      this.total += this.escenario.valor
     }
-    
-    // if (this.selectedSeats.has(seatKey)) {
-    //   // Si el asiento ya está seleccionado, lo eliminamos del conjunto y de la orden
-    //   this.selectedSeats.delete(seatKey);
-    //   this.seatOrder = this.seatOrder.filter(key => key !== seatKey);
-    // } else {
-    //   // Si el asiento no está seleccionado, lo agregamos
-    //   if (this.selectedSeats.size < 5) {
-    //     this.selectedSeats.add(seatKey);
-    //     this.seatOrder.push(seatKey);
-    //   } else {
-    //     // Si ya hay 5 asientos seleccionados, eliminamos el primero y luego agregamos el nuevo
-    //     const firstSeatKey = this.seatOrder.shift();
-    //     if (firstSeatKey) {
-    //       this.selectedSeats.delete(firstSeatKey);
-    //     }
-    //     this.selectedSeats.add(seatKey);
-    //     this.seatOrder.push(seatKey);
-    //   }
-    // }
-    
   }
+  
+  
   
   isAvailable(seat:any){
     return !this.isReservated(seat) && !this.isPaid(seat)

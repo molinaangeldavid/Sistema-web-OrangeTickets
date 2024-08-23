@@ -21,7 +21,7 @@
                 </tr>
             </tbody>
         </table>
-        <table class="sala" *ngIf="!admin">
+        <table class="sala" *ngIf="!admin && isReservationAllowed">
             <thead>
                 <th>Escenario</th>
             </thead>
@@ -45,9 +45,31 @@
                 </tr>
             </tbody>
         </table>
+        <table class="sala" *ngIf="!admin && !isReservationAllowed">
+            <thead>
+                <th>Escenario</th>
+            </thead>
+            <tbody class="tbody">
+                <tr *ngFor="let row of seats; let rowIndex = index" class="row">
+                    <td *ngFor="let seat of row" [ngClass]="{
+                        'seat': existSeat(seat), 
+                        'reservated-seat': existSeat(seat) && isReservated(seat),
+                        'paid-seat': existSeat(seat) && isPaid(seat) && !mySeat(seat),
+                        'seat-user': existSeat(seat) && mySeat(seat),
+                        'disabled': existSeat(seat) && isDisabledSeat(seat),
+                        'seat-disabled-selected': existSeat(seat) && isSelected(seat.fila, seat.butaca) && isDisabledSeat(seat) || isPaid(seat),
+                        'empty-seat':!existSeat(seat)
+                    }" >
+                    </td>
+                    <td class="row-number">
+                    {{ rowIndex + 1 }}
+                    </td>
+                </tr>
+            </tbody>
+        </table>
     </div>
 <div style="text-align: center;">
-    <p-progressSpinner ariaLabel="loading" *ngIf="loading"/>
+    <p-progressSpinner ariaLabel="loading" *ngIf="loading "/>
 </div>
 <div class="guia-color" *ngIf="!admin">
     <div>
@@ -71,11 +93,11 @@
         </div>
     </div>
 </div>
-<div style="margin-top: 20px" *ngIf="!admin">
+<div style="margin-top: 20px" *ngIf="!admin && isReservationAllowed">
     <span>Total a pagar: <span style="font-weight: 800;">{{total | currency:'':'symbol':'1.0-0'}}</span>
         </span>
 </div>
-<div class="guia-color2" *ngIf="admin">
+<div class="guia-color2" *ngIf="admin" >
     <div class="guia-row3">
         <div class="asientos-disponibles"></div> 
         <span>Disponibles</span>
@@ -89,8 +111,10 @@
         <span>Confirmados</span> 
     </div>
 </div>
-
-<div *ngIf="mostrarBoton" class="btn-content" style="margin-top: 30px;">
+<div *ngIf="!admin && !isReservationAllowed">
+    <p>No tienes permiso para reservar en este momento. Inténtalo más tarde.</p>
+</div>
+<div *ngIf="isReservationAllowed && mostrarBoton" class="btn-content" style="margin-top: 30px;" >
     <p-button label="Confirmar" class="button-scenario" (click)="confirmSeat()" size="small"></p-button>
 </div>
 

@@ -103,6 +103,7 @@ export class EventsComponent {
     this.concert = { ...concert };
     this.fecha = new Date(this.concert.fecha)
     this.hora = this.concert.hora
+    console.log(this.hora)
     this.selectedSala = this.salas.find((s:any) => s.id == this.concert.sala)
     this.concertDialog = true;
   }
@@ -171,17 +172,41 @@ export class EventsComponent {
     return `${hours}:${minutes}`;
   }
   
+  refresh(){
+    this.concertService.getEvents().subscribe(e => {
+      this.scenarioService.getSalasAdmin().subscribe(salas => {
+        this.salas = salas
+        this.concerts = e.map((c:any) => ({
+          ...c,
+          salaNombre: this.getSalaNombre(c.sala)
+        }))
+      })
+    })
+  }
+
   saveConcert(){
     this.submitted = true;
     if (this.concert!.nombre?.trim()) {
       if (this.concert!.id) {
-        console.log(this.concert)
-        this.concertService.putEvent(this.concert.id, this.concert).subscribe({
+        const data = {
+          id: this.concert.id,
+          nombre: this.concert.nombre,
+          fecha: this.fecha,
+          hora: this.getFormattedTime(this.hora),
+          sala: this.concert.sala,
+          valor: this.concert.valor,
+        } 
+
+        console.log(data.hora)
+        this.concertService.putEvent(this.concert.id, data).subscribe({
           next: (response) => {
             console.log(response)
           },
           error: (error) => {
             console.log(error)
+          },
+          complete: () => {
+            console.log("algo paso")
           }
         })
         this.concerts[this.findIndexById(this.concert!.id)] = this.concert;
