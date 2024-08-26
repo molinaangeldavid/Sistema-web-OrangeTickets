@@ -11,20 +11,6 @@
     display: flex;
     justify-content: center;
 }
-.scenario-teatro{
-    width: 35%;
-    height: 40px;
-    color: rgb(234, 243, 240);
-    border: 1px solid #070707;
-    background-color: #1f1d1d;
-    border-bottom-left-radius: 50px;
-    border-bottom-right-radius: 50px;
-    margin: 0 auto;
-    margin-bottom: 20px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
 .sala{
     padding: 20px 0;
 }
@@ -165,33 +151,6 @@ tbody:before {
 .right-position{
     margin-left: 50px;
 }
-/* .guia-color {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
-  
-  .guia-row {
-    display: flex;
-    justify-content: space-between;
-  }
-  
-  .col {
-    display: flex;
-    align-items: center;
-  }
-  
-  .mis-asientos,
-  .asientos-disponibles,
-  .asientos-reservados,
-  .asientos-pagados {
-    width: 7px;
-    padding: 7px;
-    border: 1px solid #000;
-    border-radius: 3px;
-    margin: 0 6px 6px 0;
-  }
-*/  
 
 .button-scenario{
     margin-top: 15px;

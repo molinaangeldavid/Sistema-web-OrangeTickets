@@ -2,13 +2,15 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { AuthService } from './auth.service';
 import { Observable } from 'rxjs';
+import { environment } from '../../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AdminService {
-
-  path:any = 'http://localhost:3000/api/admin'
+  
+  apiUrl = environment.apiUrl;
+  path:any = `${this.apiUrl}/api/admin`
 
   constructor(
     private http: HttpClient,

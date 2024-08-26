@@ -1,4 +1,4 @@
-import { CUSTOM_ELEMENTS_SCHEMA, Component, SimpleChanges } from '@angular/core';
+import { CUSTOM_ELEMENTS_SCHEMA, Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 
@@ -17,7 +17,6 @@ import { CardModule } from 'primeng/card';
 
 import { ShowComponentService } from '../../core/services/show-component.service';
 import { DataService } from '../../core/services/data.service';
-import { CookieService } from 'ngx-cookie-service';
 
 import { Subscription } from 'rxjs';
 import { ConcertService } from '../../core/services/concert.service';
@@ -69,7 +68,6 @@ export class HomeAdminComponent {
 
   constructor(
     private showComponentService: ShowComponentService,
-    private cookieService: CookieService,
     private concertService: ConcertService,
     private dataService: DataService,
   ){
@@ -92,7 +90,7 @@ export class HomeAdminComponent {
       });
     });
 
-    this.dni = this.cookieService.get('dniAdmin')
+    this.dni = this.dataService.getData('dniAdmin')
     this.usuario = this.dataService.getData('data')
   }
 

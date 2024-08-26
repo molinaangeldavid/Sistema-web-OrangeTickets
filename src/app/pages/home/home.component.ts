@@ -17,7 +17,6 @@ import { ButtonModule } from 'primeng/button';
 import { CardModule } from 'primeng/card';
 import { DropdownModule } from 'primeng/dropdown';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
-import { CookieService } from 'ngx-cookie-service';
 
 
 @Component({
@@ -74,12 +73,11 @@ export class HomeComponent implements OnInit,OnDestroy {
     private showComponentService: ShowComponentService,
     private dataService: DataService,
     private usuarioService: UsuarioService,
-    private cookieService: CookieService
   ){
   }
   
   async ngOnInit(){
-    this.dni = this.cookieService.get('dni')
+    this.dni = this.dataService.getData('dni')
     try {
       this.usuarioService.getHabilitation(this.dni).subscribe(all => {
         this.habilitation = all.habilitaciones

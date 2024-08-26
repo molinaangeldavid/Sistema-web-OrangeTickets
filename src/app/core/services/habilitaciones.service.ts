@@ -1,6 +1,7 @@
 import { HttpClient,HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { AuthService } from './auth.service';
+import { environment } from '../../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
@@ -11,8 +12,8 @@ export class HabilitacionesService {
     private authService: AuthService,
     private http: HttpClient
   ) { }
-
-  path: string = 'http://localhost:3000/api/admin'
+  pathUrl = environment.apiUrl
+  path: string = `${this.pathUrl}/api/admin`
 
   getAllHabilitation(){
     const headers = new HttpHeaders({

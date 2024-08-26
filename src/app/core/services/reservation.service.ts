@@ -2,16 +2,19 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { AuthService } from './auth.service';
+import { environment } from '../../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ReservationService {
   
+  pathUrl = environment.apiUrl
+
   token: any
   
-  path: any = "http://localhost:3000/api/estudiantes"
-  pathAdmin: any = "http://localhost:3000/api/admin"
+  path: any = `${this.pathUrl}/api/estudiantes`
+  pathAdmin: any = `${this.pathUrl}/api/admin`
 
   headers: HttpHeaders = new HttpHeaders({
     'Authorization': `Bearer ${this.authService.getToken()}`

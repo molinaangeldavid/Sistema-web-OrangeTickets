@@ -2,16 +2,19 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { AuthService } from './auth.service';
+import { environment } from '../../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ScenarioService {
 
+  pathUrl = environment.apiUrl
+
   private updateScenarioSource = new BehaviorSubject<any>(false);
   updateScenario$ = this.updateScenarioSource.asObservable();
 
-  path: any = 'http://localhost:3000'
+  path: any = `${this.pathUrl}`
 
   // evento: 
   constructor(

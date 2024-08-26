@@ -65,24 +65,16 @@ export class LoginComponent implements OnInit{
   
   ngOnInit(){    
     this.esAdmin = false
-  }
-  
-  cleanCookies(){
-    const allCookies = this.cookieService.getAll();
-    for (const cookieName in allCookies) {
-      if (allCookies.hasOwnProperty(cookieName)) {
-        this.cookieService.delete(cookieName);
-      }
-    }
+    this.cookieService.delete('token')
+    localStorage.clear();
   }
 
   async onSubmit(){
-    this.cleanCookies()
     try {
       const tokenUser = await firstValueFrom(this.authService.authUser(this.dni))
       if(tokenUser){
-        this.cookieService.set("dni",`${this.dni}`);
         this.cookieService.set("token",tokenUser.token);
+        this.dataService.saveData("dni",`${this.dni}`);
         this.dataService.saveData("data",tokenUser.myUser)
         this.router.navigate(['estudiante'])
       }

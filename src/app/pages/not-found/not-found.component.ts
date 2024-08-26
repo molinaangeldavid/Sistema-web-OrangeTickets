@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
-import { CookieService } from 'ngx-cookie-service';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
+import { DataService } from '../../core/services/data.service';
 
 @Component({
   selector: 'app-not-found',
@@ -18,12 +18,13 @@ export class NotFoundComponent {
   isDniAdmin: boolean | undefined = false
   isDni:boolean | undefined = false
   isNone: boolean | undefined = false
-  constructor(private cookieService: CookieService){
+
+  constructor(private dataService:DataService){
   }
 
   ngOnInit(){
-    const dniAdmin = this.cookieService.get('dniAdmin')
-    const dni = this.cookieService.get('dni')
+    const dniAdmin = this.dataService.getData('dniAdmin')
+    const dni = this.dataService.getData('dni')
     if(dniAdmin){
       this.isDniAdmin = true
     }else{

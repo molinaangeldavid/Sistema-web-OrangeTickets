@@ -67,9 +67,9 @@ export class ScenarioComponent implements OnInit{
     this.habilitation = this.habilitation.find((h:any) => h.evento_id == this.escenario.id)
     this.loading = true
     if(this.admin){
-      this.dni = this.cookieService.get('dniAdmin')
+      this.dni = this.dataService.getData('dniAdmin')
     }else{
-      this.dni = this.cookieService.get('dni')
+      this.dni = this.dataService.getData('dni')
     }
     
     this.user = this.dataService.getData('data')

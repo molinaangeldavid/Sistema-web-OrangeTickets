@@ -261,10 +261,7 @@ export class ManageReservesComponent implements OnInit,OnChanges {
   // Aqui se confirman las reservas y pasan a ser pagadas
   acceptAllReserves(user:any,event:Event){
     const now = new Date();
-    
-    // const currentDate = `${now.getFullYear()}-${this.padNumber(now.getMonth() + 1)}-${this.padNumber(now.getDate())}`;
-    // const currentTime = `${this.padNumber(now.getHours())}:${this.padNumber(now.getMinutes())}`;
-    
+  
     this.confirmationService.confirm({
       target: event.target as EventTarget,
       message: 'Estas seguro/a que deseas validar todas las reservas',

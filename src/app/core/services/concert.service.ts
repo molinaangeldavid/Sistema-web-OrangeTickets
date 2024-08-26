@@ -2,15 +2,16 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { AuthService } from './auth.service';
-
+import { environment } from '../../../environments/environment';
 @Injectable({
   providedIn: 'root'
 })
 export class ConcertService {
 
-  path:any = 'http://localhost:3000/api/admin'
+  apiUrl = environment.apiUrl
+  path:any = `${this.apiUrl}/api/admin`
 
-  pathUser:any = 'http://localhost:3000/api/estudiantes'
+  pathUser:any = `${this.apiUrl}/api/estudiantes`
 
   constructor(private http: HttpClient,private authService: AuthService) { }
 

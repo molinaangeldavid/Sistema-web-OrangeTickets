@@ -2,13 +2,15 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { AuthService } from './auth.service';
+import { environment } from '../../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class CashService {
 
-  pathAdmin: string = 'http://localhost:3000'
+  apiUrl = environment.apiUrl
+  pathAdmin: string = `${this.apiUrl}`
   headers: HttpHeaders = new HttpHeaders({
     'Authorization': `Bearer ${this.authService.getToken()}`
   });

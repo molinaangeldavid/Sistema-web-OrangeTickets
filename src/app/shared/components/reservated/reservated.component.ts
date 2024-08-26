@@ -61,7 +61,7 @@ export class ReservatedComponent {
   
   ngOnInit() {
     
-    this.dni = this.cookieService.get('dni')
+    this.dni = this.dataService.getData('dni')
     
     this.cols = [
       { field: 'evento_id', header: 'Concert' },
