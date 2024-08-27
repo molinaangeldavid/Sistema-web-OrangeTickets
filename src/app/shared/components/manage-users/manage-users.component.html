@@ -11,7 +11,7 @@
             [(ngModel)]="concertChoice" 
             optionLabel="nombre"
             placeholder="Elegir Concierto" 
-            [ngModelOptions]="{standalone: true}"/>
+            [ngModelOptions]="{standalone: true}" />
         </div>
         <div class="sub-dropdown-content" *ngIf="concertChoice" >
             <div style="margin-bottom: 10px; display: flex; flex-direction: column;">
@@ -21,7 +21,7 @@
                 [(ngModel)]="cicloChoice" 
                 (ngModelChange)="onCicloChange($event)"
                 optionLabel="ciclo"
-                [ngModelOptions]="{standalone: true}"/>
+                [ngModelOptions]="{standalone: true}" />
             </div>
             <div style="margin-bottom: 10px; display: flex; flex-direction: column;">
                 <label for="anio">Año</label>
@@ -29,7 +29,7 @@
                 [options]="niveles" 
                 [(ngModel)]="nivelChoice" 
                 optionLabel="nivel"
-                [ngModelOptions]="{standalone: true}"/>
+                [ngModelOptions]="{standalone: true}" />
             </div>
             <div style="margin-bottom: 10px; display: flex; flex-direction: column;">
                 <label for="division">Division</label>
@@ -46,11 +46,11 @@
 
 <div class="content-habilitation" *ngIf="concertChoice">
     <p-floatLabel>
-        <p-calendar 
-        [(ngModel)]="dateFrom" 
+        <p-calendar
+        [(ngModel)]="dateFrom"
         inputId="from" 
+        dateFormat="dd/mm/yy" 
         [minDate]="today"
-        dateFormat="dd/mm/yy"
         (ngModelChange)="onDateFromChange()"/>
         <label for="from">Desde</label>
     </p-floatLabel>

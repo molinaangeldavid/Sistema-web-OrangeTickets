@@ -55,7 +55,6 @@ export class ScenarioComponent implements OnInit{
   isReservationAllowed: boolean | undefined;
   
   constructor(
-    private cookieService: CookieService,
     private scenarioService: ScenarioService,
     private reservationService: ReservationService,
     private dataService: DataService,
@@ -64,15 +63,16 @@ export class ScenarioComponent implements OnInit{
   }
   
   async ngOnInit(){
-    this.habilitation = this.habilitation.find((h:any) => h.evento_id == this.escenario.id)
     this.loading = true
     if(this.admin){
       this.dni = this.dataService.getData('dniAdmin')
     }else{
       this.dni = this.dataService.getData('dni')
     }
-    
     this.user = this.dataService.getData('data')
+    if(!this.admin){
+      this.habilitation = this.habilitation.find((h:any) => h.evento_id == this.escenario.id)
+    }
     
     const currentDate = new Date()
     this.isReservationAllowed = this.checkReservationPermission(this.user.anio,currentDate)
@@ -131,13 +131,23 @@ export class ScenarioComponent implements OnInit{
       const habilitationThirdDay = new Date(habilitationStart.getTime() + 3 * 24 * 60 * 60 * 1000);
       const habilitationFinish = new Date(this.habilitation.hasta)
       
-      if(currentDate > habilitationThirdDay && currentDate < habilitationFinish){
+      const dayOfWeek = currentDate.getDay(); 
+      const isWeekday = dayOfWeek >= 1 && dayOfWeek <= 5; // Lunes es 1 y viernes es 5
+      
+      if (!isWeekday) {
+        console.log("isweekday")
+        return false; // No se permite reservar en fines de semana
+      }
+      
+      if(currentDate > habilitationStart && currentDate < habilitationFinish){
+        console.log("Habilitado")
         return true; 
       }
       
       if(currentDate < habilitationStart){
+        console.log("Menor a current Date")
         return false
-      }
+      } 
       
       const currentHour = currentDate.getHours();
       const isMorningWindow = currentHour >= 7 && currentHour < 13;
@@ -145,15 +155,19 @@ export class ScenarioComponent implements OnInit{
       
       if (userGrade === 6) {
         if (isMorningWindow || isAfternoonWindow) {
+          console.log("egresado")
           return true; // Puede reservar en el periodo correcto
         }
       } else if (userGrade >= 1 && userGrade <= 5) {
         if (isAfternoonWindow) {
+          console.log("no egresado")
           return true; // Puede reservar en la ventana de tarde
         }
       }
+      console.log("falso 1")
       return false;
     }
+    console.log("falso 1")
     return false
   }
   
@@ -165,7 +179,7 @@ export class ScenarioComponent implements OnInit{
     const currentHour = currentDateTime.getHours();
     const isMorningWindow = currentHour >= 7 && currentHour < 13;
     const isAfternoonWindow = currentHour >= 14 && currentHour < 20;
-    
+    console.log(isMorningWindow)
     let maxSeats: any = 0
     if (currentDateTime > habilitationThirdDay && currentDateTime < habilitationFinish) {
       return Infinity; // Puede reservar cualquier cantidad de asientos
@@ -180,6 +194,7 @@ export class ScenarioComponent implements OnInit{
         maxSeats = Math.max(5 - existingReservations, 0); // Máximo 5 asientos en la tarde
       }
     } else if (userGrade >= 1 && userGrade <= 5) {
+      console.log("no egresado")
       if (isAfternoonWindow) {
         console.log("no egresado")
         maxSeats = Math.max(5 - existingReservations, 0); // Máximo 5 asientos en la tarde
@@ -196,12 +211,12 @@ export class ScenarioComponent implements OnInit{
       this.total -= this.escenario.valor
     } else {
       const totalReservation = await lastValueFrom(this.reservationService.getReservation(this.user.dni))
-      
+      console.log(totalReservation.length)
       const maxSeatsAllowed = this.getMaxSeatsAllowed(this.user.anio, new Date(),totalReservation.length);
       console.log(maxSeatsAllowed)
       if (this.selectedSeats.size >= maxSeatsAllowed) {
         alert("No puede seleccionar mas asientos. Pruebe mas tarde")
-        this.isReservationAllowed = false
+        // this.isReservationAllowed = false
         return;
       }
       if(tipo == 'd'){
@@ -211,8 +226,6 @@ export class ScenarioComponent implements OnInit{
       this.total += this.escenario.valor
     }
   }
-  
-  
   
   isAvailable(seat:any){
     return !this.isReservated(seat) && !this.isPaid(seat)

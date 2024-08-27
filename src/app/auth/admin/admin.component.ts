@@ -42,7 +42,7 @@ export class AdminComponent {
   
   ngOnInit(){
     this.cookieService.deleteAll()
-    localStorage.clear();
+    this.dataService.deleteAllData()
   }
 
   async onSubmit(){

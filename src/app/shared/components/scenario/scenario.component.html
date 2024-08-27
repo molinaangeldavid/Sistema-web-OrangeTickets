@@ -57,7 +57,7 @@
                         'paid-seat': existSeat(seat) && isPaid(seat) && !mySeat(seat),
                         'seat-user': existSeat(seat) && mySeat(seat),
                         'disabled': existSeat(seat) && isDisabledSeat(seat),
-                        'seat-disabled-selected': existSeat(seat) && isSelected(seat.fila, seat.butaca) && isDisabledSeat(seat) || isPaid(seat),
+                        'seat-disabled-selected': existSeat(seat) && isSelected(seat.fila, seat.butaca) && isDisabledSeat(seat) || isDisabledSeat(seat) && isPaid(seat),
                         'empty-seat':!existSeat(seat)
                     }" >
                     </td>

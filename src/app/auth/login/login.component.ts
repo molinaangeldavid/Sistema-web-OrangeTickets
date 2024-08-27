@@ -66,7 +66,7 @@ export class LoginComponent implements OnInit{
   ngOnInit(){    
     this.esAdmin = false
     this.cookieService.delete('token')
-    localStorage.clear();
+    this.dataService.deleteAllData();
   }
 
   async onSubmit(){

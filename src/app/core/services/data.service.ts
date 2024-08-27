@@ -6,8 +6,6 @@ import { Inject, Injectable, PLATFORM_ID } from '@angular/core';
 })
 export class DataService {
 
-  // private storageScenario = 'jsonData';
-  // private storageReserve = 'jsonReserve'
 
   constructor(@Inject(PLATFORM_ID) private platformId: Object) { }
 
@@ -26,6 +24,19 @@ export class DataService {
     if (isPlatformBrowser(this.platformId)) {
       localStorage.setItem(keyStorage, JSON.stringify(data));
     } 
+  }
+
+  deleteData(keyStorage: string): void {
+    if (isPlatformBrowser(this.platformId)) {
+      localStorage.removeItem(keyStorage);
+    }
+  }
+
+  // Método para eliminar todos los datos
+  deleteAllData(): void {
+    if (isPlatformBrowser(this.platformId)) {
+      localStorage.clear();
+    }
   }
 
   
