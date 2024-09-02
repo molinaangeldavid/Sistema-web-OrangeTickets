@@ -13,7 +13,7 @@ import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { ConfirmationService, MessageService, PrimeNGConfig } from 'primeng/api';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
 
-import * as XLSX from 'xlsx';
+import * as ExcelJS from 'exceljs'
 import * as FileSaver from 'file-saver';
 import { lastValueFrom } from 'rxjs';
 import { ReservationService } from '../../../core/services/reservation.service';
@@ -86,7 +86,6 @@ export class ManageReservesComponent implements OnInit,OnChanges {
       this.reserves = reservation
       this.allUsers = users.users
       this.allAdmins = users.adminUsers
-      
       this.adminMap = new Map<string, string>();
       this.allAdmins.forEach((admin: any) => {
         this.adminMap.set(admin.dni, `${admin.nombre} ${admin.apellido}`);
@@ -163,7 +162,8 @@ export class ManageReservesComponent implements OnInit,OnChanges {
         try {
           this.reservationService.confirmReserves({dniAdmin:this.admin.dni,selectedReserves:userConfirm}).subscribe({
             next: () => {
-              this.reserves = {...this.reserves}
+              this.reserves = [...this.reserves]
+
               this.selectedReserves = null;
               this.scenarioService.notifyScenarioUpdate()
               this.messageService.add({ severity: 'success', summary: 'Confirmacion Exitosa', detail: 'Reservas eliminadas', life: 3000 });
@@ -193,7 +193,7 @@ export class ManageReservesComponent implements OnInit,OnChanges {
         this.dniSelected = this.dniSelected.filter((val:any) => !this.selectedReserves?.includes(val));
         this.reservationService.deleteReserves({dniAdmin:this.admin.dni,selectedReserves:eliminadas}).subscribe({
           next: () => {
-            this.reserves = {...this.reserves}
+            this.reserves = [...this.reserves]
             this.selectedReserves = null
             this.scenarioService.notifyScenarioUpdate()
             this.messageService.add({ severity: 'success', summary: 'Exito', detail: 'Reservas eliminadas satisfactoriamente', life: 3000 });
@@ -207,53 +207,6 @@ export class ManageReservesComponent implements OnInit,OnChanges {
       }
     });
   }
-  // Fin
-  //////////////////////////////
-  // Aca data es la distribucion del escenario
-  // updateScenario(data: any) {
-  //   this.scenarioService.notifyScenarioUpdate(data);
-  // }
-  ///////////////////////////////
-  ///////////////////////////////////
-  // Aqui se quitan todas las reservas por usuario y los asientos vuelven a estar disponible
-  // removeAllReserves(user: any, event: Event) {
-  //   this.confirmationService.confirm({
-  //     target: event.target as EventTarget,
-  //     message: 'Estas seguro/a que deseas eliminar todas las reservas de este usuario?',
-  //     header: 'Confirmacion de eliminacion',
-  //     icon: 'pi pi-info-circle',
-  //     acceptButtonStyleClass:"p-button-danger p-button-text",
-  //     rejectButtonStyleClass:"p-button-text p-button-text",
-  //     acceptIcon:"none",
-  //     rejectIcon:"none",
-  
-  //     accept: () => {
-  //       this.reserves[user.dni].forEach((reserve:any) => {
-  //         const [fila, asiento] = [reserve.fila,reserve.asiento]
-  //         // cambia de estado a reservado solo para en la funcionalidad del usuario
-  //         for (let row of this.allSeats[this.escenario.sala]) {
-  //           if (!row) continue;
-  //           for (let seat of row) {
-  //             if (seat && seat.fila === fila && seat.asiento === asiento) {
-  //               seat.estado = 'disponible';
-  //             }
-  //           }
-  //         }
-  //       })
-  //       this.updateScenario(this.allSeats)
-  //       delete this.reserves[user.dni]
-  //       this.dataService.saveData('jsonReservation',this.reserves)
-  //       this.dataService.saveData('jsonData',this.allSeats)
-  //       this.users = this.users.filter((val:any) => val.dni !== user.dni);
-  //       user = {}
-  //       this.messageService.add({ severity: 'info', summary: 'Confirmado', detail: 'Reservas eliminadas' });
-  //     },
-  //     reject: () => {
-  //       this.messageService.add({ severity: 'error', summary: 'Rechazado', detail: 'Accion rechazada' });
-  //     }
-  //   });
-  // }
-  
   padNumber(num: number): string {
     return num < 10 ? `0${num}` : `${num}`;
   }
@@ -286,7 +239,7 @@ export class ManageReservesComponent implements OnInit,OnChanges {
             try {
               this.reservationService.confirmReserves({ dniAdmin: this.admin.dni, selectedReserves: reservesDni }).subscribe({
                 next: () => {
-                  this.reserves = { ...this.reserves };
+                  this.reserves = [ ...this.reserves ];
                   user = { ...user };
                   this.scenarioService.notifyScenarioUpdate();
                   this.messageService.add({ severity: 'success', summary: 'Confirmación Exitosa', detail: 'Reservas confirmadas', life: 3000 });
@@ -314,7 +267,7 @@ export class ManageReservesComponent implements OnInit,OnChanges {
   }
   
   haveReservedSeats(dni: any): boolean {
-    if (Array.isArray(this.reserves)) {
+    if (this.reserves && Array.isArray(this.reserves)) {
       // Aplana la matriz
       const flattenedReserves = this.reserves.flat();
   
@@ -328,6 +281,7 @@ export class ManageReservesComponent implements OnInit,OnChanges {
   }
   
   areAllSeatsConfirmed(dni: any): boolean {
+    
     if (Array.isArray(this.reserves)) {
       // Aplana la matriz
       const flattenedReserves = this.reserves.flat();
@@ -402,33 +356,38 @@ export class ManageReservesComponent implements OnInit,OnChanges {
         });
       }
     });
-    const ws: any = XLSX.utils.json_to_sheet(combinedList);
-    
-    // Aplicar el formato de centrado
-    const range = XLSX.utils.decode_range(ws['!ref']);
-    for (let R = range.s.r; R <= range.e.r; ++R) {
-      for (let C = range.s.c; C <= range.e.c; ++C) {
-        const cell_ref = XLSX.utils.encode_cell({ r: R, c: C });
-        if (!ws[cell_ref]) ws[cell_ref] = {};
-        ws[cell_ref].s = {
-          alignment: {
-            horizontal: 'center',
-            vertical: 'center'
-          }
-        };
-      }
-    }
-    // Crea una hoja de trabajo (worksheet)
-    const worksheet = XLSX.utils.json_to_sheet(combinedList);
-    
-    // Crea un libro de trabajo (workbook) y agrega la hoja de trabajo
-    const workbook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(workbook, worksheet, `Reporte ${currentDate} `);
-    
-    // Genera el archivo Excel y descarga
-    const excelBuffer: any = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
-    const data: Blob = new Blob([excelBuffer], { type: 'application/octet-stream' });
-    FileSaver.saveAs(data, `${this.escenario.nombre}-${currentDate}.xlsx`);
+    const workbook = new ExcelJS.Workbook();
+    const worksheet = workbook.addWorksheet(`Reporte ${currentDate}`);
+    worksheet.columns = [
+      { header: 'DNI', key: 'DNI', width: 15 },
+      { header: 'NOMBRE', key: 'NOMBRE', width: 20 },
+      { header: 'APELLIDO', key: 'APELLIDO', width: 20 },
+      { header: 'CICLO', key: 'CICLO', width: 10 },
+      { header: 'GRADO_AÑO', key: 'GRADO_ANIO', width: 15 },
+      { header: 'DIVISION', key: 'DIVISION', width: 10 },
+      { header: 'FILA', key: 'FILA', width: 10 },
+      { header: 'BUTACA', key: 'BUTACA', width: 10 },
+      { header: 'CONFIRMADO_POR', key: 'CONFIRMADO_POR', width: 25 },
+      { header: 'FECHA_DE_CONFIRMACION', key: 'FECHA_DE_CONFIRMACION', width: 25 },
+  ];
+
+  // Agrega las filas
+  combinedList.forEach(data => {
+      worksheet.addRow(data);
+  });
+
+  // Aplica el formato de centrado a todas las celdas
+  worksheet.eachRow((row, rowNumber) => {
+      row.eachCell((cell, colNumber) => {
+          cell.alignment = { horizontal: 'center', vertical: 'middle' };
+      });
+  });
+
+  // Genera el archivo Excel y descarga
+  workbook.xlsx.writeBuffer().then((buffer) => {
+      const data: Blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+      FileSaver.saveAs(data, `${this.escenario.nombre}-${currentDate}.xlsx`);
+  });
   }
   
   showDialog(dni: any):void{

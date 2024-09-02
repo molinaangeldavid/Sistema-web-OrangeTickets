@@ -1,7 +1,3 @@
-
-<h2 style="text-align: center;">
-    Gestion de eventos
-</h2>
 <div class="content-table">
     <p-toast />
     <!-- <p-toolbar class="style-button"> -->
@@ -103,7 +99,7 @@
 </div>
 <p-dialog 
 [(visible)]="concertDialog" 
-[style]="{ 'min-width': '600px','min-height': '700px' }" 
+[style]="{ 'width': 'auto','min-height': '600px' }" 
 header="Concerts" 
 [modal]="true" 
 styleClass="p-fluid">
@@ -123,7 +119,7 @@ styleClass="p-fluid">
     </div>
     <div class="field">
         <label for="fecha">Fecha</label>
-        <p-calendar [(ngModel)]="fecha" dateFormat="dd-mm-yy" [minDate]="today" m required/>
+        <p-calendar [(ngModel)]="fecha" dateFormat="dd-mm-yy" [minDate]="today" required appendTo="body"/>
         <small *ngIf="submitted && !concert!.fecha">
             La fecha es requerida.
         </small>

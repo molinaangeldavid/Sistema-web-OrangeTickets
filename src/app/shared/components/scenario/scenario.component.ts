@@ -8,6 +8,7 @@ import { ReservationService } from '../../../core/services/reservation.service';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { DataService } from '../../../core/services/data.service';
 import { Router } from '@angular/router';
+import { EmailService } from '../../../core/services/email.service';
 
 @Component({
   selector: 'app-scenario',
@@ -58,7 +59,8 @@ export class ScenarioComponent implements OnInit{
     private scenarioService: ScenarioService,
     private reservationService: ReservationService,
     private dataService: DataService,
-    private router: Router
+    private router: Router,
+    private emailService: EmailService
   ){
   }
   
@@ -75,7 +77,7 @@ export class ScenarioComponent implements OnInit{
     }
     
     const currentDate = new Date()
-    this.isReservationAllowed = this.checkReservationPermission(this.user.anio,currentDate)
+    // this.isReservationAllowed = this.checkReservationPermission(this.user.anio,currentDate)
     
     this.subscription = this.scenarioService.updateScenario$.subscribe(() => {
       this.refreshScenario()
@@ -135,17 +137,14 @@ export class ScenarioComponent implements OnInit{
       const isWeekday = dayOfWeek >= 1 && dayOfWeek <= 5; // Lunes es 1 y viernes es 5
       
       if (!isWeekday) {
-        console.log("isweekday")
         return false; // No se permite reservar en fines de semana
       }
       
       if(currentDate > habilitationStart && currentDate < habilitationFinish){
-        console.log("Habilitado")
         return true; 
       }
       
       if(currentDate < habilitationStart){
-        console.log("Menor a current Date")
         return false
       } 
       
@@ -155,19 +154,15 @@ export class ScenarioComponent implements OnInit{
       
       if (userGrade === 6) {
         if (isMorningWindow || isAfternoonWindow) {
-          console.log("egresado")
           return true; // Puede reservar en el periodo correcto
         }
       } else if (userGrade >= 1 && userGrade <= 5) {
         if (isAfternoonWindow) {
-          console.log("no egresado")
           return true; // Puede reservar en la ventana de tarde
         }
       }
-      console.log("falso 1")
       return false;
     }
-    console.log("falso 1")
     return false
   }
   
@@ -179,7 +174,6 @@ export class ScenarioComponent implements OnInit{
     const currentHour = currentDateTime.getHours();
     const isMorningWindow = currentHour >= 7 && currentHour < 13;
     const isAfternoonWindow = currentHour >= 14 && currentHour < 20;
-    console.log(isMorningWindow)
     let maxSeats: any = 0
     if (currentDateTime > habilitationThirdDay && currentDateTime < habilitationFinish) {
       return Infinity; // Puede reservar cualquier cantidad de asientos
@@ -187,16 +181,12 @@ export class ScenarioComponent implements OnInit{
     
     if (userGrade === 6) {
       if (isMorningWindow) {
-        console.log("egresado maniana")
         maxSeats = Math.max(2 - existingReservations, 0);
       } else if (isAfternoonWindow) {
-        console.log("egresado tarde")
         maxSeats = Math.max(5 - existingReservations, 0); // Máximo 5 asientos en la tarde
       }
     } else if (userGrade >= 1 && userGrade <= 5) {
-      console.log("no egresado")
       if (isAfternoonWindow) {
-        console.log("no egresado")
         maxSeats = Math.max(5 - existingReservations, 0); // Máximo 5 asientos en la tarde
       }
     }
@@ -210,15 +200,13 @@ export class ScenarioComponent implements OnInit{
       this.selectedSeats.delete(seatKey);
       this.total -= this.escenario.valor
     } else {
-      const totalReservation = await lastValueFrom(this.reservationService.getReservation(this.user.dni))
-      console.log(totalReservation.length)
-      const maxSeatsAllowed = this.getMaxSeatsAllowed(this.user.anio, new Date(),totalReservation.length);
-      console.log(maxSeatsAllowed)
-      if (this.selectedSeats.size >= maxSeatsAllowed) {
-        alert("No puede seleccionar mas asientos. Pruebe mas tarde")
-        // this.isReservationAllowed = false
-        return;
-      }
+      // const totalReservation = await lastValueFrom(this.reservationService.getReservation(this.user.dni))
+      // const maxSeatsAllowed = this.getMaxSeatsAllowed(this.user.anio, new Date(),totalReservation.length);
+      // if (this.selectedSeats.size >= maxSeatsAllowed) {
+      //   alert("No puede seleccionar mas asientos. Pruebe mas tarde")
+      //   // this.isReservationAllowed = false
+      //   return;
+      // }
       if(tipo == 'd'){
         alert('Estas seleccionando una butaca para discapacitados')
       }
@@ -277,6 +265,36 @@ export class ScenarioComponent implements OnInit{
     }
   }
   
+  configEmail(reservas: any){
+
+    const from = "TicketsOrange@orangeinternational.edu.ar"
+    const to = "concert2024@orangeinternational.edu.ar"
+    const formattedDate = new Date(this.escenario.fecha).toLocaleDateString('es-ES', {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric'
+    });
+    const subject = `Reserva entradas 2024 de ${this.user.apellido} ${this.user.nombre} (${this.user.dni}) / Concert: ${this.escenario.nombre}`
+    let html = `
+    <p>El estudiante:
+    <span><strong>${this.user.nombre} ${this.user.apellido}</strong> - <strong>DNI ${this.user.dni}</strong></span></p>
+    <p>Realizó la siguiente reserva para el concert ${this.escenario.nombre} ( ${formattedDate} - ${this.escenario.hora}. Los detalles de las reservas:</p>
+    `
+  // Generar filas para cada reserva
+  reservas.forEach((reserva:any) => {
+    html += `<p>FILA: ${reserva.fila} -- BUTACA: ${reserva.butaca}</p>`
+  });
+
+    this.emailService.sendEmail(from,to,subject,html).subscribe({
+      next: (response) => {
+        console.log(response)
+      },
+      error: (error) => {
+        console.log(error)
+      }
+    })
+  } 
+
   confirmSeat(){
     if(this.selectedSeats.size == 0){
       return;
@@ -309,6 +327,7 @@ export class ScenarioComponent implements OnInit{
           });
           this.reservationService.postReservations(this.dni,reserveDone).subscribe({
             next: () => {
+              this.configEmail(reserveDone)
               this.selectedSeats.clear();
               const pageReservation = 'reservated'
               this.changePage.emit(pageReservation)

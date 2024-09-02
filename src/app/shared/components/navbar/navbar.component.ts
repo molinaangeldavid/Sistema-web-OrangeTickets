@@ -36,53 +36,15 @@ export class NavbarComponent {
   adminMenuItems: MenuItem[] | undefined;
   logoutMenuItems: MenuItem[] | undefined;
   adminSuper: boolean =  false
+  superAdminMenuItems: any[] | undefined;
+  operadorMenuItems: any[] | undefined
+
   constructor(
     private showService:ShowComponentService,
     private cookieService:CookieService,
     private router:Router
   ){
   }
-  // }
-  
-  // ngOnInit(){
-  // }
-  
-  // showReservation(){
-  //   this.showService.triggerComponentEvent('scenario');
-  // }
-  
-  // showReservated(){
-  //   this.showService.triggerComponentEvent('reservated');
-  // }
-  
-  // showCountCash(){
-  //   this.showService.triggerComponentEvent('countCash'); 
-  // }
-  
-  // showManageReserves(){
-  //   this.showService.triggerComponentEvent('reserveManage');  
-  // }
-  
-  // showManageUsers(){
-  //   this.showService.triggerComponentEvent('userManage');
-  // }
-  
-  // showEvents(){
-  //   this.showService.triggerComponentEvent('events')
-  // }
-  
-  // goOut(){
-  //   if(this.menusecreto){
-  //     this.cookieService.delete('token')
-  //     this.cookieService.delete('dni')
-  //     localStorage.removeItem('data')
-  //   }else{
-  //     if(this.menusecretoAdmin){
-  //       this.cookieService.delete('token')
-  //     }
-  //   }
-  //   this.router.navigate(['login'])
-  // }
   
   private readonly ADMIN_DNI1 = 37760822
   private readonly ADMIN_DNI2 = 35902759
@@ -91,34 +53,62 @@ export class NavbarComponent {
     this.menuItems = [
       { label: 'Sala', icon: 'pi pi-fw pi-home', command: () => this.showReservation() },
       { label: 'Detalles', icon: 'pi pi-fw pi-info-circle', command: () => this.showReservated() },
-      // { label: 'Salir', icon: 'pi pi-fw pi-sign-out', command: () => this.goOut() }
     ];
-    
-    if(this.user != undefined){
-      this.adminSuper = this.user.dni == this.ADMIN_DNI1 || this.user.dni == this.ADMIN_DNI2
-    }
 
-    this.adminMenuItems = [
+    this.superAdminMenuItems = [
       { label: 'Reservas', icon: 'pi pi-fw pi-calendar', command: () => this.showManageReserves() },
       { label: 'Habilitaciones', icon: 'pi pi-fw pi-users',
         items:[
           {label: 'Usuarios', command: () => this.showManageUsers() },
-          ...(this.adminSuper ? [{ label: 'Administradores', command: () => this.showManageAdmin() }] :[]),
+          { label: 'Administradores', command: () => this.showManageAdmin() },
         ],
       },
       { label: 'Eventos', icon: 'pi pi-fw pi-calendar-plus', command: () => this.showEvents() },
       { label: 'Reportes', icon: 'pi pi-fw pi-clipboard', 
         items: [
           { label: 'Caja', command: () => this.showCountCash() },
-          //{ label: 'Historial',  command: () => this.showHistorialReports() },
+          { label: 'Historial',  command: () => this.showHistorialReports() },
         ]
-      }, 
-      // {label: 'Salir', icon: 'pi pi-fw pi-sign-out', command: () => this.goOut() }
+      },
     ];
-    
-    this.logoutMenuItems = [
-      // { label: 'Salir', icon: 'pi pi-fw pi-sign-out', command: () => this.goOut() }
+
+    this.adminMenuItems = [
+      { label: 'Reservas', icon: 'pi pi-fw pi-calendar', command: () => this.showManageReserves() },
+      { label: 'Habilitaciones', icon: 'pi pi-fw pi-users',
+        items:[
+          {label: 'Usuarios', command: () => this.showManageUsers() },
+        ],
+      },
+      { label: 'Eventos', icon: 'pi pi-fw pi-calendar-plus', command: () => this.showEvents() },
+      { label: 'Reportes', icon: 'pi pi-fw pi-clipboard', 
+        items: [
+          { label: 'Caja', command: () => this.showCountCash() },
+          { label: 'Historial',  command: () => this.showHistorialReports() },
+        ]
+      },
     ];
+
+    this.operadorMenuItems = [
+      { label: 'Reservas', icon: 'pi pi-fw pi-calendar', command: () => this.showManageReserves() },
+    ];
+
+    if(this.menusecretoAdmin){
+      switch (this.user.role) {
+        case 'superadmin':
+          this.menusecretoAdmin = true;
+          this.adminMenuItems = this.superAdminMenuItems;
+          break;
+        case 'admin':
+          this.menusecretoAdmin = true;
+          this.adminMenuItems = this.adminMenuItems;
+          break;
+        case 'operador':
+          this.menusecretoAdmin = true;
+          this.adminMenuItems = this.operadorMenuItems;
+          break;
+      }
+    }
+  
   }
 
   showReservation() {

@@ -1,6 +1,10 @@
 <app-navbar [menusecreto]="false"></app-navbar>
-
+<div class="container-title">
+    <img src="../../../assets/oie_transparent.png" alt="logo">
+    <h2 class="title-login">Tickets Orange</h2>
+</div>
 <div class="content">
+
     <form #myForm="ngForm" (ngSubmit)="onSubmit()">
         <div class="content-form">
             <div class="container-title">
@@ -12,15 +16,6 @@
                 [ngModelOptions]="{standalone:true}">
                 <div *ngIf="errorDni" class="alert">
                     Dni Incorrecto
-                </div>
-            </div>
-            
-            <div class="login-admin" *ngIf="esAdmin">
-                <label for="password" class="form-label">Contraseña</label>
-                <input type="password" [(ngModel)]="password" id="password" class="form-control" aria-describedby="passwordHelpBlock" 
-                [ngModelOptions]="{standalone:true}">
-                <div *ngIf="(errorPassword && esAdmin)" class="alert">
-                    Contraseña Incorrecta
                 </div>
             </div>
             <p-button  type="submit" label="Ingresar" size="small" class="button-form"/>

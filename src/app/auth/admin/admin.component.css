@@ -1,44 +1,93 @@
 :host {
     display: flex;
     flex-direction: column;
+    align-items: center;
+    justify-content: center;
     height: 100vh;
     width: 100%;
     padding: 0;
     margin: 0;
+    background: linear-gradient(100deg, #141E30, #243B55,#2d3f55);
+    font-family: 'Arial', sans-serif; /* Añadiendo una fuente más moderna */
 }
 
 .content {
     flex: 1 0 0;
     display: flex;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
 }
 
-.content-form{
-    border: 0.5px solid #000;
-    padding: 38px 20px;
-    background-color: rgb(228, 228, 228);
-}
-
 .container-title{
-   text-align: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+}
+.title-login {
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+    font-size: 2.5em;
+    font-weight: 700;
+    color: #ffffff;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+    text-align: center;
+    margin-bottom: 20px;
+    animation: fadeIn 2s ease-in-out;
 }
 
-.title-content{
-    font-weight: 600;
-    position: relative;
-    bottom: 10px;
+/* Animación para hacer que el título aparezca suavemente */
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+img {
+    width: 200px;
+    margin-bottom: 25px; /* Reduciendo el margen inferior para que no se vea tan separado */
+    /* filter: drop-shadow(0 0 10px rgba(0,0,0,0.5)); Añadiendo sombra al logo */
 }
 
-form label{
+.content-form {
+    border: none; /* Quitando el borde */
+    padding: 48px 30px;
+    background-color: #ffffff; /* Cambiando a blanco para un contraste mejor */
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1); /* Añadiendo sombra para profundidad */
+    border-radius: 10px; /* Redondeando los bordes */
+}
+
+.container-title {
+    text-align: center;
+    margin-bottom: 20px; /* Añadiendo espacio debajo del título */
+}
+
+.title-content {
+    font-weight: 700; /* Aumentando el peso de la fuente */
+    color: #333; /* Color más oscuro para mejor legibilidad */
+    font-size: 1.5em; /* Aumentando el tamaño del título */
+}
+
+form label {
     display: block;
-    margin: 10px 0;
+    margin: 10px 0 5px; /* Ajustando el margen */
+    font-weight: 600;
+    color: #555; /* Color más suave para las etiquetas */
 }
 
-form input{
-    padding: 5px;
-    /* font-size: 20px; */
+form input {
+    padding: 10px; /* Aumentando el padding para un mejor toque */
+    width: 100%; /* Asegurando que los inputs ocupen todo el ancho */
+    border: 1px solid #ddd; /* Borde más suave */
+    border-radius: 5px; /* Redondeando los bordes de los inputs */
+    transition: border-color 0.3s; /* Transición suave para el borde */
 }
+
+form input:focus {
+    border-color: #e78931; /* Cambio de color al hacer foco */
+    outline: none; /* Quitando el outline predeterminado */
+    box-shadow: 0 0 5px rgba(231, 137, 49, 0.5); /* Añadiendo sombra al hacer foco */
+}
+
 .button-form{
     display: block;
     font-size: 10px;
@@ -46,8 +95,11 @@ form input{
     text-align: center;
 }
 
-.alert{
+.alert {
     font-weight: 500;
-    color: rgb(120, 0, 4);
+    color: #d3450d; /* Usando el color del fondo para el error */
     margin: 5px 0;
+    background-color: #ffebee; /* Fondo suave para el mensaje de error */
+    padding: 5px;
+    border-radius: 3px;
 }

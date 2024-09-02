@@ -31,10 +31,6 @@ export class ReservationService {
     const headers = this.headers
     return this.http.get<any>(`${this.path}/reservas/${dni}`,{headers})
   }
-  getAllReservations(sala:any): Observable<any>{
-    const headers = this.headers
-    return this.http.get<any>(`${this.path}/allReservas/${sala}`,{headers})
-  }
 
   postReservations(dni:any,reserves:any): Observable<any>{
     const headers = this.headers

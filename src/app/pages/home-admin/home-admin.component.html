@@ -1,7 +1,7 @@
 <app-navbar [menusecretoAdmin]="true" [user]="usuario"></app-navbar>
-<div>
+<div style="z-index: 0;">
     <div *ngIf="currentComponent === 'reserveManage'" style="text-align: center;">
-
+        
         <h2 style="text-align: center;">
             Gestion de Reservas
         </h2>
@@ -20,32 +20,48 @@
             </div>
         </div>
     </div>  
-
-    <div class="showScenario">
+    
+    <div class="showScenario" *ngIf="currentComponent === 'reserveManage' && concertChoice">
         <app-scenario [admin]="admin" [escenario]="concertChoice!" [mostrarBoton]="false" *ngIf="currentComponent === 'reserveManage' && concertChoice"></app-scenario>
     </div>
-    <div class="showReserves">
+    <div class="showReserves" *ngIf="currentComponent === 'reserveManage' && concertChoice">
         <app-manage-reserves [admin]="usuario" [escenario]="concertChoice" *ngIf="currentComponent === 'reserveManage' && concertChoice"></app-manage-reserves>
     </div>
-
-    <div class="showUsers">
+    
+    <div class="showUsers" *ngIf="currentComponent === 'userManage'">
+        <h2 style="text-align: center;">
+            Habilitacion de Usuarios
+        </h2>
         <app-manage-users *ngIf="currentComponent === 'userManage'"></app-manage-users>
     </div>
-
-    <div class="showAdmin" style="margin-bottom: 100px;" >
+    
+    <div class="showAdmin" style="margin-bottom: 100px;" *ngIf="currentComponent === 'adminManage'" >
+        <h2 style="text-align: center;">
+            Gestion de Administracion
+        </h2>
         <app-admin-manage *ngIf="currentComponent === 'adminManage'"></app-admin-manage>
     </div>
     
-    <div class="showCash" style="margin-bottom: 100px;">
+    <div class="showCash" style="margin-bottom: 100px;" *ngIf="currentComponent === 'countCash'">
+        <h2 style="text-align: center;">
+            Reporte de la Caja
+        </h2>
         <app-count-cash *ngIf="currentComponent === 'countCash'"></app-count-cash>
     </div>
-    <div class="showHistorial" style="margin-bottom: 100px;">
+    
+    <div class="showHistorial" style="margin-bottom: 100px;"  *ngIf="currentComponent === 'historialReport'">
+        <h2 style="text-align: center;">
+            Historial de reportes
+        </h2>
         <app-historial-reserves *ngIf="currentComponent === 'historialReport'"></app-historial-reserves>
     </div>
-
-    <div class="showEvents">
+    
+    <div class="showEvents" *ngIf="currentComponent === 'events'">
+        <h2 style="text-align: center;">
+            Gestion de eventos
+        </h2>
         <app-events *ngIf="currentComponent === 'events'"></app-events>
     </div>
 </div>
 
-<app-footer class="footer" ></app-footer>
+<app-footer class="footer" style="z-index: 99;" ></app-footer>

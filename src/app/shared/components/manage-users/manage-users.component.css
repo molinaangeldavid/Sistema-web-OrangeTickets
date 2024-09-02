@@ -28,6 +28,10 @@
     justify-content: center;
     align-items: center;
 }
+.dropdown-group button {
+    align-self: center; /* Centra el botón horizontalmente */
+    margin-top: 10px; /* Espacio superior para separación */
+}
 
 .content-habilitation{
     margin-top: 25px;

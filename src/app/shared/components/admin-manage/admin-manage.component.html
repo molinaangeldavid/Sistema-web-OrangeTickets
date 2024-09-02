@@ -1,6 +1,3 @@
-<h2 style="text-align: center;">
-    Gestion de Administracion
-</h2>
 <div class="content-table">
     <p-toast />
             <div class="buttons">
@@ -78,7 +75,7 @@
 </div>
 <p-dialog 
 [(visible)]="administradorDialog" 
-[style]="{ 'min-width': '600px','min-height': '700px' }" 
+[style]="{ 'width': 'auto','height': 'auto' }" 
 header="Administrador" 
 [modal]="true" 
 styleClass="p-fluid">
@@ -133,6 +130,18 @@ styleClass="p-fluid">
         autofocus />
         <small *ngIf="submitted && !administrador!.pass">
             La contraseña es requerida
+        </small>
+    </div>
+    <div class="field">
+        <label for="rol">Rol</label>
+        <p-dropdown 
+        [options]="roles" 
+        [(ngModel)]="rolSelected" 
+        optionLabel="name"
+        appendTo="body" 
+        placeholder="Seleccione una rol" required/>
+        <small *ngIf="submitted && !administrador!.rol">
+            El rol es requerido
         </small>
     </div>
 </ng-template>

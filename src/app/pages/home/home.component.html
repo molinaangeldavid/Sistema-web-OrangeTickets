@@ -1,7 +1,9 @@
 <app-navbar [menusecreto]="true" [user]="usuario"></app-navbar>
 
 <h2 style="text-align: center;" *ngIf="currentComponent=='reservated'">Detalle de las Reservas</h2>
+
 <h2 style="text-align: center;" *ngIf="currentComponent!='reservated'">Reserva de butacas</h2>
+
 <div class="perfil" id="perfil" *ngIf="currentComponent == 'reservated'">
     <p-card role="region" class="subcontainer-perfil">
         <div style="text-align: center;font-weight: 700; margin-bottom: 10px;">Estudiante</div>

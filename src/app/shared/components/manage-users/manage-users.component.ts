@@ -14,23 +14,11 @@ import { DropdownModule } from 'primeng/dropdown';
 import { CalendarModule } from 'primeng/calendar';
 import { FloatLabelModule } from 'primeng/floatlabel';
 import { CheckboxModule } from 'primeng/checkbox';
-import { FileUploadModule, UploadEvent } from 'primeng/fileupload';
+import { FileUploadModule} from 'primeng/fileupload';
 
 import { ConcertService } from '../../../core/services/concert.service';
 import { HabilitacionesService } from '../../../core/services/habilitaciones.service';
 import { AdminService } from '../../../core/services/admin.service';
-
-// interface User{
-//   anio:number,
-//   apellido: string,
-//   ciclo: string,
-//   division: string,
-//   dni: number,
-//   evento_id: number,
-//   habilitado: number,
-//   habilitadoant: number,
-//   nombre: string
-// }
 
 @Component({
   selector: 'app-manage-users',
@@ -86,6 +74,8 @@ export class ManageUsersComponent {
   loading: boolean = true;
   
   file: any
+
+  allSelected: boolean = false;
   
   constructor(
     private confirmationService:ConfirmationService,
@@ -175,6 +165,24 @@ export class ManageUsersComponent {
     }
   }
 
+  toggleAll(event: Event) {
+    const desde = this.dateFrom; 
+  const hasta = this.dateTo;
+
+  if (this.allSelected && (!desde || !hasta)) {
+    // Mostrar alerta si las fechas no están configuradas
+    alert('Debes configurar la fecha de inicio y de fin antes de habilitar a todos los usuarios.');
+    // Desmarcar el checkbox general si las fechas no están configuradas
+    this.allSelected = false;
+    // Evitar que los checkboxes se habiliten
+    event.preventDefault();
+    return;
+  }
+    this.filteredUsers.forEach((user:any) => {
+      user.habilitado = this.allSelected ? 1 : 0;
+    });
+  }
+
   canHabilitar(user: any, event: any) {
     const checkbox = event.target;
     const desde = this.dateFrom; 
@@ -204,43 +212,6 @@ export class ManageUsersComponent {
         this.dateTo = undefined; // O puedes establecerlo a minDateTo si prefieres
       }
     }
-  }
-  
-  // habilitar(users:any){
-  //   this.habilitacionesService.postHabilitacion(this.concertChoice.id,this.dateFrom,this.dateTo,users).subscribe({
-  //     next: (response) => {
-  //       console.log(response)
-  //     },
-  //     error: (error) => {
-  //       console.log(error)
-  //     }
-  //   })
-  // }
-  
-  toggleHabilitation(event:any){
-    // this.confirmationService.confirm({
-    //   message: 'Estas seguro/a de confirmar las reservas seleccionadas?',
-    //   header: 'Confirmacion',
-    //   target: event.target as EventTarget,
-    //   icon: 'pi pi-exclamation-triangle',
-    //   accept: () => {
-    //     console.log(this.filteredUsers)
-    //     this.habilitacionesService.postHabilitacion(this.concertChoice.id,this.dateFrom,this.dateTo,this.filteredUsers).subscribe({
-    //       next: (response) => {
-    //         this.filteredUsers = [...this.filteredUsers]
-    //         console.log(response)
-    //         this.messageService.add({ severity: 'success', summary: 'Habilitado', detail: 'Usuario habilitado', life: 3000 })
-    //       },
-    //       error: (error:any) => {
-    //         console.log(error)
-    //         this.messageService.add({severity: 'error', summary: 'Error', detail: 'Error al habilitar', life: 3000})
-    //       },
-    //     })
-    //   },
-    //   reject: () => {
-    //     this.messageService.add({severity: 'reject', summary: 'Rechazar', detail: 'No se modifico', life: 3000})
-    //   }
-    // })
   }
   
   habilitar(event: any){
@@ -284,14 +255,5 @@ export class ManageUsersComponent {
     }
   })
 }
-
-
-
-
-
-// showDialog(dni:any){
-//   this.dniSelected = dni
-//   this.dialogVisible = true
-// }
 
 }

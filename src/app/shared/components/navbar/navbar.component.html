@@ -1,34 +1,4 @@
- <div class="container">
-<!--    <div class="subcontainer">
-        <img src="../../../../assets/oie_transparent.png" alt="" srcset="">
-        <h1 class="titulo">Orange Day School</h1>
-    </div>
-    <div class="container-menu" *ngIf="menusecreto">
-        <ul>
-            <li class="hover-list"><a (click)="showReservation()">Sala</a></li>
-            <li class="hover-list"><a (click)="showReservated()">Detalles</a></li>
-            <li class="hover-list"><a (click)="goOut()">Salir</a></li>
-        </ul>qews,
-    </div>
-    <div class="container-menu" *ngIf="menusecretoNada">
-        <ul>
-            <li class="hover-list"><a (click)="goOut()">Salir</a></li>
-        </ul>
-    </div>
--->
-     <!-- <div class="container-menu" *ngIf="menusecretoAdmin">
-        <ul class="responsive">
-            <li class="hover-list"><a (click)="showManageReserves()">Reservas</a></li>
-            <li class="hover-list"><a (click)="showManageUsers()">Usuarios</a></li>
-            <li class="hover-list"><a (click)="showCountCash()">Caja</a></li>
-            <li class="hover-list"><a (click)="showManageAdmin()">Administradores</a></li>
-            <li class="hover-list"><a (click)="showEvents()">Eventos</a></li>
-            <li class="hover-list"><a (click)="goOut()">Salir</a></li>
-        </ul>
-        
-    </div> -->
-    
-<!-- </div>  -->
+
 <div class="container">
     
     <p-menubar *ngIf="menusecreto" [model]="menuItems" [autoDisplay]="false" class="custom-menubar">
@@ -40,10 +10,10 @@
                 <div style="display: flex;flex-direction: column; align-items: center;">
                     <span><strong>{{user.nombre}} {{user.apellido}}</strong></span>
                 </div>
-                <button pButton type="button" label="Salir" (click)="goOut()"  icon="pi pi-fw pi-sign-out"></button>
+                <button pButton type="button" label="Salir" (click)="goOut()" severity="danger"  icon="pi pi-fw pi-sign-out"></button>
             </div>
         </ng-template>
-    </p-menubar>
+</p-menubar>
 
     <p-menubar *ngIf="menusecretoAdmin" [model]="adminMenuItems" [autoDisplay]="false" class="custom-menubar">
         <ng-template pTemplate="start">
@@ -54,7 +24,7 @@
                 <div style="display: flex;flex-direction: column; align-items: center;">
                     <span><strong>{{user.nombre}} {{user.apellido}}</strong></span>
                 </div>
-                <button pButton type="button" label="Salir" (click)="goOut()"  icon="pi pi-fw pi-sign-out"></button>
+                <button pButton type="button" label="Salir" (click)="goOut()" severity="danger" icon="pi pi-fw pi-sign-out"></button>
             </div>
         </ng-template>
     </p-menubar>

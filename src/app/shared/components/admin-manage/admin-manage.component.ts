@@ -50,7 +50,14 @@ export class AdminManageComponent {
   administradorDialog: boolean = false
   
   submitted: boolean = false
-  
+
+  roles: any =[
+    {name: "Superadmin"},
+    {name: "Admin"},
+    {name: "Operador"},
+  ]
+  rolSelected: any = "admin"
+
   private readonly userDni = 37760822
   constructor(
     private messageService: MessageService, 
@@ -66,11 +73,11 @@ export class AdminManageComponent {
       nombre: "",
       apellido: "",
       pass: "",
+      rol: this.rolSelected!.toLowerCase()
     }
     this.adminService.getAdmins().subscribe(e => {
       this.administradores = e
       this.administradores = e.filter((admin:any) => admin.dni !== this.userDni);
-      console.log(this.administradores)
     })
   }
   
@@ -81,7 +88,12 @@ export class AdminManageComponent {
   }
   
   editAdministrador(administrador:any){
-    this.administrador = { ...administrador };
+    this.administrador = { 
+      dni: administrador.dni, 
+      nombre: administrador.nombre,
+      apellido: administrador.apellido,
+      rol: administrador.rol
+    };
     this.administradorDialog = true;
   }
   

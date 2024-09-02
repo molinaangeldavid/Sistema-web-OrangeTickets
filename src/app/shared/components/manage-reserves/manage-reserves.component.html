@@ -80,7 +80,6 @@
                 size="small"
                 [disabled]="areAllSeatsConfirmed(user.dni)">
             </button>
-            <p-confirmDialog />
             </td>
          </tr>
     </ng-template>
@@ -201,3 +200,4 @@ styleClass="p-datatable-gridlines"
     <button class="button-report" *ngIf="users && users!.length > 0" pButton type="button" (click)="descarga()" >Descargar Reporte</button>
 </div>
 
+<p-confirmDialog />

@@ -15,9 +15,9 @@
     font-weight: 500;
     padding: 4px;
 }
-.showReserves,.showCash,.showReserves,.showEvents{
+.showReserves,.showCash,.showReserves,.showEvents,.showUsers,.showAdmin,.showHistorial{
     margin: 0 auto;
-    margin-bottom:100px;
+    margin-bottom: 100px;
     width: 100%;
 }
 .data-information.title{
