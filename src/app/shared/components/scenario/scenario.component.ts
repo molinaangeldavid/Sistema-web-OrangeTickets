@@ -2,13 +2,14 @@ import { CommonModule } from '@angular/common';
 import { CUSTOM_ELEMENTS_SCHEMA,NO_ERRORS_SCHEMA,Component, EventEmitter, Input, Output, OnInit, SimpleChanges} from '@angular/core';
 import { ButtonModule } from 'primeng/button';
 import { CookieService } from 'ngx-cookie-service';
-import { lastValueFrom, Subscription } from 'rxjs';
+import { lastValueFrom, Subscription, switchMap, throwError } from 'rxjs';
 import { ScenarioService } from '../../../core/services/scenario.service';
 import { ReservationService } from '../../../core/services/reservation.service';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { DataService } from '../../../core/services/data.service';
 import { Router } from '@angular/router';
 import { EmailService } from '../../../core/services/email.service';
+import { HistorialService } from '../../../core/services/historial.service';
 
 @Component({
   selector: 'app-scenario',
@@ -60,7 +61,8 @@ export class ScenarioComponent implements OnInit{
     private reservationService: ReservationService,
     private dataService: DataService,
     private router: Router,
-    private emailService: EmailService
+    private emailService: EmailService,
+    private historialService: HistorialService
   ){
   }
   
@@ -75,9 +77,13 @@ export class ScenarioComponent implements OnInit{
     if(!this.admin){
       this.habilitation = this.habilitation.find((h:any) => h.evento_id == this.escenario.id)
     }
-    
     const currentDate = new Date()
-    // this.isReservationAllowed = this.checkReservationPermission(this.user.anio,currentDate)
+    if(this.habilitation){
+      console.log(this.habilitation)
+      this.isReservationAllowed = false
+    }else{
+      this.isReservationAllowed = false
+    }
     
     this.subscription = this.scenarioService.updateScenario$.subscribe(() => {
       this.refreshScenario()
@@ -127,86 +133,19 @@ export class ScenarioComponent implements OnInit{
     return `${rowIndex}-${seatIndex}`;
   }
   
-  checkReservationPermission(userGrade:number,currentDate: Date): boolean {
-    if(this.habilitation){
-      const habilitationStart = new Date(this.habilitation.desde);
-      const habilitationThirdDay = new Date(habilitationStart.getTime() + 3 * 24 * 60 * 60 * 1000);
-      const habilitationFinish = new Date(this.habilitation.hasta)
-      
-      const dayOfWeek = currentDate.getDay(); 
-      const isWeekday = dayOfWeek >= 1 && dayOfWeek <= 5; // Lunes es 1 y viernes es 5
-      
-      if (!isWeekday) {
-        return false; // No se permite reservar en fines de semana
-      }
-      
-      if(currentDate > habilitationStart && currentDate < habilitationFinish){
-        return true; 
-      }
-      
-      if(currentDate < habilitationStart){
-        return false
-      } 
-      
-      const currentHour = currentDate.getHours();
-      const isMorningWindow = currentHour >= 7 && currentHour < 13;
-      const isAfternoonWindow = currentHour >= 14 && currentHour < 20;
-      
-      if (userGrade === 6) {
-        if (isMorningWindow || isAfternoonWindow) {
-          return true; // Puede reservar en el periodo correcto
-        }
-      } else if (userGrade >= 1 && userGrade <= 5) {
-        if (isAfternoonWindow) {
-          return true; // Puede reservar en la ventana de tarde
-        }
-      }
-      return false;
-    }
-    return false
-  }
-  
-  getMaxSeatsAllowed(userGrade: number, currentDateTime: Date, existingReservations:any): number {
-    const habilitationStart = new Date(this.habilitation.desde);
-    const habilitationThirdDay = new Date(habilitationStart.getTime() + 3 * 24 * 60 * 60 * 1000);
-    const habilitationFinish = new Date(this.habilitation.hasta) 
-    
-    const currentHour = currentDateTime.getHours();
-    const isMorningWindow = currentHour >= 7 && currentHour < 13;
-    const isAfternoonWindow = currentHour >= 14 && currentHour < 20;
-    let maxSeats: any = 0
-    if (currentDateTime > habilitationThirdDay && currentDateTime < habilitationFinish) {
-      return Infinity; // Puede reservar cualquier cantidad de asientos
-    }
-    
-    if (userGrade === 6) {
-      if (isMorningWindow) {
-        maxSeats = Math.max(2 - existingReservations, 0);
-      } else if (isAfternoonWindow) {
-        maxSeats = Math.max(5 - existingReservations, 0); // Máximo 5 asientos en la tarde
-      }
-    } else if (userGrade >= 1 && userGrade <= 5) {
-      if (isAfternoonWindow) {
-        maxSeats = Math.max(5 - existingReservations, 0); // Máximo 5 asientos en la tarde
-      }
-    }
-    
-    return maxSeats; // No puede reservar fuera del horario permitido
-  }
-  
   async toggleSeatSelection(row:any,seat:any,tipo:any){
     const seatKey = this.getSeatKey(row, seat);
     if (this.selectedSeats.has(seatKey)) {
       this.selectedSeats.delete(seatKey);
       this.total -= this.escenario.valor
     } else {
-      // const totalReservation = await lastValueFrom(this.reservationService.getReservation(this.user.dni))
-      // const maxSeatsAllowed = this.getMaxSeatsAllowed(this.user.anio, new Date(),totalReservation.length);
-      // if (this.selectedSeats.size >= maxSeatsAllowed) {
-      //   alert("No puede seleccionar mas asientos. Pruebe mas tarde")
-      //   // this.isReservationAllowed = false
-      //   return;
-      // }
+      const currentDate = new Date()
+      const totalReservation = this.seats.filter((s:any) => s.dni == this.dni && s.fechaDni > currentDate)
+      const maxSeatsAllowed = totalReservation.length ;
+      if (this.selectedSeats.size >= maxSeatsAllowed) {
+        alert("No puede seleccionar mas asientos. Pruebe mas tarde")
+        return;
+      }
       if(tipo == 'd'){
         alert('Estas seleccionando una butaca para discapacitados')
       }
@@ -266,25 +205,25 @@ export class ScenarioComponent implements OnInit{
   }
   
   configEmail(reservas: any){
-
-    const from = "TicketsOrange@orangeinternational.edu.ar"
+    
+    const from = "ticketsOrange@orangeinternational.edu.ar"
     const to = "concert2024@orangeinternational.edu.ar"
     const formattedDate = new Date(this.escenario.fecha).toLocaleDateString('es-ES', {
       day: '2-digit',
       month: '2-digit',
       year: 'numeric'
     });
-    const subject = `Reserva entradas 2024 de ${this.user.apellido} ${this.user.nombre} (${this.user.dni}) / Concert: ${this.escenario.nombre}`
+    const subject = `Tickets Orange 2024 -- ${this.user.apellido} ${this.user.nombre} (${this.user.dni}) / Concert: ${this.escenario.nombre}`
     let html = `
     <p>El estudiante:
     <span><strong>${this.user.nombre} ${this.user.apellido}</strong> - <strong>DNI ${this.user.dni}</strong></span></p>
     <p>Realizó la siguiente reserva para el concert ${this.escenario.nombre} ( ${formattedDate} - ${this.escenario.hora}. Los detalles de las reservas:</p>
     `
-  // Generar filas para cada reserva
-  reservas.forEach((reserva:any) => {
-    html += `<p>FILA: ${reserva.fila} -- BUTACA: ${reserva.butaca}</p>`
-  });
-
+    // Generar filas para cada reserva
+    reservas.forEach((reserva:any) => {
+      html += `<p>FILA: ${reserva.fila} -- BUTACA: ${reserva.butaca}</p>`
+    });
+    
     this.emailService.sendEmail(from,to,subject,html).subscribe({
       next: (response) => {
         console.log(response)
@@ -294,76 +233,76 @@ export class ScenarioComponent implements OnInit{
       }
     })
   } 
-
-  confirmSeat(){
-    if(this.selectedSeats.size == 0){
+  
+  confirmSeat() {
+    if (this.selectedSeats.size === 0) {
       return;
     }
-    
-    const reserveDone: any[] = []
     
     const seatsToCheck: { fila: number, butaca: number }[] = [];
     
     this.selectedSeats.forEach(seatKey => {
       const [fila, butaca] = seatKey.split('-').map(Number);
-      seatsToCheck.push({
-        fila,
-        butaca
-      });
+      seatsToCheck.push({ fila, butaca });
     });
-    this.reservationService.checkSeatAvailable(this.escenario.sala, seatsToCheck).subscribe({
-      next: (availableSeats) => {
-        if(availableSeats.length == seatsToCheck.length){
-          this.selectedSeats.forEach(seatKey => {
-            const [fila, butaca] = seatKey.split('-').map(Number);
-            reserveDone.push({
-              evento_id:this.escenario.id,
-              fila,
-              butaca,
-              estado: 'reservado',
-              dni: this.dni,
-              fechaDni:new Date()
-            })
-          });
-          this.reservationService.postReservations(this.dni,reserveDone).subscribe({
-            next: () => {
-              this.configEmail(reserveDone)
-              this.selectedSeats.clear();
-              const pageReservation = 'reservated'
-              this.changePage.emit(pageReservation)
-            },
-            error: (error:any) => {
-              this.showOccupiedSeatsError();
-              this.selectedSeats.clear();
-            }
-          })
-        }else{
+    
+    this.reservationService.checkSeatAvailable(this.escenario.sala, seatsToCheck).pipe(
+      switchMap(availableSeats => {
+        if (availableSeats.length !== seatsToCheck.length) {
           this.showOccupiedSeatsError();
+          return throwError(() => 'Some seats are not available');
         }
+        
+        const reserveDone =  Array.from(this.selectedSeats).map(seatKey => {
+          const [fila, butaca] = seatKey.split('-').map(Number);
+          return {
+            evento_id: this.escenario.id,
+            fila,
+            butaca,
+            estado: 'reservado',
+            dni: this.dni,
+            fechaDni: new Date()
+          };
+        });
+        
+        return this.reservationService.postReservations(this.dni, reserveDone).pipe(
+          switchMap(() => {
+            this.configEmail(reserveDone);
+            return this.historialService.createReserveHistorial({
+              dni: this.dni,
+              reserves: reserveDone
+            });
+          })
+        );
+      })
+    ).subscribe({
+      next: () => {
+        this.selectedSeats.clear();
+        this.changePage.emit('reservated');
       },
-      error: (error)=> {
-        console.log('Error al verificar la disponibilidad de asientos', error);
+      error: (error) => {
+        console.error('Error:', error);
+        this.showOccupiedSeatsError();
+        this.selectedSeats.clear();
       }
-      
-    }
-  );
-  
-}
-showOccupiedSeatsError() {
-  // Aquí puedes implementar la lógica para mostrar un mensaje al usuario
-  alert('Algunos de los asientos seleccionados ya están ocupados. Por favor, selecciona otros asientos.');
-  setTimeout(() => {
-    // Redirigir a la misma página o componente actual
-    this.router.navigateByUrl(this.router.url)
-  }, 3000); // Espera de 3 segundos antes de redirigir
-}
-
-
-ngOnDestroy(){
-  if (this.subscription) {
-    this.subscription.unsubscribe();
+    });
   }
-}
-
+  
+  showOccupiedSeatsError() {
+    // Aquí puedes implementar la lógica para mostrar un mensaje al usuario
+    alert('Algunos de los asientos seleccionados ya están ocupados. Por favor, selecciona otros asientos.');
+    setTimeout(() => {
+      // Redirigir a la misma página o componente actual
+      this.router.navigateByUrl(this.router.url)
+    }, 3000); // Espera de 3 segundos antes de redirigir
+  }
+  
+  
+  ngOnDestroy(){
+    if (this.subscription) {
+      this.subscription.unsubscribe();
+    }
+  }
+  
 }
 

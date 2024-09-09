@@ -42,7 +42,7 @@ export class CountCashComponent {
   dateNow: any
   datebeforeNow: any
   
-  showUser: boolean | undefined
+  showUser: boolean | undefined = true
   showDate: boolean = false
   desde: Date | undefined
   hasta: Date | undefined

@@ -22,6 +22,7 @@ import { Subscription } from 'rxjs';
 import { ConcertService } from '../../core/services/concert.service';
 import { AdminManageComponent } from '../../shared/components/admin-manage/admin-manage.component';
 import { HistorialReservesComponent } from '../../shared/components/historial-reserves/historial-reserves.component';
+import { AdminService } from '../../core/services/admin.service';
 
 
 
@@ -51,6 +52,8 @@ import { HistorialReservesComponent } from '../../shared/components/historial-re
 })
 export class HomeAdminComponent {
 
+  user: any
+
   usuario: any
 
   admin: boolean = true
@@ -70,11 +73,13 @@ export class HomeAdminComponent {
     private showComponentService: ShowComponentService,
     private concertService: ConcertService,
     private dataService: DataService,
+    private adminService: AdminService
   ){
 
   }
   
   ngOnInit(){
+    
     this.currentComponent! = 'reserveManage'
     this.subscription = this.showComponentService.componentEvent$.subscribe(name => {
       this.currentComponent = name;
@@ -91,7 +96,9 @@ export class HomeAdminComponent {
     });
 
     this.dni = this.dataService.getData('dniAdmin')
+
     this.usuario = this.dataService.getData('data')
+    
   }
 
 

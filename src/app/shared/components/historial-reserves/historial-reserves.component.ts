@@ -1,21 +1,40 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
-import { NavbarComponent } from '../navbar/navbar.component';
-import { FooterComponent } from '../footer/footer.component';
+import { Component, CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA } from '@angular/core';
+import { HistorialService } from '../../../core/services/historial.service';
+import { ButtonModule } from 'primeng/button';
 
 @Component({
   selector: 'app-historial-reserves',
   standalone: true,
   imports: [
     CommonModule,
-    NavbarComponent,
-    FooterComponent
+    ButtonModule
   ],
   templateUrl: './historial-reserves.component.html',
-  styleUrl: './historial-reserves.component.css'
+  styleUrl: './historial-reserves.component.css',
+  schemas:[CUSTOM_ELEMENTS_SCHEMA,NO_ERRORS_SCHEMA]
 })
 export class HistorialReservesComponent {
 
-  usuario: any 
+  historial: any
+
+  tipoSelected: any
+  constructor(
+    private historialService: HistorialService
+  ){
+    
+  }
+
+  ngOnInit(){
+
+    this.historialService.getAllHistorial().subscribe(value => {
+      this.historial = value
+    })
+
+  }
+
+  openDialog(){
+
+  }
 
 }

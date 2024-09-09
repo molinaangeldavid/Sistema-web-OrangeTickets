@@ -142,6 +142,9 @@ export class ManageReservesComponent implements OnInit,OnChanges {
   //////////////////////////////////////
   // Bloque de funciones de seleccion
   confirmSelectedReserves(dni:any,event:Event){
+    if (!this.selectedReserves || !this.selectedReserves.length) {
+      return;
+    }
     const now = new Date();
     
     // const currentDate = `${this.padNumber(now.getDate())}-${this.padNumber(now.getMonth() + 1)}-${now.getFullYear()}`;
@@ -182,7 +185,9 @@ export class ManageReservesComponent implements OnInit,OnChanges {
   }
   
   deleteSelectedReserves(dni:any,event:Event) {
-    
+    if (!this.selectedReserves || !this.selectedReserves.length) {
+      return;
+    }
     this.confirmationService.confirm({
       message: 'Estas seguro/a de eliminar las reservas seleccionadas',
       target: event.target as EventTarget,

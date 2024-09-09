@@ -1,3 +1,71 @@
-<div>
-    <h2>Hola</h2>
+
+<div class="filter">
+
+</div>
+<div *ngIf="!historial">
+    <h2>No existen ningun registro en el historial</h2>
+</div>
+<div class="container-table" *ngIf="historial">
+    <p-table 
+    #dt
+    [value]="historial" 
+    [scrollable]="true" 
+    scrollHeight="400px" 
+    [tableStyle]="{'width': 'auto', 'margin':'auto'}"
+    [paginator] = true
+    [rows] = 10
+    [globalFilterFields]="['date','tipo']">
+    <!-- <ng-template pTemplate="caption" style="width: 50%;">
+        <div class="caption" style="display: flex; justify-content: space-between;">
+            <p-iconField iconPosition="right" class="ml-auto">
+                <p-inputIcon>
+                    <i class="pi pi-search"></i>
+                </p-inputIcon>
+                <input 
+                pInputText 
+                type="text" 
+                (input)="dt.filterGlobal($any($event.target).value, 'contains')" 
+                placeholder="Buscar..." />
+            </p-iconField>
+        </div>
+    </ng-template> -->
+    <ng-template pTemplate="header">
+        <tr>
+            <th pSortableColumn="id">
+                ID <p-sortIcon field="id" />
+            </th>
+            <th pSortableColumn="tipo">
+                Tipo <p-sortIcon field="tipo" />
+            </th>
+            <th pSortableColumn="fecha">
+                Fecha <p-sortIcon field="fecha" />
+            </th>
+            <th pSortableColumn="admin">
+                Es Admin <p-sortIcon field="admin" />
+            </th>
+            <th pSortableColumn="dni">
+                DNI <p-sortIcon field="dni" />
+            </th>
+            <th>
+                Data
+            </th>
+            
+        </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-data>
+        <tr>
+            <td>{{ data.id }}</td>
+            <td>{{ data.tipo }}</td>
+            <td>{{ data.fecha }}</td>
+            <td>{{ data.admin }}</td>
+            <td>{{ data.dni }}</td>
+            <td>
+                <button #pButton (click)="openDialog()" icon="pi pi-arrow-up-right-and-arrow-down-left-from-center">
+
+                </button>
+            </td>
+        </tr>
+    </ng-template>
+</p-table>
+
 </div>

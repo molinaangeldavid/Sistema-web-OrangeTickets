@@ -106,10 +106,6 @@ export class HomeComponent implements OnInit,OnDestroy {
     })
     this.usuario = this.dataService.getData('data')
   }
-  
-  habilitado(){
-    return true   
-  }
 
   changePage(value:any){
     this.currentComponent = value

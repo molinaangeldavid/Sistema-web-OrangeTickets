@@ -1,4 +1,4 @@
-<app-navbar [menusecreto]="true" [user]="usuario"></app-navbar>
+<app-navbar [menusecreto]="true" [usuario]="usuario"></app-navbar>
 
 <h2 style="text-align: center;" *ngIf="currentComponent=='reservated'">Detalle de las Reservas</h2>
 
@@ -57,7 +57,7 @@
     </div>
 </div>
 
-<div class="content" style="margin-bottom: 120px" *ngIf="habilitado()">
+<div class="content" style="margin-bottom: 120px">
     
     <app-scenario [admin]="admin" [escenario]="concertChoice!" [habilitation]="habilitation" *ngIf="currentComponent === 'scenario' && concertChoice!" (changePage)="changePage($event)"></app-scenario>
     

@@ -15,18 +15,11 @@ export class HabilitacionesService {
   pathUrl = environment.apiUrl
   path: string = `${this.pathUrl}/api/admin`
 
-  getAllHabilitation(){
+  getHabilitacionesFilter(evento_id:any,ciclo:any,anio:any,division:any, dni:any){
     const headers = new HttpHeaders({
       'Authorization': `Bearer ${this.authService.getToken()}`
     })
-    return this.http.get<any>(`${this.path}/habilitaciones`,{headers})
-  }
-
-  getHabilitacionesFilter(evento_id:any,ciclo:any,anio:any,division:any){
-    const headers = new HttpHeaders({
-      'Authorization': `Bearer ${this.authService.getToken()}`
-    })
-    return this.http.get<any>(`${this.path}/habilitaciones/${evento_id}/${ciclo}/${anio}/${division}`,{headers})
+    return this.http.get<any>(`${this.path}/habilitaciones/${evento_id}/${ciclo}/${anio}/${division}/${dni}`,{headers})
   }
 
   postHabilitacion(evento_id:any,body: any){

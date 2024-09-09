@@ -8,30 +8,25 @@
         <ng-template pTemplate="end">
             <div style="display: flex; align-items: center; gap:5px">
                 <div style="display: flex;flex-direction: column; align-items: center;">
-                    <span><strong>{{user.nombre}} {{user.apellido}}</strong></span>
+                    <span><strong>{{usuario.nombre}} {{usuario.apellido}}</strong></span>
                 </div>
                 <button pButton type="button" label="Salir" (click)="goOut()" severity="danger"  icon="pi pi-fw pi-sign-out"></button>
             </div>
         </ng-template>
 </p-menubar>
 
-    <p-menubar *ngIf="menusecretoAdmin" [model]="adminMenuItems" [autoDisplay]="false" class="custom-menubar">
+    <p-menubar *ngIf="menusecretoAdmin" [model]="menues" [autoDisplay]="false" class="custom-menubar">
         <ng-template pTemplate="start">
             <img src="../../../../assets/oie_transparent.png" alt="Orange Day School Logo" height="40" class="mr-2">
         </ng-template>
         <ng-template pTemplate="end">
             <div style="display: flex; align-items: center; gap:5px">
                 <div style="display: flex;flex-direction: column; align-items: center;">
-                    <span><strong>{{user.nombre}} {{user.apellido}}</strong></span>
+                    <span><strong>{{usuario.nombre}} {{usuario.apellido}}</strong></span>
                 </div>
                 <button pButton type="button" label="Salir" (click)="goOut()" severity="danger" icon="pi pi-fw pi-sign-out"></button>
             </div>
         </ng-template>
     </p-menubar>
 
-    <!-- <p-menubar *ngIf="menusecretoNada" [model]="logoutMenuItems" [autoDisplay]="false">
-        <ng-template pTemplate="start">
-            <img src="../../../../assets/oie_transparent.png" alt="Orange Day School Logo" height="40" class="mr-2">
-        </ng-template>
-    </p-menubar> -->
 </div>

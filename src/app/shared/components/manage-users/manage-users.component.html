@@ -1,3 +1,12 @@
+<div style="display: flex; justify-content: center; gap: 10px; margin-bottom: 15px;" >
+    <button pButton severity="success" (click)="habilitarOption()" style="width: 10%; text-align: center;">
+        Habilitar
+    </button>
+    <button pButton severity="danger" (click)="deshabilitarOption()" style="width: 10%; text-align: center;">
+        Deshabilitar
+    </button>
+</div>
+
 <div class="container-choose">
     <div class="dropdown-content">
         <div style="margin-bottom: 10px; display: flex; flex-direction: column;">
@@ -9,6 +18,15 @@
             placeholder="Elegir Concierto" 
             [ngModelOptions]="{standalone: true}" />
         </div>
+        <!-- <div style="margin-bottom: 10px; display: flex; flex-direction: column;" *ngIf="deshabilitarOptionBoolean">
+            <label for="concert">Concert</label>
+            <p-dropdown 
+            [options]="concerts" 
+            [(ngModel)]="concertChoice" 
+            optionLabel="nombre"
+            placeholder="Elegir Concierto" 
+            [ngModelOptions]="{standalone: true}" />
+        </div> -->
         <div class="sub-dropdown-content" *ngIf="concertChoice" >
             <div style="margin-bottom: 10px; display: flex; flex-direction: column;">
                 <label for="Ciclo">Ciclo</label>
@@ -35,42 +53,79 @@
                 optionLabel="division"
                 [ngModelOptions]="{standalone: true}"/>
             </div>
-            <div class="dropdown-group">
+            <div style="margin-bottom: 10px; display: flex; flex-direction: column;">
+                <label for="division">Dni</label>
+                <input 
+                type="text" 
+                pInputText 
+                [(ngModel)]="dniFilter " 
+                [value]="dniFilter || 'Todos'"/>
+            </div>
+            <div class="dropdown-group" *ngIf="habilitarOptionBoolean">
+                <button pButton type="button" (click)="setFiltro()" class="pi pi-search"></button>
+            </div>
+            <div class="dropdown-group" *ngIf="deshabilitarOptionBoolean">
                 <button pButton type="button" (click)="verFiltro()" class="pi pi-search"></button>
             </div>
         </div>
     </div>
 </div>
-
-<div class="content-habilitation" *ngIf="concertChoice">
-    <p-floatLabel>
+<div *ngIf="habilitarOptionBoolean" style="display: flex; justify-content: center; font-weight: 700; font-size: 1.4rem;">Habilitar Usuarios</div>
+<div *ngIf="deshabilitarOptionBoolean" style="display: flex; justify-content: center; font-weight: 700; font-size: 1.4rem;">Eliminar habilitaciones</div>
+<div class="content-habilitation" *ngIf="habilitarOptionBoolean">
+    <div class="subcontainer-habilitation">
+        <span style="display: block; margin-left: 5px;">Fecha inicio</span>
         <p-calendar
         [(ngModel)]="dateFrom"
         inputId="from" 
         dateFormat="dd/mm/yy" 
         [minDate]="today"
-        (ngModelChange)="onDateFromChange()"/>
-        <label for="from">Desde</label>
-    </p-floatLabel>
-    <p-floatLabel>
+        (ngModelChange)="onDateFromChange()"
+        placeholder="Fecha"/>
+        <p-calendar 
+        inputId="calendar-timeonly" 
+        [(ngModel)]="timeFrom" 
+        [timeOnly]="true" 
+        (ngModelChange)="onDateFromChange()"
+        placeholder="Hora" 
+        />
+    </div>
+    <div class="subcontainer-habilitation">
+        <span style="display: block; margin-left: 5px;">Fecha Fin</span>
         <p-calendar 
         [(ngModel)]="dateTo" 
         inputId="to"
-        [minDate]="minDateTo"
-        dateFormat="dd/mm/yy"/>
-        <label for="to">Hasta</label>
-    </p-floatLabel>
+        [minDate]="today"
+        (ngModelChange)="onDateToChange()"
+        dateFormat="dd/mm/yy"
+        placeholder="Fecha"/>
+        <p-calendar 
+        inputId="calendar-timeonly" 
+        [(ngModel)]="timeTo" 
+        [timeOnly]="true" 
+        (ngModelChange)="onDateToChange()"
+        placeholder="Fecha"/>
+    </div>
+</div>
+<div class="last-input" *ngIf="habilitarOptionBoolean">
+    <label for="cantidad">Cantidad: </label>
+    <p-inputNumber 
+    inputId="integeronly" 
+    [(ngModel)]="cantidad"/> 
 </div>
 <p-confirmDialog />
-
-<div class="container-table">
+<div *ngIf="!loadingHabilitados && !filteredUsers" style="display: flex; justify-content: center; font-weight: 800;">No existen usuarios en el sistema</div>
+<div class="container-table" *ngIf="habilitarOptionBoolean && filteredUsers">
     <p-table 
-    #dt2 
+    #dt
     [value]="filteredUsers" 
     [scrollable]="true" 
     scrollHeight="400px" 
-    [tableStyle]="{'width': 'auto', 'margin':'0 auto'}"
-    [globalFilterFields]="['dni', 'apellido', 'nombre', 'ciclo','nivel','division','concert']">
+    [paginator]="true"
+    [rows]="10"
+    [loading]="loadingHabilitados"
+    [tableStyle]="{'width': 'auto', 'margin':'auto'}"
+    [globalFilterFields]="['dni', 'apellido', 'nombre', 'ciclo','nivel','division']">
     <ng-template pTemplate="caption" style="width: 50%;">
         <div class="caption" style="display: flex; justify-content: space-between;">
             <p-iconField iconPosition="right" class="ml-auto">
@@ -80,7 +135,7 @@
                 <input 
                 pInputText 
                 type="text" 
-                (input)="dt2.filterGlobal($any($event.target).value, 'contains')" 
+                (input)="dt.filterGlobal($any($event.target).value, 'contains')" 
                 placeholder="Buscar..." />
             </p-iconField>
             <p-fileUpload 
@@ -115,10 +170,6 @@
             <th pSortableColumn="division">
                 Division <p-sortIcon field="division" />
             </th>
-            <th pSortableColumn="concert">
-                Habilitado
-                <input type="checkbox" [(ngModel)]="allSelected" (change)="toggleAll($event)" *ngIf="this.filteredUsers" />
-            </th>
         </tr>
     </ng-template>
     <ng-template pTemplate="body" let-user>
@@ -128,21 +179,121 @@
             <td>{{ user.nombre }}</td>
             <td>{{ user.ciclo }}</td>
             <td>{{ user.anio }}</td>
-            <td>{{ user.division }}</td>
+            <td>{{ user.division }}</td> 
+        </tr>
+    </ng-template>
+</p-table>
+</div>
+<div *ngIf="!habilitaciones" style="display: flex; justify-content: center; font-weight: 800;">No existen usuarios en el sistema</div>
+<div class="container-table" *ngIf="deshabilitarOptionBoolean && habilitaciones">
+    <p-table 
+    #dt2 
+    [value]="habilitaciones" 
+    [scrollable]="true" 
+    scrollHeight="400px" 
+    [paginator]="true"
+    [rows]="10"
+    [loading]="loadingdeshabilitados"
+    [tableStyle]="{'width': 'auto', 'margin':'auto'}"
+    [globalFilterFields]="['dni','nombre','apellido','ciclo','nivel','division','desde','hasta','cantidad']"
+    [(selection)]="selectedHabilitaciones">
+    <ng-template pTemplate="caption" style="width: 50%;">
+        <div class="caption" style="display: flex; justify-content: space-between;">
+            <p-iconField iconPosition="right" class="ml-auto">
+                <p-inputIcon>
+                    <i class="pi pi-search"></i>
+                </p-inputIcon>
+                <input 
+                pInputText 
+                type="text" 
+                (input)="dt2.filterGlobal($any($event.target).value, 'contains')" 
+                placeholder="Buscar..." />
+            </p-iconField>
+        </div>
+    </ng-template>
+    <ng-template pTemplate="header">
+        <tr>
+            <th style="width: 40px;">
+                <p-tableHeaderCheckbox></p-tableHeaderCheckbox> <!-- Checkbox para seleccionar todas las filas -->
+            </th>
+            <th pSortableColumn="dni">
+                DNI <p-sortIcon field="dni" />
+            </th>
+            <th pSortableColumn="nombre">
+                Nombre <p-sortIcon field="nombre" />
+            </th>
+            <th pSortableColumn="apellido">
+                Apellido <p-sortIcon field="apellido" />
+            </th>
+            <th pSortableColumn="ciclo">
+                Ciclo <p-sortIcon field="ciclo" />
+            </th>
+            <th pSortableColumn="nivel">
+                Nivel <p-sortIcon field="nivel" />
+            </th>
+            <th pSortableColumn="division">
+                Division <p-sortIcon field="division" />
+            </th>
+            <th pSortableColumn="desde">
+                Desde <p-sortIcon field="desde" />
+            </th>
+            <th pSortableColumn="hasta">
+                Hasta <p-sortIcon field="hasta" />
+            </th>
+            <th pSortableColumn="cantidad">
+                Cantidad <p-sortIcon field="cantidad" />
+            </th>
+            
+        </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-habilitacion>
+        <tr>
             <td>
-                <input type="checkbox" name="habilitado" id="habilitado" [checked]="user.habilitado" 
-                [disabled]="!concertChoice && !dateFrom && !dateTo" (change)="canHabilitar(user, $event)">
+                <p-tableCheckbox [value]="habilitacion"></p-tableCheckbox> <!-- Checkbox para cada fila -->
             </td>
+            <td>{{ habilitacion.dni }}</td>
+            <td>{{ habilitacion.nombre }}</td>
+            <td>{{ habilitacion.apellido }}</td>
+            <td>{{ habilitacion.ciclo }}</td>
+            <td>{{ habilitacion.anio }}</td>
+            <td>{{ habilitacion.division }}</td>
+            <td>{{ habilitacion.habilitados.desde | date: 'dd/MM/yyyy HH:mm' }}</td>
+            <td>{{ habilitacion.habilitados.hasta | date: 'dd/MM/yyyy HH:mm' }}</td>
+            <td>{{ habilitacion.habilitados.cantidad }}</td>
         </tr>
     </ng-template>
 </p-table>
 
-<button
-pButton
-type="button"
-(click)="habilitar($event)"
-*ngIf="filteredUsers != undefined"
-style="margin-top: 20px;"
->Guardar</button>
-
 </div>
+<div style="display: flex; justify-content: center;">
+    <button
+    pButton
+    type="button"
+    (click)="habilitar($event)"
+    *ngIf="habilitarOptionBoolean "
+    [disabled]="selectedUsers == undefined && canHabilitar()">
+    Guardar</button>
+    
+    <button
+    pButton
+    type="button"
+    (click)="deshabilitar($event)"
+    severity="danger"
+    *ngIf="deshabilitarOptionBoolean"
+    [disabled]="selectedHabilitaciones == undefined">
+    Eliminar</button>
+</div>
+
+<p-dialog [(visible)]="displayConflictsDialog" [modal]="true" header="Conflictos de Habilitación" [style]="{width: '30vw'}">
+    <ng-template pTemplate="content">
+        <p *ngIf="conflictos && conflictos.length > 0">Se encontraron conflictos con los siguientes estudiantes:</p>
+        <ul>
+            <li *ngFor="let conflicto of conflictos">
+                {{ conflicto.dni }}: {{ conflicto.descripcion }}
+            </li>
+        </ul>
+    </ng-template>
+    <ng-template pTemplate="footer">
+        <button pButton label="Cerrar" icon="pi pi-check" (click)="displayConflictsDialog=false"></button>
+    </ng-template>
+</p-dialog>

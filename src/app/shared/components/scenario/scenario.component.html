@@ -11,7 +11,6 @@
                         'seat': existSeat(seat), 
                         'reservated-seat': existSeat(seat) && isReservated(seat),
                         'paid-seat': existSeat(seat) && isPaid(seat),
-                        'disabled': existSeat(seat) && isDisabledSeat(seat),
                         'empty-seat':!existSeat(seat)
                     }" >
                     </td>
@@ -21,7 +20,7 @@
                 </tr>
             </tbody>
         </table>
-        <table class="sala" *ngIf="!admin">
+        <table class="sala" *ngIf="!admin && isReservationAllowed">
             <thead>
                 <th>Escenario</th>
             </thead>
@@ -34,8 +33,6 @@
                         'reservated-seat': existSeat(seat) && isReservated(seat),
                         'paid-seat': existSeat(seat) && isPaid(seat) && !mySeat(seat),
                         'seat-user': existSeat(seat) && mySeat(seat),
-                        'disabled': existSeat(seat) && isDisabledSeat(seat),
-                        'seat-disabled-selected': existSeat(seat) && isSelected(seat.fila, seat.butaca) && isDisabledSeat(seat),
                         'empty-seat':!existSeat(seat)
                     }" (click)="existSeat(seat) && isAvailable(seat) && toggleSeatSelection(seat.fila, seat.butaca, seat.tipo)">
                     </td>
@@ -45,7 +42,7 @@
                 </tr>
             </tbody>
         </table>
-        <!-- <table class="sala" *ngIf="!admin && !isReservationAllowed">
+        <table class="sala" *ngIf="!admin && !isReservationAllowed">
             <thead>
                 <th>Escenario</th>
             </thead>
@@ -56,8 +53,6 @@
                         'reservated-seat': existSeat(seat) && isReservated(seat),
                         'paid-seat': existSeat(seat) && isPaid(seat) && !mySeat(seat),
                         'seat-user': existSeat(seat) && mySeat(seat),
-                        'disabled': existSeat(seat) && isDisabledSeat(seat),
-                        'seat-disabled-selected': existSeat(seat) && isSelected(seat.fila, seat.butaca) && isDisabledSeat(seat) || isDisabledSeat(seat) && isPaid(seat),
                         'empty-seat':!existSeat(seat)
                     }" >
                     </td>
@@ -66,7 +61,7 @@
                     </td>
                 </tr>
             </tbody>
-        </table> -->
+        </table>
     </div>
 <div style="text-align: center;">
     <p-progressSpinner ariaLabel="loading" *ngIf="loading "/>
