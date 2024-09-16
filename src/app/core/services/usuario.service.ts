@@ -21,7 +21,7 @@ export class UsuarioService {
   
   getHabilitation(dni:any):Observable<any>{
     const headers = new HttpHeaders({
-      'Authorization': `Bearer ${this.authService.getToken()}` 
+      'Authorization': `Bearer ${this.authService.getTokenEstudiante()}` 
     });
     return this.http.get<any>(`${this.path}/api/estudiantes/estudiante/${dni}`,{headers})
   }

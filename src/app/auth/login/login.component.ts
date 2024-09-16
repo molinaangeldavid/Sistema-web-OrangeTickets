@@ -65,7 +65,7 @@ export class LoginComponent implements OnInit{
   
   ngOnInit(){    
     this.esAdmin = false
-    this.cookieService.delete('token')
+    this.cookieService.delete('tokenEstudiante')
     this.dataService.deleteAllData();
   }
 
@@ -73,7 +73,7 @@ export class LoginComponent implements OnInit{
     try {
       const tokenUser = await firstValueFrom(this.authService.authUser(this.dni))
       if(tokenUser){
-        this.cookieService.set("token",tokenUser.token);
+        this.cookieService.set("tokenEstudiante",tokenUser.token);
         this.dataService.saveData("dni",`${this.dni}`);
         this.dataService.saveData("data",tokenUser.myUser)
         this.router.navigate(['estudiante'])

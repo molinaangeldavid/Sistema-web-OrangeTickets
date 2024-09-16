@@ -10,24 +10,32 @@ import { environment } from '../../../environments/environment';
 export class AuthService {
   apiUrl = environment.apiUrl
   path: any = `${this.apiUrl}`
-  token: any
+  tokenEstudiante: any
+  tokenAdmin: any
 
   constructor(
     private http: HttpClient,
     private cookieService: CookieService
   ) {
-    this.loadToken()
+    this.loadTokens()
    }
 
-  private loadToken() {
-    this.token = this.cookieService.get('token');
+   private loadTokens() {
+    this.tokenEstudiante = this.cookieService.get('tokenEstudiante');
+    this.tokenAdmin = this.cookieService.get('tokenAdmin');
   }
 
-  getToken(): string {
-    if (!this.token) {
-      this.loadToken();
+  getTokenAdmin(): string {
+    if (!this.tokenAdmin) {
+      this.loadTokens();
     }
-    return this.token;
+    return this.tokenAdmin;
+  }
+  getTokenEstudiante(): string {
+    if (!this.tokenEstudiante) {
+      this.loadTokens();
+    }
+    return this.tokenEstudiante;
   }
 
   authUser(dni:any): Observable<any>{

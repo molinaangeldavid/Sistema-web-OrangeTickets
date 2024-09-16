@@ -10,7 +10,7 @@ export const adminGuard: CanActivateFn = (route, state) => {
   const cookieService = inject(CookieService)
   const router = inject(Router)
   const http = inject(HttpClient)
-  const token = cookieService.get('token')
+  const token = cookieService.get('tokenAdmin')
   const path = `${pathUrl}/api/admin`
   if(!token){
     router.navigate(['/login/admin'])

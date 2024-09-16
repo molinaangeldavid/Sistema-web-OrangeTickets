@@ -109,7 +109,7 @@ styleClass="p-datatable-gridlines"
     label="Validar" 
     icon="pi pi-check" 
     [text]="true" 
-    (click)="confirmSelectedReserves(aloneDni,$event)" 
+    (click)="confirmSelectedReserves($event)" 
     [disabled]="!selectedReserves || !selectedReserves.length" />
     <p-button 
     pRipple 
@@ -118,13 +118,11 @@ styleClass="p-datatable-gridlines"
     [text]="true" 
     (click)="deleteSelectedReserves(aloneDni,$event)" 
     [disabled]="!selectedReserves || !selectedReserves.length" />
-    <!-- <p-confirmDialog></p-confirmDialog> -->
 </ng-template>
 
 <ng-template pTemplate="header">
     <tr>
         <th style="width: 4rem"  >
-            <!-- <p-tableHeaderCheckbox \/> -->
         </th>
         <th>
             Fila
@@ -152,7 +150,7 @@ styleClass="p-datatable-gridlines"
 <ng-template pTemplate="body" let-reserve>
     <tr>
         <td>
-            <p-tableCheckbox [value]="reserve" [disabled]="reserve.estado == 'pagado'" />
+            <p-tableCheckbox [value]="reserve" [disabled]="reserve.estado == 'pagado' && dataAdmin.rol != 'superadmin'" />
         </td>
         <td>
             {{reserve.fila}}
@@ -203,3 +201,5 @@ styleClass="p-datatable-gridlines"
 </div>
 
 <p-confirmDialog />
+
+<p-messages />

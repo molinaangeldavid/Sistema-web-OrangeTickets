@@ -77,10 +77,11 @@ export class HomeComponent implements OnInit,OnDestroy {
   }
   
   async ngOnInit(){
+    const currentDate = new Date()
     this.dni = this.dataService.getData('dni')
     try {
       this.usuarioService.getHabilitation(this.dni).subscribe(all => {
-        this.habilitation = all.habilitaciones
+        const habilitations = all.habilitaciones
         if (all && all.eventos) {
           if (all.eventos.length === 2) {
             this.concerts = all.eventos; // Asigna los dos eventos a this.concerts
@@ -90,6 +91,23 @@ export class HomeComponent implements OnInit,OnDestroy {
             // Manejar el caso cuando no hay eventos
             this.concerts = [];
             this.concertChoice = null;
+          }
+          if (this.concertChoice) {
+            // Filtrar la habilitación correspondiente al concierto seleccionado y dentro de las fechas válidas
+            const validHabilitacion = habilitations.find((h:any) => 
+              h.evento_id === this.concertChoice.id && 
+              new Date(h.desde) <= currentDate && 
+              new Date(h.hasta) >= currentDate
+            );
+
+            if (validHabilitacion) {
+              // Guardar la habilitación válida
+              console.log('Habilitación válida:', validHabilitacion);
+              this.habilitation = validHabilitacion;
+            } else {
+              console.log('No hay habilitación válida para este concierto en las fechas actuales');
+              this.habilitation = null;
+            }
           }
         }
       })

@@ -15,10 +15,14 @@ import { ProgressSpinnerModule } from 'primeng/progressspinner';
 
 import * as ExcelJS from 'exceljs'
 import * as FileSaver from 'file-saver';
-import { lastValueFrom } from 'rxjs';
+import { forkJoin, lastValueFrom, of, switchMap } from 'rxjs';
 import { ReservationService } from '../../../core/services/reservation.service';
 
 import { AdminService } from '../../../core/services/admin.service';
+import { HabilitacionesService } from '../../../core/services/habilitaciones.service';
+import { HistorialService } from '../../../core/services/historial.service';
+import { MessagesModule } from 'primeng/messages';
+import { DataService } from '../../../core/services/data.service';
 
 @Component({
   selector: 'app-manage-reserves',
@@ -32,7 +36,8 @@ import { AdminService } from '../../../core/services/admin.service';
     InputIconModule,
     InputTextModule,
     ConfirmDialogModule,
-    ProgressSpinnerModule
+    ProgressSpinnerModule,
+    MessagesModule
   ],
   templateUrl: './manage-reserves.component.html',
   styleUrl: './manage-reserves.component.css',
@@ -60,7 +65,8 @@ export class ManageReservesComponent implements OnInit,OnChanges {
   selectedReserves: any
   
   adminMap: any
-  
+
+  dataAdmin: any
   constructor(
     private confirmationService: ConfirmationService,
     private messageService: MessageService,
@@ -68,7 +74,10 @@ export class ManageReservesComponent implements OnInit,OnChanges {
     private scenarioService:ScenarioService,
     private reservationService: ReservationService,
     private adminService: AdminService,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private habilitacionService: HabilitacionesService,
+    private historialService: HistorialService,
+    private dataService: DataService
     
   ){
     this.primengConfig.setTranslation({
@@ -86,6 +95,10 @@ export class ManageReservesComponent implements OnInit,OnChanges {
       this.reserves = reservation
       this.allUsers = users.users
       this.allAdmins = users.adminUsers
+      const dni = this.dataService.getData('dniAdmin')
+      if(dni){
+        this.dataAdmin = this.allAdmins.find((a:any) => a.dni == dni)
+      }
       this.adminMap = new Map<string, string>();
       this.allAdmins.forEach((admin: any) => {
         this.adminMap.set(admin.dni, `${admin.nombre} ${admin.apellido}`);
@@ -125,7 +138,6 @@ export class ManageReservesComponent implements OnInit,OnChanges {
           this.users = this.allUsers.filter((user:any) => {
             return validUser.has(user.dni)
           })
-          // Reemplazar el array completo para que Angular detecte el cambio
           // Forzar la detección de cambios
           this.cdr.detectChanges();
         },0);
@@ -138,17 +150,24 @@ export class ManageReservesComponent implements OnInit,OnChanges {
       this.isLoading = false
     }
   }
-  
+  async updateUserTable() {
+    this.reserves = await lastValueFrom(this.reservationService.getAllReservationsAdmin(this.escenario.id))
+    const userReservations = this.reserves!.filter((reserva:any) => {
+      return reserva.evento_id === this.escenario.id && 
+      (reserva.estado === 'reservado' || reserva.estado === 'pagado')
+    });
+    const validUser = new Set(userReservations.map((reserva:any)=> reserva.dni))
+    this.users = this.allUsers.filter((user: any) => {
+      return validUser.has(user.dni)
+    });
+  }
   //////////////////////////////////////
   // Bloque de funciones de seleccion
-  confirmSelectedReserves(dni:any,event:Event){
+  confirmSelectedReserves(event:Event){
     if (!this.selectedReserves || !this.selectedReserves.length) {
       return;
     }
     const now = new Date();
-    
-    // const currentDate = `${this.padNumber(now.getDate())}-${this.padNumber(now.getMonth() + 1)}-${now.getFullYear()}`;
-    // const currentTime = `${this.padNumber(now.getHours())}:${this.padNumber(now.getMinutes())}`;
     
     this.confirmationService.confirm({
       message: 'Estas seguro/a de confirmar las reservas seleccionadas?',
@@ -157,29 +176,38 @@ export class ManageReservesComponent implements OnInit,OnChanges {
       icon: 'pi pi-exclamation-triangle',
       accept: () => {
         const userConfirm = this.dniSelected.filter((val:any) => this.selectedReserves?.includes(val));
+        this.dniSelected = this.dniSelected.filter((val:any) => !this.selectedReserves?.includes(val));
         userConfirm.forEach((value:any) => {
           value.admin = this.admin.dni 
           value.fechaAdmin = now
           value.estado = 'pagado'
         })
-        try {
-          this.reservationService.confirmReserves({dniAdmin:this.admin.dni,selectedReserves:userConfirm}).subscribe({
+        this.reservationService.confirmReserves({dniAdmin:this.admin.dni,selectedReserves:userConfirm}).pipe(
+          switchMap(()=> 
+            this.historialService.confirmOrRemove({
+                    tipo: "confirmaciones",
+                    dni: this.admin.dni,
+                    admin: true,
+                    reservas: userConfirm
+              })
+          )
+        )
+        .subscribe({
             next: () => {
-              this.reserves = [...this.reserves]
-
+              this.dialogVisible = false
+              this.updateUserTable()
               this.selectedReserves = null;
               this.scenarioService.notifyScenarioUpdate()
-              this.messageService.add({ severity: 'success', summary: 'Confirmacion Exitosa', detail: 'Reservas eliminadas', life: 3000 });
+              this.cdr.detectChanges();
+
             },
             error: () => {
+              this.dialogVisible = false
+              this.updateUserTable()
               this.scenarioService.notifyScenarioUpdate()
-              this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Ocurrió un error al confirmar las reservas', life: 3000 });
+              this.cdr.detectChanges();
             }
           });
-        } catch (error) {
-          this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Ocurrió un error inesperado', life: 3000 });
-        }   
-        
       }
     });
   }
@@ -194,24 +222,48 @@ export class ManageReservesComponent implements OnInit,OnChanges {
       header: 'Eliminacion',
       icon: 'pi pi-exclamation-triangle',
       accept: () => {
-        const eliminadas = this.dniSelected.filter((val:any) => this.selectedReserves?.includes(val));
-        this.dniSelected = this.dniSelected.filter((val:any) => !this.selectedReserves?.includes(val));
-        this.reservationService.deleteReserves({dniAdmin:this.admin.dni,selectedReserves:eliminadas}).subscribe({
-          next: () => {
-            this.reserves = [...this.reserves]
-            this.selectedReserves = null
-            this.scenarioService.notifyScenarioUpdate()
-            this.messageService.add({ severity: 'success', summary: 'Exito', detail: 'Reservas eliminadas satisfactoriamente', life: 3000 });
-          },
-          error: () => {
-            this.scenarioService.notifyScenarioUpdate()
-            this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Error al eliminar las reservas', life: 3000 });
-          },
-        })
-        
+      const reservasPagadas = this.dniSelected.filter((val: any) => this.selectedReserves?.includes(val) && val.estado === 'pagado');
+      const reservasReservadas = this.dniSelected.filter((val: any) => this.selectedReserves?.includes(val) && val.estado === 'reservado');
+
+        let eliminarPagadas$ = reservasPagadas.length ? 
+        this.reservationService.deleteReservesPagadas({ dniAdmin: this.admin.dni, selectedReserves: reservasPagadas }) : 
+        of(null);
+
+      // Eliminar las reservas reservadas
+      let eliminarReservadas$ = reservasReservadas.length ? 
+        this.reservationService.deleteReserves({ dniAdmin: this.admin.dni, selectedReserves: reservasReservadas }) : 
+        of(null);
+        forkJoin([eliminarPagadas$,eliminarReservadas$]).pipe(
+          switchMap(()=>
+            this.historialService.confirmOrRemove({
+                tipo: "eliminaciones",
+                dni: this.admin.dni,
+                admin: true,
+                reservas: [...reservasPagadas, ...reservasReservadas]
+              })
+          ),
+          switchMap(() => 
+            this.habilitacionService.putCantidadHabilitacionAdmin(dni,[...reservasPagadas, ...reservasReservadas])
+          )
+        ).subscribe({
+            next: () => {
+              this.dialogVisible = false
+              this.updateUserTable()
+              this.selectedReserves = null
+              this.scenarioService.notifyScenarioUpdate()
+              this.cdr.detectChanges();
+            },
+            error: () => {
+              this.dialogVisible = false
+              this.updateUserTable()
+              this.scenarioService.notifyScenarioUpdate()
+              this.cdr.detectChanges();
+            },
+          })
       }
     });
   }
+
   padNumber(num: number): string {
     return num < 10 ? `0${num}` : `${num}`;
   }
@@ -230,39 +282,37 @@ export class ManageReservesComponent implements OnInit,OnChanges {
         // Mover la lógica de validación y actualización aquí
         this.reservationService.getReservationAdmin(user.dni).subscribe(reservesDni => {
           const now = new Date();
-          if (reservesDni.some((r: any) => r.estado === 'reservado')) {
-            // alert("Todas las butacas de este usuario ya están confirmadas.");
-            // return;
-            reservesDni.forEach((value: any) => {
+          const reservasAConfirmar = reservesDni.filter((r: any) => r.estado === 'reservado');
+          if (reservasAConfirmar.length > 0) {
+            reservasAConfirmar.forEach((value: any) => {
               if (value.estado !== 'pagado') {
                 value.admin = this.admin.dni;
                 value.fechaAdmin = now;
                 value.estado = 'pagado';
               }
             });
-  
-            try {
-              this.reservationService.confirmReserves({ dniAdmin: this.admin.dni, selectedReserves: reservesDni }).subscribe({
+            this.reservationService.confirmReserves({ dniAdmin: this.admin.dni, selectedReserves: reservasAConfirmar }).pipe(
+              switchMap(() =>
+                this.historialService.confirmOrRemove({
+                    tipo: "confirmaciones",
+                    dni: this.admin.dni,
+                    admin: true,
+                    reservas: reservesDni
+                  })
+              )
+            )
+            .subscribe({
                 next: () => {
-                  this.reserves = [ ...this.reserves ];
-                  user = { ...user };
+                  this.updateUserTable()
                   this.scenarioService.notifyScenarioUpdate();
-                  this.messageService.add({ severity: 'success', summary: 'Confirmación Exitosa', detail: 'Reservas confirmadas', life: 3000 });
                 },
                 error: () => {
                   this.scenarioService.notifyScenarioUpdate();
-                  this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Ocurrió un error al confirmar las reservas', life: 3000 });
                 }
               });
-            } catch (error) {
-              this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Ocurrió un error inesperado', life: 3000 });
-            }
           }
         });
       },
-      reject: () => {
-        this.messageService.add({ severity: 'error', summary: 'Rechazado', detail: 'Acción rechazada', life: 3000 });
-      }
     });
   }
   

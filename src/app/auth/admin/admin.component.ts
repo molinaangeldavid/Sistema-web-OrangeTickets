@@ -49,7 +49,7 @@ export class AdminComponent {
     try {
       const tokenAdmin = await firstValueFrom(this.authService.authAdmin(this.dni,this.password))
       if(tokenAdmin){
-        this.cookieService.set("token",tokenAdmin.token)
+        this.cookieService.set("tokenAdmin",tokenAdmin.token)
         this.dataService.saveData("dniAdmin",this.dni)
         this.dataService.saveData('data',tokenAdmin.myUser) 
         

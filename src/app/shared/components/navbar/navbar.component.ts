@@ -133,11 +133,11 @@ export class NavbarComponent {
   
   goOut() {
     if(this.menusecreto){
-      this.cookieService.delete('token')
+      this.cookieService.delete('tokenEstudiante')
       localStorage.removeItem('data')
     }else{
       if(this.menusecretoAdmin){
-        this.cookieService.delete('token')
+        this.cookieService.delete('tokenAdmin')
       }
     }
     this.router.navigate(['login'])

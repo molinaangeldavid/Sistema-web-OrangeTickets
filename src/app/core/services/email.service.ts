@@ -18,7 +18,7 @@ export class EmailService {
 
   sendEmail(from:any,to:any, subject:any, html:any): Observable<any>{
     const headers = new HttpHeaders({
-      'Authorization': `Bearer ${this.authService.getToken()}`
+      'Authorization': `Bearer ${this.authService.getTokenEstudiante()}`
     })
     return this.http.post(`${this.path}/enviar-email`, {from,to,subject,html}, {headers})
   }

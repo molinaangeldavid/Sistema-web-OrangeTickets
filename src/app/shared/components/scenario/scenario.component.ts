@@ -1,15 +1,19 @@
 import { CommonModule } from '@angular/common';
 import { CUSTOM_ELEMENTS_SCHEMA,NO_ERRORS_SCHEMA,Component, EventEmitter, Input, Output, OnInit, SimpleChanges} from '@angular/core';
-import { ButtonModule } from 'primeng/button';
-import { CookieService } from 'ngx-cookie-service';
-import { lastValueFrom, Subscription, switchMap, throwError } from 'rxjs';
+import { Router } from '@angular/router';
+
+
+import { forkJoin, lastValueFrom, Subscription, switchMap, tap, throwError } from 'rxjs';
+
 import { ScenarioService } from '../../../core/services/scenario.service';
 import { ReservationService } from '../../../core/services/reservation.service';
-import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { DataService } from '../../../core/services/data.service';
-import { Router } from '@angular/router';
 import { EmailService } from '../../../core/services/email.service';
 import { HistorialService } from '../../../core/services/historial.service';
+import { HabilitacionesService } from '../../../core/services/habilitaciones.service';
+
+import { ButtonModule } from 'primeng/button';
+import { ProgressSpinnerModule } from 'primeng/progressspinner';
 
 @Component({
   selector: 'app-scenario',
@@ -17,11 +21,11 @@ import { HistorialService } from '../../../core/services/historial.service';
   imports: [
     CommonModule,
     ButtonModule,
-    ProgressSpinnerModule
+    ProgressSpinnerModule,
   ],
   templateUrl: './scenario.component.html',
   styleUrl: './scenario.component.css',
-  schemas:[CUSTOM_ELEMENTS_SCHEMA,NO_ERRORS_SCHEMA]
+  schemas:[CUSTOM_ELEMENTS_SCHEMA,NO_ERRORS_SCHEMA],
 })
 export class ScenarioComponent implements OnInit{
   
@@ -29,7 +33,6 @@ export class ScenarioComponent implements OnInit{
   
   loading: any
   
-  @Input() mostrarBoton = true
   @Input() escenario: any
   @Input() admin:boolean | undefined
   @Input() habilitation: any
@@ -62,7 +65,8 @@ export class ScenarioComponent implements OnInit{
     private dataService: DataService,
     private router: Router,
     private emailService: EmailService,
-    private historialService: HistorialService
+    private historialService: HistorialService,
+    private habilitationService: HabilitacionesService,
   ){
   }
   
@@ -74,13 +78,8 @@ export class ScenarioComponent implements OnInit{
       this.dni = this.dataService.getData('dni')
     }
     this.user = this.dataService.getData('data')
-    if(!this.admin){
-      this.habilitation = this.habilitation.find((h:any) => h.evento_id == this.escenario.id)
-    }
-    const currentDate = new Date()
-    if(this.habilitation){
-      console.log(this.habilitation)
-      this.isReservationAllowed = false
+    if(this.habilitation && this.habilitation.cantidad > 0){
+      this.isReservationAllowed = true
     }else{
       this.isReservationAllowed = false
     }
@@ -139,16 +138,13 @@ export class ScenarioComponent implements OnInit{
       this.selectedSeats.delete(seatKey);
       this.total -= this.escenario.valor
     } else {
-      const currentDate = new Date()
-      const totalReservation = this.seats.filter((s:any) => s.dni == this.dni && s.fechaDni > currentDate)
-      const maxSeatsAllowed = totalReservation.length ;
-      if (this.selectedSeats.size >= maxSeatsAllowed) {
+      if (this.selectedSeats.size >= this.habilitation.cantidad) {
         alert("No puede seleccionar mas asientos. Pruebe mas tarde")
         return;
       }
-      if(tipo == 'd'){
-        alert('Estas seleccionando una butaca para discapacitados')
-      }
+      // if(tipo == 'd'){
+      //   alert('Estas seleccionando una butaca para discapacitados')
+      // }
       this.selectedSeats.add(seatKey);
       this.total += this.escenario.valor
     }
@@ -217,7 +213,7 @@ export class ScenarioComponent implements OnInit{
     let html = `
     <p>El estudiante:
     <span><strong>${this.user.nombre} ${this.user.apellido}</strong> - <strong>DNI ${this.user.dni}</strong></span></p>
-    <p>Realizó la siguiente reserva para el concert ${this.escenario.nombre} ( ${formattedDate} - ${this.escenario.hora}. Los detalles de las reservas:</p>
+    <p>Realizó la siguiente reserva para el concert ${this.escenario.nombre} ( ${formattedDate} - ${this.escenario.hora} ). Los detalles de las reservas:</p>
     `
     // Generar filas para cada reserva
     reservas.forEach((reserva:any) => {
@@ -236,65 +232,53 @@ export class ScenarioComponent implements OnInit{
   
   confirmSeat() {
     if (this.selectedSeats.size === 0) {
-      return;
+        return;
     }
-    
-    const seatsToCheck: { fila: number, butaca: number }[] = [];
-    
-    this.selectedSeats.forEach(seatKey => {
-      const [fila, butaca] = seatKey.split('-').map(Number);
-      seatsToCheck.push({ fila, butaca });
-    });
-    
-    this.reservationService.checkSeatAvailable(this.escenario.sala, seatsToCheck).pipe(
-      switchMap(availableSeats => {
-        if (availableSeats.length !== seatsToCheck.length) {
-          this.showOccupiedSeatsError();
-          return throwError(() => 'Some seats are not available');
-        }
-        
-        const reserveDone =  Array.from(this.selectedSeats).map(seatKey => {
-          const [fila, butaca] = seatKey.split('-').map(Number);
-          return {
+
+    const reserveDone = Array.from(this.selectedSeats).map(seatKey => {
+        const [fila, butaca] = seatKey.split('-').map(Number);
+        return {
             evento_id: this.escenario.id,
             fila,
             butaca,
             estado: 'reservado',
             dni: this.dni,
             fechaDni: new Date()
-          };
-        });
-        
-        return this.reservationService.postReservations(this.dni, reserveDone).pipe(
-          switchMap(() => {
-            this.configEmail(reserveDone);
-            return this.historialService.createReserveHistorial({
-              dni: this.dni,
-              reserves: reserveDone
-            });
-          })
-        );
-      })
-    ).subscribe({
-      next: () => {
-        this.selectedSeats.clear();
-        this.changePage.emit('reservated');
-      },
-      error: (error) => {
-        console.error('Error:', error);
-        this.showOccupiedSeatsError();
-        this.selectedSeats.clear();
-      }
+        };
     });
-  }
+
+    this.reservationService.postReservations(this.dni, reserveDone).pipe(
+        switchMap(() => 
+            forkJoin([
+                this.habilitationService.putCantidadHabilitacion(this.habilitation._id, this.habilitation.cantidad - reserveDone.length),
+                this.historialService.createReserveHistorial({
+                    dni: this.dni,
+                    reservas: reserveDone
+                })
+            ])
+        ),
+        tap(() => {
+            this.configEmail(reserveDone);
+        })
+    ).subscribe({
+        next: () => {
+            this.selectedSeats.clear();
+            this.changePage.emit('reservated');
+        },
+        error: (error) => {
+            if(error.error && error.status == 400){
+              this.showOccupiedSeatsError()
+            } 
+            console.error('Error:', error);
+            this.selectedSeats.clear();
+        }
+    });
+}
   
   showOccupiedSeatsError() {
     // Aquí puedes implementar la lógica para mostrar un mensaje al usuario
     alert('Algunos de los asientos seleccionados ya están ocupados. Por favor, selecciona otros asientos.');
-    setTimeout(() => {
-      // Redirigir a la misma página o componente actual
-      this.router.navigateByUrl(this.router.url)
-    }, 3000); // Espera de 3 segundos antes de redirigir
+    this.refreshScenario()
   }
   
   

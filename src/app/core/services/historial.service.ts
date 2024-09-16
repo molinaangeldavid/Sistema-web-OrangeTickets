@@ -1,4 +1,4 @@
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { AuthService } from './auth.service';
 import { Observable } from 'rxjs';
@@ -19,7 +19,7 @@ export class HistorialService {
   // Usuario
   createReserveHistorial(reserves:any): Observable<any>{
     const headers = new HttpHeaders({
-      'Authorization': `Bearer ${this.authService.getToken()}`
+      'Authorization': `Bearer ${this.authService.getTokenEstudiante()}`
     })
     return this.http.post(`${this.pathDir}/api/estudiantes/historial-reserva`,reserves,{headers})
   }
@@ -27,21 +27,23 @@ export class HistorialService {
   // Admin
   getAllHistorial(): Observable<any>{
     const headers = new HttpHeaders({
-      'Authorization': `Bearer ${this.authService.getToken()}`
+      'Authorization': `Bearer ${this.authService.getTokenAdmin()}`
     })
     return this.http.get(`${this.pathDir}/api/admin/historial`,{headers})
   }
 
-  getAllTypeHistorial(type: any): Observable<any>{
+  getFilterHistorial(param:any): Observable<any>{
     const headers = new HttpHeaders({
-      'Authorization': `Bearer ${this.authService.getToken()}`
+      'Authorization': `Bearer ${this.authService.getTokenAdmin()}`
     })
-    return this.http.get(`${this.pathDir}/api/admin/historial/${type}`,{headers})
+    const params = new HttpParams({fromObject: param})
+      
+    return this.http.get(`${this.pathDir}/api/admin/historial-filter`,{headers,params})
   }
 
   confirmOrRemove(reserves:any): Observable<any>{
     const headers = new HttpHeaders({
-      'Authorization': `Bearer ${this.authService.getToken()}`
+      'Authorization': `Bearer ${this.authService.getTokenAdmin()}`
     })
     return this.http.post(`${this.pathDir}/api/admin/historial-reservas`,reserves,{headers})
   }

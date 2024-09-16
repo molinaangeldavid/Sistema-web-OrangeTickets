@@ -19,40 +19,40 @@ export class AdminService {
 
   getAllUsers(): Observable<any>{
     const headers = new HttpHeaders({
-      'Authorization': `Bearer ${this.authService.getToken()}`
+      'Authorization': `Bearer ${this.authService.getTokenAdmin()}`
     })
     return this.http.get<any>(`${this.path}/usuarios`,{headers})
   }
   getAllEstudiantes(ciclo: string,anio: string, division: string,dni:any): Observable<any>{
     const headers = new HttpHeaders({
-      'Authorization': `Bearer ${this.authService.getToken()}`
+      'Authorization': `Bearer ${this.authService.getTokenAdmin()}`
     })
     
     return this.http.get<any>(`${this.path}/allEstudiantes/${ciclo}/${anio}/${division}/${dni}`,{headers})
   }
   getAdmins(): Observable<any>{
     const headers = new HttpHeaders({
-      'Authorization': `Bearer ${this.authService.getToken()}`
+      'Authorization': `Bearer ${this.authService.getTokenAdmin()}`
     })
     return this.http.get<any>(`${this.path}/administradores`,{headers})
   }
   getAdminByDni(dni:any): Observable<any>{
     const headers = new HttpHeaders({
-      'Authorization': `Bearer ${this.authService.getToken()}`
+      'Authorization': `Bearer ${this.authService.getTokenAdmin()}`
     })
     return this.http.get<any>(`${this.path}/administradores/${dni}`,{headers})
   }
 
   postAdmin(body:any):Observable<any>{
     const headers = new HttpHeaders({
-      'Authorization': `Bearer ${this.authService.getToken()}`
+      'Authorization': `Bearer ${this.authService.getTokenAdmin()}`
     })
     return this.http.post<any>(`${this.path}/administradores`,body,{headers})
   }
   // Cargar usuarios
   uploadUser(file:File): Observable<any>{
     const headers = new HttpHeaders({
-      'Authorization': `Bearer ${this.authService.getToken()}`
+      'Authorization': `Bearer ${this.authService.getTokenAdmin()}`
     })
     const formData = new FormData();
     formData.append('file',file,file.name);
@@ -61,13 +61,13 @@ export class AdminService {
   // Administracion de administradores
   putAdmin(dni:any,body:any):Observable<any>{
     const headers = new HttpHeaders({
-      'Authorization': `Bearer ${this.authService.getToken()}`
+      'Authorization': `Bearer ${this.authService.getTokenAdmin()}`
     })
     return this.http.put<any>(`${this.path}/administradores/${dni}`,body,{headers})
   }
   deleteAdmin(dni:any):Observable<any>{
     const headers = new HttpHeaders({
-      'Authorization': `Bearer ${this.authService.getToken()}`
+      'Authorization': `Bearer ${this.authService.getTokenAdmin()}`
     })
     return this.http.delete<any>(`${this.path}/administradores/${dni}`,{headers})
   }

@@ -10,7 +10,7 @@ export const loginGuard: CanActivateFn = (route, state) => {
   const cookieService = inject(CookieService)
   const router = inject(Router)
   const http = inject(HttpClient)
-  const token = cookieService.get('token')
+  const token = cookieService.get('tokenEstudiante')
   const path = `${pathUrl}/api/estudiantes`
   if(!token){
     router.navigate(['/login'])

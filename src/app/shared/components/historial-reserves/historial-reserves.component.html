@@ -1,11 +1,39 @@
-
 <div class="filter">
-
+    <div style="margin-bottom: 10px; display: flex; flex-direction: column;">
+        <label for="Ciclo">Tipo</label>
+        <p-dropdown 
+        [options]="tipos" 
+        [(ngModel)]="tipoChoice" 
+        optionLabel="nombre"
+        [ngModelOptions]="{standalone: true}" />
+    </div>
+    <div style="margin-bottom: 10px; display: flex; flex-direction: column;">
+        <label for="anio">Dni</label>
+        <input 
+        type="text" 
+        pInputText 
+        [(ngModel)]="dniFilter">
+    </div>
+    <div style="margin-bottom: 10px; display: flex; flex-direction: column;">
+        <label for="anio">Usuario</label>
+        <p-dropdown 
+        [options]="usuarios" 
+        [(ngModel)]="usuarioChoice" 
+        optionLabel="usuario"
+        [ngModelOptions]="{standalone: true}" />
+    </div>
+    <div style="margin-bottom: 10px; display: flex; flex-direction: column;">
+        <label for="date">Fecha</label>
+        <p-calendar [(ngModel)]="date" />
+    </div>
+    <div class="dropdown-group" style="display: flex; align-items: flex-end;">
+        <button pButton type="button" (click)="buscar()" class="pi pi-search"></button>
+    </div>
 </div>
-<div *ngIf="!historial">
-    <h2>No existen ningun registro en el historial</h2>
+<div *ngIf="!showTable">
+    <h2 style="text-align: center;">No existen ningun registro en el historial</h2>
 </div>
-<div class="container-table" *ngIf="historial">
+<div class="container-table" *ngIf="showTable">
     <p-table 
     #dt
     [value]="historial" 
@@ -14,8 +42,8 @@
     [tableStyle]="{'width': 'auto', 'margin':'auto'}"
     [paginator] = true
     [rows] = 10
-    [globalFilterFields]="['date','tipo']">
-    <!-- <ng-template pTemplate="caption" style="width: 50%;">
+    [globalFilterFields]="['tipo','fecha','admin','dni']">
+    <ng-template pTemplate="caption" style="width: 50%;">
         <div class="caption" style="display: flex; justify-content: space-between;">
             <p-iconField iconPosition="right" class="ml-auto">
                 <p-inputIcon>
@@ -28,12 +56,9 @@
                 placeholder="Buscar..." />
             </p-iconField>
         </div>
-    </ng-template> -->
+    </ng-template>
     <ng-template pTemplate="header">
         <tr>
-            <th pSortableColumn="id">
-                ID <p-sortIcon field="id" />
-            </th>
             <th pSortableColumn="tipo">
                 Tipo <p-sortIcon field="tipo" />
             </th>
@@ -47,25 +72,75 @@
                 DNI <p-sortIcon field="dni" />
             </th>
             <th>
-                Data
+                Informacion
             </th>
             
         </tr>
     </ng-template>
     <ng-template pTemplate="body" let-data>
         <tr>
-            <td>{{ data.id }}</td>
             <td>{{ data.tipo }}</td>
-            <td>{{ data.fecha }}</td>
-            <td>{{ data.admin }}</td>
+            <td>{{ data.fecha | date:'dd/mm/yyyy hh:mm' }}</td>
+            <td>{{ data.admin ? "Administrador" : "Estudiante" }}</td>
             <td>{{ data.dni }}</td>
             <td>
-                <button #pButton (click)="openDialog()" icon="pi pi-arrow-up-right-and-arrow-down-left-from-center">
-
-                </button>
+                <button pButton type="button" (click)="openDialog(data.reservas)" class="pi pi-external-link" ></button>
             </td>
         </tr>
     </ng-template>
 </p-table>
+<p-dialog 
+header="Informacion" 
+[resizable]="false" 
+[modal]="true" 
+[maximizable]="true" 
+[(visible)]="dialogVisible" 
+[style]="{width: '75vw'}" 
+[contentStyle]="{height: '600px'}">
+<p-table 
+[value]="historialSelected" 
+[scrollable]="true"
+scrollHeight="flex"
+[tableStyle]="{'width': 'auto'}"  
+styleClass="p-datatable-gridlines">
+<ng-template pTemplate="header">
+    <tr>
+        <th>
+            Fila
+        </th>
+        <th>
+            Bucata
+        </th>
+        <th>
+            Concierto
+        </th>
+    </tr>
+</ng-template>
+<ng-template pTemplate="body" let-info>
+    <tr>
+        <td>
+            {{info.fila}}
+        </td>
+        <td>
+            {{info.butaca}}
+        </td>
+        <td>
+            {{info.evento_id}}
+        </td>
+    </tr>
+</ng-template>
 
+</p-table>
+<ng-template pTemplate="footer">
+    <button 
+    type="button"
+    pButton
+    pRipple 
+    icon="pi pi-times" 
+    (click)="dialogVisible=false" 
+    label="Salir" 
+    class="p-button-text">
+</button>
+</ng-template>
+</p-dialog>
 </div>

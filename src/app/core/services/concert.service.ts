@@ -17,7 +17,7 @@ export class ConcertService {
 
   getEventsUser(): Observable<any>{
     const headers = new HttpHeaders({
-      'Authorization': `Bearer ${this.authService.getToken()}`
+      'Authorization': `Bearer ${this.authService.getTokenEstudiante()}`
     })
     return this.http.get<any>(`${this.pathUser}/eventos`,{headers})
   }
@@ -25,28 +25,28 @@ export class ConcertService {
 
   getEvents(): Observable<any>{
     const headers = new HttpHeaders({
-      'Authorization': `Bearer ${this.authService.getToken()}`
+      'Authorization': `Bearer ${this.authService.getTokenAdmin()}`
     })
     return this.http.get<any>(`${this.path}/eventos`,{headers})
   }
 
   postEvent(body:any): Observable<any>{
     const headers = new HttpHeaders({
-      'Authorization': `Bearer ${this.authService.getToken()}`
+      'Authorization': `Bearer ${this.authService.getTokenAdmin()}`
     })
     return this.http.post<any>(`${this.path}/evento`,body,{headers})
   }
 
   putEvent(id:any, body:any): Observable<any>{
     const headers = new HttpHeaders({
-      'Authorization': `Bearer ${this.authService.getToken()}`
+      'Authorization': `Bearer ${this.authService.getTokenAdmin()}`
     })
     return this.http.put<any>(`${this.path}/evento/${id}`,body,{headers})
   }
 
   deleteEvent(id:any,body:any): Observable<any>{
     const headers = new HttpHeaders({
-      'Authorization': `Bearer ${this.authService.getToken()}`
+      'Authorization': `Bearer ${this.authService.getTokenAdmin()}`
     })
     return this.http.put<any>(`${this.path}/eventoEliminar/${id}`,body,{headers})
   }

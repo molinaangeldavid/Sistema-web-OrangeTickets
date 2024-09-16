@@ -22,7 +22,6 @@ import { Subscription } from 'rxjs';
 import { ConcertService } from '../../core/services/concert.service';
 import { AdminManageComponent } from '../../shared/components/admin-manage/admin-manage.component';
 import { HistorialReservesComponent } from '../../shared/components/historial-reserves/historial-reserves.component';
-import { AdminService } from '../../core/services/admin.service';
 
 
 
@@ -73,7 +72,6 @@ export class HomeAdminComponent {
     private showComponentService: ShowComponentService,
     private concertService: ConcertService,
     private dataService: DataService,
-    private adminService: AdminService
   ){
 
   }

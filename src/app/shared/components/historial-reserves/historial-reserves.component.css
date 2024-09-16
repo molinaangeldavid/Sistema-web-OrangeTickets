@@ -1,0 +1,15 @@
+.container-table{
+    display: flex;
+    justify-content: center;
+}
+
+.filter{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+}
+
+::ng-deep input, ::ng-deep .p-dropdown .p-dropdown-label{
+    padding: 6px !important;
+}

@@ -280,9 +280,12 @@ export class ManageUsersComponent {
   }
   
   canHabilitar() {
-    if(this.concertChoice && this.startDateTime != null && this.endDateTime!= null && this.cantidad != undefined){
-      return false;
-    }
+    if (!this.concertChoice) return false;
+  
+    if (!this.dateFrom || !this.timeFrom || !this.dateTo || !this.timeTo) return false;
+  
+    if (!this.cantidad || this.cantidad <= 0) return false;
+  
     return true;
   }
   

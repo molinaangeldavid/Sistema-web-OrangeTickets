@@ -12,7 +12,7 @@ export class CashService {
   apiUrl = environment.apiUrl
   pathAdmin: string = `${this.apiUrl}`
   headers: HttpHeaders = new HttpHeaders({
-    'Authorization': `Bearer ${this.authService.getToken()}`
+    'Authorization': `Bearer ${this.authService.getTokenAdmin()}`
   });
   constructor(
     private http: HttpClient,

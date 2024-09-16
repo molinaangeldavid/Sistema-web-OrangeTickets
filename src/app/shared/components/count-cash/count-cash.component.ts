@@ -74,7 +74,7 @@ export class CountCashComponent {
   }
   
   ngOnInit(){
-    // this.showUser = true
+    this.showByUser()
     this.dateNow = new Date()
     this.concertService.getEvents().subscribe(data =>{
       this.events = data
@@ -205,6 +205,10 @@ export class CountCashComponent {
       }
     }
     this.showDate = true
+    this.cashService.controlCaja(this.filter).subscribe(response => {
+      const group = this.groupByDate(response);
+      this.byDate = Object.values(group);
+    });
   }
   
   showByConcert(){

@@ -271,7 +271,7 @@
     type="button"
     (click)="habilitar($event)"
     *ngIf="habilitarOptionBoolean "
-    [disabled]="selectedUsers == undefined && canHabilitar()">
+    [disabled]="!selectedUsers || !canHabilitar()">
     Guardar</button>
     
     <button
@@ -297,3 +297,4 @@
         <button pButton label="Cerrar" icon="pi pi-check" (click)="displayConflictsDialog=false"></button>
     </ng-template>
 </p-dialog>
+<p-messages />

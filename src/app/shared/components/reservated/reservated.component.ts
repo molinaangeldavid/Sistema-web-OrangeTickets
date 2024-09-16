@@ -2,7 +2,6 @@ import { Component, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 import { DataService } from '../../../core/services/data.service';
-import { CookieService } from 'ngx-cookie-service';
 import { ReservationService } from '../../../core/services/reservation.service';
 import { ConcertService } from '../../../core/services/concert.service';
 
@@ -53,7 +52,6 @@ export class ReservatedComponent {
   allEvents: any
   
   constructor(
-    private cookieService: CookieService,
     private reservationService: ReservationService,
     private dataService: DataService,
     private concertService: ConcertService

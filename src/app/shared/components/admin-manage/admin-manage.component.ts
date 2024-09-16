@@ -56,7 +56,7 @@ export class AdminManageComponent {
     {name: "Admin"},
     {name: "Operador"},
   ]
-  rolSelected: any = "admin"
+  rolSelected: any
 
   private readonly userDni = 37760822
   constructor(
@@ -73,7 +73,7 @@ export class AdminManageComponent {
       nombre: "",
       apellido: "",
       pass: "",
-      rol: this.rolSelected!.toLowerCase()
+      rol: ""
     }
     this.adminService.getAdmins().subscribe(e => {
       this.administradores = e
@@ -82,7 +82,9 @@ export class AdminManageComponent {
   }
   
   new(){
-    this.administrador = {};
+    this.administrador = {
+      rol: this.rolSelected.name
+    };
     this.submitted = false;
     this.administradorDialog = true;
   }
@@ -119,6 +121,7 @@ export class AdminManageComponent {
     this.submitted = true;
     const exist = this.administradores.some((a:any) => a.dni == this.administrador.dni)
     if (exist) {
+      this.administrador.rol = this.rolSelected.name
       this.adminService.putAdmin(this.administrador.dni, this.administrador).subscribe({
         next: (response) => {
           console.log(response)
@@ -129,8 +132,8 @@ export class AdminManageComponent {
       })
       this.messageService.add({ severity: 'success', summary: 'Exito', detail: 'Administrador actualizado', life: 3000 });
     } else {
+      this.administrador.rol = this.rolSelected.name
       this.administradores.push(this.administrador!);
-      console.log(this.administrador)
       this.adminService.postAdmin(this.administrador).subscribe({
         next: (response) => {
           console.log(response)
