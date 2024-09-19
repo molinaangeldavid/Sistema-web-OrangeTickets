@@ -83,7 +83,6 @@ export class AdminManageComponent {
   
   new(){
     this.administrador = {
-      rol: this.rolSelected.name
     };
     this.submitted = false;
     this.administradorDialog = true;

@@ -1,6 +1,6 @@
-// export const environment = {
-//     apiUrl: 'http://149.50.143.151:3000',
-//   };
 export const environment = {
-  apiUrl: 'http://localhost:3000',
-};
+    apiUrl: 'https://ticketsorange.com.ar',
+  };
+// export const environment = {
+//   apiUrl: 'http://localhost:3000',
+// };
