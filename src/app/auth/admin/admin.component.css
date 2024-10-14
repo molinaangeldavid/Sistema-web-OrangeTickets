@@ -3,11 +3,11 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    height: 100vh;
     width: 100%;
+    height: 100vh;
     padding: 0;
     margin: 0;
-    background: linear-gradient(100deg, #141E30, #243B55,#2d3f55);
+    background: linear-gradient(100deg, #b8d3f1, #b6d8ff,#c4daf5);
     font-family: 'Arial', sans-serif; /* Añadiendo una fuente más moderna */
 }
 
@@ -17,6 +17,7 @@
     flex-direction: column;
     justify-content: center;
     align-items: center;
+    padding-bottom: 20px;
 }
 
 .container-title{
@@ -24,6 +25,7 @@
     flex-direction: column;
     justify-content: center;
     align-items: center;
+    padding-top: 20px;
 
 }
 .title-login {
@@ -102,4 +104,21 @@ form input:focus {
     background-color: #ffebee; /* Fondo suave para el mensaje de error */
     padding: 5px;
     border-radius: 3px;
+}
+
+@media screen and (max-width: 800px) {
+    .content {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        width: 100%; /* Asegúrate de que ocupe todo el ancho */
+        padding: 20px; /* Agregar padding para un mejor espaciado interno */
+    }
+
+    img {
+        width: 100px;
+        margin-bottom: 8px; /* Reduciendo el margen inferior para que no se vea tan separado */
+        /* filter: drop-shadow(0 0 10px rgba(0,0,0,0.5)); Añadiendo sombra al logo */
+    }
 }

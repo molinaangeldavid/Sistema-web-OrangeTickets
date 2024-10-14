@@ -26,8 +26,9 @@
         <label for="date">Fecha</label>
         <p-calendar [(ngModel)]="date" />
     </div>
-    <div class="dropdown-group" style="display: flex; align-items: flex-end;">
+    <div class="dropdown-group" style="display: flex; align-items: flex-end; gap: 10px;">
         <button pButton type="button" (click)="buscar()" class="pi pi-search"></button>
+        <button pButton type="button" (click)="resetFilters()" class="pi pi-filter-slash"></button>
     </div>
 </div>
 <div *ngIf="!showTable">
@@ -36,7 +37,7 @@
 <div class="container-table" *ngIf="showTable">
     <p-table 
     #dt
-    [value]="historial" 
+    [value]="historial"
     [scrollable]="true" 
     scrollHeight="400px" 
     [tableStyle]="{'width': 'auto', 'margin':'auto'}"
@@ -66,7 +67,7 @@
                 Fecha <p-sortIcon field="fecha" />
             </th>
             <th pSortableColumn="admin">
-                Es Admin <p-sortIcon field="admin" />
+                Usuario <p-sortIcon field="admin" />
             </th>
             <th pSortableColumn="dni">
                 DNI <p-sortIcon field="dni" />
@@ -79,8 +80,8 @@
     </ng-template>
     <ng-template pTemplate="body" let-data>
         <tr>
-            <td>{{ data.tipo }}</td>
-            <td>{{ data.fecha | date:'dd/mm/yyyy hh:mm' }}</td>
+            <td>{{ data.tipo | tipoHistoria }}</td>
+            <td>{{ data.fecha | date:'dd/MM/yyyy hh:mm' }}</td>
             <td>{{ data.admin ? "Administrador" : "Estudiante" }}</td>
             <td>{{ data.dni }}</td>
             <td>

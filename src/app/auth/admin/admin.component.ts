@@ -45,6 +45,11 @@ export class AdminComponent {
     this.dataService.deleteAllData()
   }
 
+  validateDni() {
+    const dniRegex = /^[0-9]{8}$/;
+    this.errorDni = !dniRegex.test(this.dni);
+  }
+
   async onSubmit(){
     try {
       const tokenAdmin = await firstValueFrom(this.authService.authAdmin(this.dni,this.password))

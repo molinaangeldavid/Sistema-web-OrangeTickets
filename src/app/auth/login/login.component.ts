@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { CommonModule } from '@angular/common';
@@ -67,6 +67,11 @@ export class LoginComponent implements OnInit{
     this.esAdmin = false
     this.cookieService.delete('tokenEstudiante')
     this.dataService.deleteAllData();
+  }
+
+  validateDni() {
+    const dniRegex = /^[0-9]{8}$/;
+    this.errorDni = !dniRegex.test(this.dni);
   }
 
   async onSubmit(){

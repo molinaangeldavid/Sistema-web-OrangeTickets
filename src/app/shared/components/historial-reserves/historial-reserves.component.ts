@@ -11,6 +11,7 @@ import { CalendarModule } from 'primeng/calendar';
 import { DropdownModule } from 'primeng/dropdown';
 import { FormsModule } from '@angular/forms';
 import { ConcertService } from '../../../core/services/concert.service';
+import { TipoHistoriaPipe } from "../../pipes/tipo-historia.pipe";
 
 @Component({
   selector: 'app-historial-reserves',
@@ -24,9 +25,10 @@ import { ConcertService } from '../../../core/services/concert.service';
     InputTextModule,
     DialogModule,
     CalendarModule,
-    DropdownModule, 
-    FormsModule
-  ],
+    DropdownModule,
+    FormsModule,
+    TipoHistoriaPipe
+],
   templateUrl: './historial-reserves.component.html',
   styleUrl: './historial-reserves.component.css',
   schemas:[CUSTOM_ELEMENTS_SCHEMA,NO_ERRORS_SCHEMA]
@@ -105,6 +107,13 @@ export class HistorialReservesComponent {
     const evento = this.concerts.find((eve:any) => eve.id == id)
     return `${evento.nombre} ${this.formatDateToDDMMYYYY(evento.fecha)} ${evento.hora}`
   }
+
+  resetFilters() {
+    this.tipoChoice = null; 
+    this.dniFilter = '';  
+    this.usuarioChoice = null;
+    this.date = null;  
+}
 
   buscar(){
     const params:any = {}

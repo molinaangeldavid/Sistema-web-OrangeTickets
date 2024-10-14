@@ -1,3 +1,7 @@
+.content{
+    flex: 1 0 0;
+}
+
 .subcontainer-perfil{
     display: flex;
     flex-direction: column;

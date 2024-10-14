@@ -36,6 +36,7 @@ tbody:before {
     border: 1px solid #070707;
     border-radius: 3px;
 }
+
 .row-number{
     padding:0 20px;
 }
@@ -167,9 +168,4 @@ tbody:before {
     }
 
 }
-@media only screen and (max-width: 800px){
-    
-    .seat,.empty-seat {
-        padding: 6px;
-    }
-}
+

@@ -1,7 +1,5 @@
-<app-navbar [menusecreto]="false"></app-navbar>
 <div class="container-title">
-    <img src="../../../assets/oie_transparent.png" alt="logo">
-    <h2 class="title-login">Tickets Orange</h2>
+    <img src="../../../assets/logoOrange.png" alt="logo">
 </div>
 <div class="content">
     <form #myForm="ngForm" (ngSubmit)="onSubmit()">
@@ -11,10 +9,10 @@
             </div>
             <div class="login-user">
                 <label for="inputdni" class="form-label">DNI</label>
-                <input type="text" [(ngModel)]="dni" id="inputdni" class="form-control" aria-describedby="dniHelpBlock" required
+                <input type="text" [(ngModel)]="dni" id="inputdni" class="form-control" aria-describedby="dniHelpBlock" (ngModelChange)="validateDni()" required
                 [ngModelOptions]="{standalone:true}">
                 <div *ngIf="errorDni" class="alert">
-                    Dni Incorrecto
+                    Dni Incorrecto, debe contener 8 caracteres numéricos.
                 </div>
             </div>
             

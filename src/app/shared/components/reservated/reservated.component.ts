@@ -150,6 +150,9 @@ export class ReservatedComponent {
     if (isNaN(fecha.getTime())) {
       throw new Error('Fecha UTC no válida');
     }
+
+    fecha.setUTCHours(fecha.getUTCHours() - 3);
+    
     const year = fecha.getUTCFullYear();
     const month = String(fecha.getUTCMonth() + 1).padStart(2, '0'); // Mes empieza en 0
     const day = String(fecha.getUTCDate()).padStart(2, '0');
@@ -162,7 +165,7 @@ export class ReservatedComponent {
   async generarPDF() {
     const colegioImagen = await this.getDataUrlFromImage('../../../../assets/oie_transparent.png') 
     const lugar = 'Paseo La Plaza // Sala Pablo Picasso '
-    const detallesEvento = {
+    const detallesEvento = { 
       nombre: this.escenario.nombre,
       fecha: this.fechaFormatted(this.escenario.fecha),
       hora: this.escenario.hora,
@@ -178,7 +181,6 @@ export class ReservatedComponent {
     pdfMake.vfs = {
       ...pdfFonts.pdfMake.vfs,
       "monotype-old-english.ttf":font,
-
     }
     pdfMake.fonts = {
       CustomFont: {

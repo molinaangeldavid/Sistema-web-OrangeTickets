@@ -54,54 +54,5 @@
   <!-- <div class="info" *ngIf="hasReserves">
     <button pButton class="p-button-success" (click)="openDialog()" icon="pi pi-exclamation-circle" severity="help" label="Ver informacion"></button>
   </div> -->
-  <p-dialog 
-  header="Informacion importante" 
-  [modal]="true" 
-  [(visible)]="dialog" 
-  [style]="{ width: '45rem' }" 
-  [breakpoints]="{ '1199px': '75vw', '575px': '90vw' }">
-  <div class="todo" id="todo">
-    <span class="subtitle">Reserva con obligacion de compra</span>
-    <div class="caption">
-      <p>
-        En caso de no efectivizarse el pago de las reservas dentro de las 48hs habiles, las reservas quedaran anuladas.
-        Dicha confirmacion de reservas se puede hacer por Administracion entre las 8:00 a 14:00
-      </p>
-    </div>
-    <span class="subtitle">Limite de reservas por alumno</span>
-    <div class="caption">
-      <p>
-        Podras reservar solo 5 butacas los primeros 2 dias (6/11 a 8/11). Y esto es dependiendo del ciclo que curse el alumno
-      </p>
-      <ul>
-        <li>6° grado/año(Egresados): De 7:00 a 13:00</li>
-        <li>Todos los ciclos(1° a 6°): De 14:00 a 20:00</li>
-      </ul>
-      <p>
-        En caso de los egresados, solo podran reservas 2 butacas. Luego de las 14:00 puede reservas las 3 butacas restantes
-      </p>
-    </div>
-    <span class="subtitle">Entradas remanentes</span>
-    <div class="caption">
-      <p>
-        Desde el 9/11 podras reservas las butacas que desees desde las 7:00. Cumpliendo la confirmacion de las reservas dentro las 48 hs habiles
-      </p>
-    </div>
-    <span class="subtitle">Mas informacion</span>
-    <div class="caption">
-      <ul>
-        <li>Metodo de pago: Efectivo</li>
-        <li>Se podra reservar hasta el martes 28/11 a las 20:00. No se puede reservar despues de ese dia</li>
-      </ul>
-    </div>
-    <span class="subtitle">Contacto</span>
-    <div>
-      <p>Para mas informacion:</p>
-      <ul>
-        <li><strong>Telefono:</strong> 3530-6532</li>
-        <li><strong>Email:</strong> administracion&#64;orangeinternational.edu.ar</li>
-      </ul>
-    </div>
-  </div>
-</p-dialog>
+  
 </div>

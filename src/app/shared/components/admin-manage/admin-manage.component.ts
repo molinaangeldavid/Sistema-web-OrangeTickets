@@ -163,7 +163,7 @@ export class AdminManageComponent {
       icon: 'pi pi-exclamation-triangle',
       accept: () => {
         // let concertRemoved = this.concerts.filter((val: any) => val.id == concert.id)
-        this.adminService.deleteAdmin(administrador.id).subscribe({
+        this.adminService.deleteAdmin(administrador.dni).subscribe({
           next: (response) => {
             console.log(response)
             this.messageService.add({ severity: 'success', summary: 'Exito', detail: 'Administrador Eliminado', life: 3000 });
@@ -173,7 +173,7 @@ export class AdminManageComponent {
             this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Error al eliminarse el administrador', life: 3000 });
           }
         })
-        this.administradores = this.administradores.filter((val:any) => val.id !== administrador.id);
+        this.administradores = this.administradores.filter((val:any) => val.dni !== administrador.dni);
         this.administrador = {};
       }
     });

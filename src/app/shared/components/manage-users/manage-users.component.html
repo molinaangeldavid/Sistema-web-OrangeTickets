@@ -14,9 +14,9 @@
             <p-dropdown 
             [options]="concerts" 
             [(ngModel)]="concertChoice" 
-            optionLabel="nombre"
             placeholder="Elegir Concierto" 
-            [ngModelOptions]="{standalone: true}" />
+            optionLabel="displayLabel"
+            [ngModelOptions]="{standalone: true}"/>
         </div>
         <!-- <div style="margin-bottom: 10px; display: flex; flex-direction: column;" *ngIf="deshabilitarOptionBoolean">
             <label for="concert">Concert</label>
@@ -104,7 +104,7 @@
         [(ngModel)]="timeTo" 
         [timeOnly]="true" 
         (ngModelChange)="onDateToChange()"
-        placeholder="Fecha"/>
+        placeholder="Hora"/>
     </div>
 </div>
 <div class="last-input" *ngIf="habilitarOptionBoolean">
@@ -139,6 +139,7 @@
                 placeholder="Buscar..." />
             </p-iconField>
             <p-fileUpload 
+            #fileUpload
             mode="basic" 
             chooseLabel="Importar" 
             chooseIcon="pi pi-upload"
@@ -147,7 +148,7 @@
             (onSelect)="onFileSelect($event)"
             [customUpload]="true"
             />
-            <button pButton type="button" (click)="uploadFile()">Confirmar</button>
+            <button pButton type="button" (click)="uploadFile(fileUpload)">Confirmar</button>
         </div>
     </ng-template>
     <ng-template pTemplate="header">
@@ -184,7 +185,6 @@
     </ng-template>
 </p-table>
 </div>
-<div *ngIf="!habilitaciones" style="display: flex; justify-content: center; font-weight: 800;">No existen usuarios en el sistema</div>
 <div class="container-table" *ngIf="deshabilitarOptionBoolean && habilitaciones">
     <p-table 
     #dt2 

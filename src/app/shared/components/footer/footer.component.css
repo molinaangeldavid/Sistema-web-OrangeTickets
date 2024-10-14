@@ -5,8 +5,7 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    padding: 30px;
-    overflow-y: scroll;
+    padding: 20px;
 }
 span{
     font-weight: 700;
@@ -15,7 +14,7 @@ span{
 
 @media screen and (max-width: 800px) {
     .container{
-        padding: 5px;
+        padding: 10px;
     }
     span{
         font-size: 11px;

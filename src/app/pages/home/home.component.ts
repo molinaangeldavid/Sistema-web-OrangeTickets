@@ -102,10 +102,8 @@ export class HomeComponent implements OnInit,OnDestroy {
 
             if (validHabilitacion) {
               // Guardar la habilitación válida
-              console.log('Habilitación válida:', validHabilitacion);
               this.habilitation = validHabilitacion;
             } else {
-              console.log('No hay habilitación válida para este concierto en las fechas actuales');
               this.habilitation = null;
             }
           }

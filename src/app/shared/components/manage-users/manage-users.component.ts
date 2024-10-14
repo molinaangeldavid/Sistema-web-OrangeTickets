@@ -132,7 +132,7 @@ export class ManageUsersComponent {
     this.nivelChoice = this.niveles[0];
     this.divisionChoice = this.divisiones[0];
     this.dniFilter = "Todos"
-    this.adminService.getAllEstudiantes(this.cicloChoice.ciclo,this.nivelChoice.nivel,this.divisionChoice.division,this.dniFilter).subscribe({
+    this.adminService.getAllEstudiantes(this.cicloChoice.ciclo.toLowerCase(),this.nivelChoice.nivel,this.divisionChoice.division,this.dniFilter).subscribe({
       next: (value) => {
         this.users = value
         this.filteredUsers = this.users
@@ -149,7 +149,15 @@ export class ManageUsersComponent {
   loadData(){
     this.concertService.getEvents().subscribe({
       next: (value) => {
-        this.concerts = value
+        this.concerts = value.map((event: any) => {
+          const fecha = new Date(event.fecha);
+          const opcionesFecha: Intl.DateTimeFormatOptions = { day: '2-digit', month: '2-digit', year: 'numeric' };
+          return {
+            ...event,
+            displayLabel: `${event.nombre} - ${fecha.toLocaleDateString('es-ES', opcionesFecha)} ${event.hora}`
+          }
+
+        })
       },
       error: (error) => {
         console.log(error)
@@ -182,7 +190,7 @@ export class ManageUsersComponent {
   
   setFiltro(){
     this.loadingHabilitados = true
-    this.adminService.getAllEstudiantes(this.cicloChoice.ciclo,this.nivelChoice.nivel,this.divisionChoice.division,this.dniFilter).subscribe({
+    this.adminService.getAllEstudiantes(this.cicloChoice.ciclo.toLowerCase(),this.nivelChoice.nivel,this.divisionChoice.division,this.dniFilter).subscribe({
       next: (value) => {
         this.filteredUsers = value
         this.selectedUsers = value
@@ -198,7 +206,7 @@ export class ManageUsersComponent {
 
   verFiltro(){
     this.loadingdeshabilitados = true
-    this.habilitacionesService.getHabilitacionesFilter(this.concertChoice.id,this.cicloChoice.ciclo,this.nivelChoice.nivel,this.divisionChoice.division,this.dniFilter).subscribe({
+    this.habilitacionesService.getHabilitacionesFilter(this.concertChoice.id,this.cicloChoice.ciclo.toLowerCase(),this.nivelChoice.nivel,this.divisionChoice.division,this.dniFilter).subscribe({
       next: (value) => {
         if (value && value.length > 0) {
           this.habilitaciones = value;
@@ -220,7 +228,7 @@ export class ManageUsersComponent {
     this.loadingHabilitados = true
     this.deshabilitarOptionBoolean = false
     this.habilitarOptionBoolean = true
-    this.adminService.getAllEstudiantes(this.cicloChoice.ciclo,this.nivelChoice.nivel,this.divisionChoice.division,this.dniFilter).subscribe({
+    this.adminService.getAllEstudiantes(this.cicloChoice.ciclo.toLowerCase(),this.nivelChoice.nivel,this.divisionChoice.division,this.dniFilter).subscribe({
       next: (value) => {
         this.users = value
         this.filteredUsers = this.users
@@ -242,7 +250,7 @@ export class ManageUsersComponent {
     this.loadingdeshabilitados = true
     this.habilitarOptionBoolean = false
     this.deshabilitarOptionBoolean = true
-    this.habilitacionesService.getHabilitacionesFilter(this.concertChoice.id,this.cicloChoice.ciclo,this.nivelChoice.nivel,this.divisionChoice.division,this.dniFilter).subscribe({
+    this.habilitacionesService.getHabilitacionesFilter(this.concertChoice.id,this.cicloChoice.ciclo.toLowerCase(),this.nivelChoice.nivel,this.divisionChoice.division,this.dniFilter).subscribe({
       next: (value) => {
         if (value && value.length > 0) {
           this.habilitaciones = value;
@@ -264,11 +272,12 @@ export class ManageUsersComponent {
     this.file = event.files[0];
   }
   
-  uploadFile(){
+  uploadFile(fileUpload:any){
     if(this.file){
       this.adminService.uploadUser(this.file).subscribe({
         next: (response) => {
           console.log(response)
+          fileUpload.clear()
           this.messageService.add({ severity: 'success', summary: 'Exito', detail: 'Usuarios agregados a la base de datos', life: 3000 })
         },
         error: (error) => {

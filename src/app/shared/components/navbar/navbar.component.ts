@@ -63,8 +63,8 @@ export class NavbarComponent {
       this.user = this.user[0]
     }
     this.menuItems = [
-      { label: 'Sala', icon: 'pi pi-fw pi-home', command: () => this.showReservation() },
-      { label: 'Detalles', icon: 'pi pi-fw pi-info-circle', command: () => this.showReservated() },
+      { label: 'Eventos', icon: 'pi pi-fw pi-home', command: () => this.showReservation() },
+      { label: 'Reservas', icon: 'pi pi-fw pi-info-circle', command: () => this.showReservated() },
     ];
 
     this.superAdminMenuItems = [

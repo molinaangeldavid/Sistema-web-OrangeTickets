@@ -35,7 +35,13 @@
             "prerender": true,
             "ssr": {
               "entry": "server.ts"
-            }
+            },
+            "allowedCommonJsDependencies": [
+              "pdfmake/build/pdfmake",
+              "pdfmake/build/vfs_fonts",
+              "exceljs",
+              "file-saver"
+            ]
           },
           "configurations": {
             "production": {
