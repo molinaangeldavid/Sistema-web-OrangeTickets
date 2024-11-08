@@ -3,6 +3,11 @@
     padding: 8px;
 }
 
+#habilitarButton,#deshabilitarButton{
+    width: 15%;
+    text-align: center;
+}
+
 .button-habilitation button{
     margin-bottom: 10px;
 }
@@ -75,14 +80,11 @@ p-calendar{
 #to{
     padding: 5px !important;
 }
-/* 
-.confirm-habilitation{
-    margin: 10px 0;
+.container-button-confirm{
     display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-} */
+    justify-content: center; 
+    margin: 10px 0 300px 0
+}
 
 .container-table{
     display: flex;
@@ -119,5 +121,19 @@ input{
         display: flex;
         flex-direction: column;
         justify-content: center;
+    }
+
+    #habilitarButton,#deshabilitarButton{
+        width: 50%;
+        text-align: center;
+    }
+    .container-button-confirm button{
+        margin-bottom: 200px;
+    }
+}
+
+@media screen and (max-height: 900px){
+    .container-button-confirm button{
+        margin-bottom: 150px;
     }
 }

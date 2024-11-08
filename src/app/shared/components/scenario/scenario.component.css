@@ -43,9 +43,9 @@ tbody:before {
 .seat-available{
     cursor: pointer;
 }
-.seat-available:hover {
+/* .seat-available:hover {
     background-color: #a0a7a0;
-}
+} */
 
 .selected-seat {
     background-color: #2b2524;
@@ -168,4 +168,16 @@ tbody:before {
     }
 
 }
+
+@media only screen and (max-width:900px) {
+    .seat-available:hover {
+      background-color: initial; 
+    }
+
+    .selected-seat {
+        border:1px solid #2b2524;
+    }
+
+  }
+
 

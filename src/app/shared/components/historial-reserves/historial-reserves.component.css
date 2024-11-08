@@ -13,3 +13,16 @@
 ::ng-deep input, ::ng-deep .p-dropdown .p-dropdown-label{
     padding: 6px !important;
 }
+
+@media screen and (max-height:900px) {
+    .container-table{
+        margin-bottom: 150px;
+        display:block;
+    }
+    .filter{
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+    }
+}

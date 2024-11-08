@@ -16,6 +16,7 @@ import { FloatLabelModule } from 'primeng/floatlabel';
 import { CheckboxModule } from 'primeng/checkbox';
 import { FileUploadModule} from 'primeng/fileupload';
 import { InputNumberModule } from 'primeng/inputnumber';
+import { ToastModule } from 'primeng/toast';
 
 import { ConcertService } from '../../../core/services/concert.service';
 import { HabilitacionesService } from '../../../core/services/habilitaciones.service';
@@ -39,7 +40,8 @@ import { AdminService } from '../../../core/services/admin.service';
     FloatLabelModule,
     CheckboxModule,
     FileUploadModule,
-    InputNumberModule
+    InputNumberModule,
+    ToastModule
   ],
   templateUrl: './manage-users.component.html',
   styleUrl: './manage-users.component.css',
@@ -190,6 +192,9 @@ export class ManageUsersComponent {
   
   setFiltro(){
     this.loadingHabilitados = true
+    if(this.dniFilter == '' || this.dniFilter == undefined){
+      this.dniFilter = 'Todos'
+    }
     this.adminService.getAllEstudiantes(this.cicloChoice.ciclo.toLowerCase(),this.nivelChoice.nivel,this.divisionChoice.division,this.dniFilter).subscribe({
       next: (value) => {
         this.filteredUsers = value
@@ -206,6 +211,9 @@ export class ManageUsersComponent {
 
   verFiltro(){
     this.loadingdeshabilitados = true
+    if(this.dniFilter == '' || this.dniFilter == undefined){
+      this.dniFilter = 'Todos'
+    }
     this.habilitacionesService.getHabilitacionesFilter(this.concertChoice.id,this.cicloChoice.ciclo.toLowerCase(),this.nivelChoice.nivel,this.divisionChoice.division,this.dniFilter).subscribe({
       next: (value) => {
         if (value && value.length > 0) {

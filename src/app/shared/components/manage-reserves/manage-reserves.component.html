@@ -11,9 +11,9 @@
     styleClass="p-datatable-gridlines" 
     [paginator]="true"
     [rows]="10"
-    [tableStyle]="{'width': 'auto', 'margin':'0 auto'}"
+    [tableStyle]="{'width': 'auto', 'margin':'auto'}"
     class="custom-table"
-    [globalFilterFields]="['dni', 'apellido', 'nombre', 'ciclo','grado']"
+    [globalFilterFields]="['dni', 'apellido', 'nombre', 'ciclo','nivel', 'division']"
     >
     <ng-template pTemplate="caption" class="caption">
         <!-- <div class="flex"> -->
@@ -69,7 +69,8 @@
                 (click)="showDialog(user.dni)" 
                 pButton 
                 [icon]="haveReservedSeats(user.dni) ? 'pi pi-exclamation-triangle' : 'pi pi-external-link'" 
-                size="small">
+                size="small"
+                [ngClass]="haveReservedSeats(user.dni) ? 'warning-button' : ''">
             </button></td>
             <td>
                 <button 

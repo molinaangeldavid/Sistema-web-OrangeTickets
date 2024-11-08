@@ -1,19 +1,19 @@
 <div class="content-table">
     <p-toast />
-            <div class="buttons">
-                <p-button 
-                severity="success" 
-                label="Nuevo" 
-                icon="pi pi-plus" 
-                class="mr-2" 
-                (onClick)="new()" />
-                <p-button 
-                severity="danger" 
-                label="Eliminar" 
-                icon="pi pi-trash" 
-                (onClick)="deleteSelectedAdministrador()" 
-                [disabled]="!selectedAdministrador || !selectedAdministrador.length" />
-            </div>
+    <div class="buttons">
+        <p-button 
+        severity="success" 
+        label="Nuevo" 
+        icon="pi pi-plus" 
+        class="mr-2" 
+        (onClick)="new()" />
+        <p-button 
+        severity="danger" 
+        label="Eliminar" 
+        icon="pi pi-trash" 
+        (onClick)="deleteSelectedAdministrador()" 
+        [disabled]="!selectedAdministrador || !selectedAdministrador.length" />
+    </div>
     <p-table
     #dt
     [value]="administradores"

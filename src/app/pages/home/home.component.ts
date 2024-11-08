@@ -77,6 +77,20 @@ export class HomeComponent implements OnInit,OnDestroy {
   }
   
   async ngOnInit(){
+   
+    await this.loadHabilitationAndEvents()
+    
+    this.currentComponent! = 'scenario'
+    this.subscription = this.showComponentService.componentEvent$.subscribe(name => {
+      this.currentComponent = name;
+      if (name === 'scenario') {
+        this.loadHabilitationAndEvents(); // Vuelve a cargar habilitaciones y eventos al cambiar a scenario
+      }
+    })
+    this.usuario = this.dataService.getData('data')
+  }
+  
+  async loadHabilitationAndEvents(){
     const currentDate = new Date()
     this.dni = this.dataService.getData('dni')
     try {
@@ -115,16 +129,14 @@ export class HomeComponent implements OnInit,OnDestroy {
     }finally{
       this.loading = false
     }
-    
-    this.currentComponent! = 'scenario'
-    this.subscription = this.showComponentService.componentEvent$.subscribe(name => {
-      this.currentComponent = name;
-    })
-    this.usuario = this.dataService.getData('data')
   }
+
 
   changePage(value:any){
     this.currentComponent = value
+    if (value === 'scenario') {
+      this.loadHabilitationAndEvents(); 
+    }
   }
 
   ngOnDestroy(): void {

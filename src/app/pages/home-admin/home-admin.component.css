@@ -1,7 +1,6 @@
-.content{
+/* .content{
     flex: 1 0 0;
-}
-
+} */
 .subcontainer-perfil{
     display: flex;
     flex-direction: column;
@@ -24,6 +23,7 @@
     margin-bottom: 100px;
     width: 100%;
 }
+
 .data-information.title{
     font-weight: 700;
 }
@@ -35,5 +35,14 @@
 @media screen and (max-width: 800px) {
     .showCash{
         width: 100%;
+    }
+    .showUsers{
+        margin-bottom: 250px;
+    }
+}
+
+@media screen and (max-height: 900px){
+    .showAdmin, .showHistorial{
+        margin-bottom: 100px;
     }
 }

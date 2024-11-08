@@ -18,8 +18,25 @@ input{
     font-size: 14px;
 }
 
+:host ::ng-deep .warning-button {
+    background-color: #ffa726 !important;
+    color: white !important;
+    border-color: #ffa726 !important;
+    transition: background-color 0.3s ease; 
+}
+
+:host ::ng-deep .warning-button:hover {
+    background-color: #fb8c00 !important; 
+    border-color: #fb8c00 !important;
+}
+
 @media screen and (max-width: 800px) {
     .card{
         display: block;
+    }
+}
+@media screen and (max-height:900px) {
+    .button-report{
+        margin-bottom: 150px
     }
 }

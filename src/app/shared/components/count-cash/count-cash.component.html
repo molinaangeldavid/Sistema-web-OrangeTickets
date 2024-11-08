@@ -28,7 +28,12 @@
     <div class="container-table1" *ngIf="showUser">
         <h3 style="padding: 5px 0; text-align: center;">Resumen Caja por Usuario</h3>
         
-        <p-table #dt [value]="byUsers" [scrollable]="true" scrollHeight="400px" [tableStyle]="{'width': 'auto', 'margin': '0 auto'}"
+        <p-table #dt [value]="byUsers" 
+        [scrollable]="true" 
+        scrollHeight="400px" 
+        [tableStyle]="{'width': 'auto', 'margin': '0 auto'}"
+        [paginator]="true"
+        [rows]="30"
         [globalFilterFields]="['dni', 'apellido', 'nombre', 'total']">
         <ng-template pTemplate="caption">
             <div class="flex">

@@ -78,7 +78,9 @@ export class LoginComponent implements OnInit{
     try {
       const tokenUser = await firstValueFrom(this.authService.authUser(this.dni))
       if(tokenUser){
-        this.cookieService.set("tokenEstudiante",tokenUser.token);
+        const expirationDate = new Date();
+        expirationDate.setHours(expirationDate.getHours() + 1);
+        this.cookieService.set("tokenEstudiante",tokenUser.token,{expires: expirationDate,path:'/',secure: true, sameSite:'Lax'});
         this.dataService.saveData("dni",`${this.dni}`);
         this.dataService.saveData("data",tokenUser.myUser)
         this.router.navigate(['estudiante'])

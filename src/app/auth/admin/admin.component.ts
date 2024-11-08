@@ -54,7 +54,9 @@ export class AdminComponent {
     try {
       const tokenAdmin = await firstValueFrom(this.authService.authAdmin(this.dni,this.password))
       if(tokenAdmin){
-        this.cookieService.set("tokenAdmin",tokenAdmin.token)
+        const expirationDate = new Date();
+        expirationDate.setHours(expirationDate.getHours() + 6);
+        this.cookieService.set("tokenAdmin",tokenAdmin.token,{expires: expirationDate,path: '/', secure: true, sameSite: 'Lax' })
         this.dataService.saveData("dniAdmin",this.dni)
         this.dataService.saveData('data',tokenAdmin.myUser) 
         

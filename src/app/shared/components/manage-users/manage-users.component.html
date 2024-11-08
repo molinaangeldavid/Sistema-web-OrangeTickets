@@ -1,8 +1,8 @@
 <div style="display: flex; justify-content: center; gap: 10px; margin-bottom: 15px;" >
-    <button pButton severity="success" (click)="habilitarOption()" style="width: 10%; text-align: center;">
+    <button id="habilitarButton" pButton severity="success" (click)="habilitarOption()">
         Habilitar
     </button>
-    <button pButton severity="danger" (click)="deshabilitarOption()" style="width: 10%; text-align: center;">
+    <button id="deshabilitarButton" pButton severity="danger" (click)="deshabilitarOption()">
         Deshabilitar
     </button>
 </div>
@@ -59,7 +59,7 @@
                 type="text" 
                 pInputText 
                 [(ngModel)]="dniFilter " 
-                [value]="dniFilter || 'Todos'"/>
+                [value]="dniFilter"/>
             </div>
             <div class="dropdown-group" *ngIf="habilitarOptionBoolean">
                 <button pButton type="button" (click)="setFiltro()" class="pi pi-search"></button>
@@ -113,6 +113,7 @@
     inputId="integeronly" 
     [(ngModel)]="cantidad"/> 
 </div>
+<p-toast />
 <p-confirmDialog />
 <div *ngIf="!loadingHabilitados && !filteredUsers" style="display: flex; justify-content: center; font-weight: 800;">No existen usuarios en el sistema</div>
 <div class="container-table" *ngIf="habilitarOptionBoolean && filteredUsers">
@@ -265,7 +266,7 @@
 </p-table>
 
 </div>
-<div style="display: flex; justify-content: center;">
+<div class="container-button-confirm">
     <button
     pButton
     type="button"

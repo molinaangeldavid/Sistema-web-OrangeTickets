@@ -44,7 +44,7 @@
                 </tr>
             </tbody>
         </table>
-        <table class="sala" *ngIf="!admin && !isReservationAllowed">
+        <!-- <table class="sala" *ngIf="!admin && isReservationAllowed && isMobile">
             <thead>
                 <th>Escenario</th>
             </thead>
@@ -52,23 +52,27 @@
                 <tr *ngFor="let row of seats; let rowIndex = index" class="row">
                     <td *ngFor="let seat of row" [ngClass]="{
                         'seat': existSeat(seat), 
+                        'seat-available': existSeat(seat) && isAvailable(seat),
+                        'selected-seat': existSeat(seat) && isSelected(seat.fila, seat.butaca),
                         'reservated-seat': existSeat(seat) && isReservated(seat),
                         'paid-seat': existSeat(seat) && isPaid(seat) && !mySeat(seat),
                         'seat-user': existSeat(seat) && mySeat(seat),
                         'empty-seat':!existSeat(seat) || isDisabledSeat(seat)
-                    }" >
+                    }" 
+                    title="{{ seat.butaca }}"
+                    (touchend)="existSeat(seat) && isAvailable(seat) && toggleSeatSelection(seat.fila, seat.butaca, seat.tipo)">
                     </td>
                     <td class="row-number">
                     {{ rowIndex + 1 }}
                     </td>
                 </tr>
             </tbody>
-        </table>
+        </table> -->
     </div>
 <div style="text-align: center;">
     <p-progressSpinner ariaLabel="loading" *ngIf="loading "/>
 </div>
-<div class="guia-color" *ngIf="!admin">
+<div class="guia-color" *ngIf="!admin && isReservationAllowed">
     <div>
         <div class="guia-row">
             <div class="mis-asientos"></div> 

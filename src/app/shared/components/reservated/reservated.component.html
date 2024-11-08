@@ -3,7 +3,11 @@
 </div>
 <div class="card-content" style="margin: auto;" *ngIf="hasReserves" >
   <div class="card" id="card" *ngIf="reserves">
-    <p-table [columns]="cols" [value]="reserves" [tableStyle]="{'width': 'auto', 'margin':'0 auto'}">
+    <p-table 
+    [columns]="cols" 
+    [scrollable]="true" 
+    [value]="reserves" 
+    [tableStyle]="{'width': 'auto', 'margin': 'auto'}">
       <ng-template pTemplate="header" let-columns>
         <tr>
           <th *ngFor="let col of columns">

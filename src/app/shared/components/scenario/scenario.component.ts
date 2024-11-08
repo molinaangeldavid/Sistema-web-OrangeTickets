@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { CUSTOM_ELEMENTS_SCHEMA,NO_ERRORS_SCHEMA,Component, EventEmitter, Input, Output, OnInit, SimpleChanges} from '@angular/core';
+import { CUSTOM_ELEMENTS_SCHEMA,NO_ERRORS_SCHEMA,Component, EventEmitter, Input, Output, OnInit, SimpleChanges, ChangeDetectorRef} from '@angular/core';
 import { Router } from '@angular/router';
 
 
@@ -63,10 +63,10 @@ export class ScenarioComponent implements OnInit{
     private scenarioService: ScenarioService,
     private reservationService: ReservationService,
     private dataService: DataService,
-    private router: Router,
     private emailService: EmailService,
     private historialService: HistorialService,
     private habilitationService: HabilitacionesService,
+    private cdr: ChangeDetectorRef
   ){
   }
   
@@ -142,14 +142,12 @@ export class ScenarioComponent implements OnInit{
         alert("No puede seleccionar mas asientos. Pruebe mas tarde")
         return;
       }
-      // if(tipo == 'd'){
-      //   alert('Estas seleccionando una butaca para discapacitados')
-      // }
       this.selectedSeats.add(seatKey);
       this.total += this.escenario.valor
     }
+    this.cdr.detectChanges();
   }
-  
+
   isAvailable(seat:any){
     return !this.isReservated(seat) && !this.isPaid(seat)
   }
@@ -273,8 +271,8 @@ export class ScenarioComponent implements OnInit{
             this.selectedSeats.clear();
         }
     });
-}
-  
+  }
+
   showOccupiedSeatsError() {
     // Aquí puedes implementar la lógica para mostrar un mensaje al usuario
     alert('Algunos de los asientos seleccionados ya están ocupados. Por favor, selecciona otros asientos.');
