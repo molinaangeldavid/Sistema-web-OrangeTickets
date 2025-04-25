@@ -135,7 +135,9 @@ export class HomeComponent implements OnInit,OnDestroy {
   changePage(value:any){
     this.currentComponent = value
     if (value === 'scenario') {
-      this.loadHabilitationAndEvents(); 
+      setTimeout(() => {
+        this.loadHabilitationAndEvents(); 
+      }, 2000);
     }
   }
 
